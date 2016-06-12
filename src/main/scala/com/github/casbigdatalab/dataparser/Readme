@@ -1,0 +1,63 @@
+Datapaser mapping定义说明
+
+mappingSpec表示mapping，
+基本参数：
+type表示mapping类型，包括csvMapping, jsonMapping, regexMapping, 以及customMapping(用户自定义映射)
+dimensionMap表示dataparser返回字段的列表
+
+扩展参数：
+columns表示消息字段名称列表。
+pattern表示解析规则，主要用于regexMapping。
+delimiter表示解析CSV文件时指定的分割符
+
+mapping定义示例：
+Json示例:
+"mappingSpec":{
+    "type": "jsonMapping",
+    "dimensionsMap":  {
+      "dimensions" : ["page","language","user","unpatrolled","newPage","robot","anonymous","namespace","continent","country","region","city"]
+    }
+}
+约束说明：
+dimensions的字段名称与json消息保持一致。
+columns缺省，默认从Json消息中解析获得。
+pattern缺省。
+目前不支持嵌套。
+
+CSV示例:
+"mappingSpec":{
+    "type": "csvMapping",
+    "columns": ["ip","time","language","request","status","length","referer","user_agent"],
+	"delimiter": ",",
+    "dimensionsMap":  {
+      "dimensions" : ["ip","time","language","request","status","length","referer","user_agent"]
+    }
+}
+约束说明：
+columns为CSV消息中delimiter分割字段的列表，其前后顺序应与的delimiter分割的前后顺序保持一致。
+dimensions的字段名称与columns保持一致。
+pattern缺省。
+
+regex示例:
+"mappingSpec":{
+    "type": "regexMapping",
+    "columns": ["ip","time","language","request","status","length","referer","user_agent"],
+    "dimensionsMap":  {
+      "dimensions" : ["ip","time","language","request","status","length","referer","user_agent"]
+    }
+	"pattern" : <regex pattern for partitioning data>
+}
+约束说明：
+columns为regex group获得的字段名称列表，其前后顺序应与regex group的前后顺序保持一致。
+dimensions的字段名称与columns保持一致。
+pattern表示Java支持的正则表达式。
+
+customMapping示例：
+"mappingSpec":{
+    "type": "customMapping",
+    "dimensionsMap":  {
+      "dimensions" : ["ip","time","language","request","status","length","referer","user_agent"]
+    }
+}
+约束说明：
+customMapping需要调用用户自定义的解析类，该类继承trait com.github.casbigdatalab.dataparser_common，实现parser接口。parser返回记录dimensions字段Map List。定义示例见源码。
