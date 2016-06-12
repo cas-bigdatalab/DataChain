@@ -1,4 +1,4 @@
-package com.github.casbigdatalab.dataparser
+package com.cnic.datachain.dataparser
 
 import org.apache.spark.SparkConf
 
@@ -41,15 +41,10 @@ object Test {
     // val rdd = sc.textFile("file:///D:/TDDOWNLOAD/012312_927_X71q_xWFhjY1u")
 
     log.flatMap(_.split(" "))
-
       .map((_, 1)).reduceByKey(_+_)
-
       .map(x => (x._2, x._1))
-
       .sortByKey(false)
-
       .map(x => (x._2, x._1))
-
       .saveAsTextFile("hdfs://10.0.71.32:9000/tmp/output")//计数结果在hdfs上的保存目录    sc.stop
 
   }
