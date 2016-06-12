@@ -18,7 +18,8 @@ libraryDependencies ++=Seq(
   "org.apache.spark" %% "spark-streaming-kafka" %  sparkVersion % "compile",
   "org.apache.kafka" % "kafka_2.10" % "0.8.2.2",
   "mysql" % "mysql-connector-java" % "5.1.39",
-  "org.apache.zookeeper" % "zookeeper" % "3.4.5" exclude("org.jboss.netty", "netty")
+  "org.apache.zookeeper" % "zookeeper" % "3.4.5" exclude("org.jboss.netty", "netty"),
+  "com.yammer.metrics" % "metrics-core" % "2.2.0"
 )
 
 fork in Test := true
