@@ -44,6 +44,13 @@ object tools{
     json.get
   }
 
+  def jsonMap2Columns(mapping:Any):List[String] = {
+    val jmmap:Map[String, Any] = mapping.asInstanceOf[Map[String, Any]].get("mappingSpec").get.asInstanceOf[Map[String, Any]]
+    val colsList = jmmap.get("columns").get.asInstanceOf[List[String]]
+    colsList
+  }
+
+  //json
   def jsonStr2HashMap(jsonstr:String): HashMap[String, String] = {
     val json:Option[Any] = JSON.parseFull(jsonstr)
     //check whether mapping are correctly coded, otherwise throw exception
@@ -59,10 +66,18 @@ object tools{
     val delimiter = jmmap.get("delimiter").get.toString.trim.charAt(0)
     delimiter
   }
+
   //
   def jsonMap2SchemaList(mapping:Any):List[String] = {
     val jmmap:Map[String, Any] = mapping.asInstanceOf[Map[String, Any]].get("mappingSpec").get.asInstanceOf[Map[String, Any]]
     val schemaList = jmmap.get("dimensionsMap").get.asInstanceOf[Map[String, Any]].get("dimensions").get.asInstanceOf[List[String]]
     schemaList
+  }
+
+  //regex
+  def jsonMap2RegexStr(mapping:Any):String = {
+    val jmmap: Map[String, Any] = mapping.asInstanceOf[Map[String, Any]].get("mappingSpec").get.asInstanceOf[Map[String, Any]]
+    val regexstr = jmmap.get("pattern").get.toString.trim
+    regexstr
   }
 }

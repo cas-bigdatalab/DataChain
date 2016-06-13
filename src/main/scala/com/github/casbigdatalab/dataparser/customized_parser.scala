@@ -6,23 +6,27 @@ package com.github.casbigdatalab.datachain.dataparser
 
 import java.util
 
-object customized_parserTest {
-  class customized_parser(schema_json: String, mapping_json : String) extends common {
+// example about defining customized_parser
+object customized_parse {
+  class customized_parser(mapping_conf : String) extends common {
+    val jmapping = tools.jsonfile2JsonMap(mapping_conf)
+    val schemaList =tools.jsonMap2SchemaList(jmapping)
 
     override def parse(msg:String): util.ArrayList[Map[String, Any]] = {
-      val re = "customised: " + msg
       val result = new util.ArrayList[Map[String, Any]]()
-      result.add(Map("cust"->"cust"))
+      //extract and assembly
+      for(item <- schemaList) {
+        result.add(Map(item -> msg))
+      }
       result
     }
   }
 
   def main(agrs: Array[String]): Unit = {
-    println("beginning testing cust dataparser")
-    val myparser = new dataparser("mapping.json", new customized_parser("schema.json", "mapping.json"))
-//    val dataparser = parser.getparser()
-    val out = myparser.parse("abc")
-    println(out)
+    val mapping_conf = "conf\\" + "regexMapping.json"
+    val msg = "custom-defined-message"
+    val customparser = new dataparser(mapping_conf, new customized_parser(mapping_conf))
+    println("msg: " + msg)
+    println("parse result: : " + customparser.parse((msg)))
   }
-  //
 }

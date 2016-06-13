@@ -19,6 +19,7 @@ object parserCreater {
       mapping_type match {
         case "csvMapping" => new csvdataparser(mapping_json)
         case "jsonMapping" => new jsondataparser(mapping_json)
+        case "regexMapping" => new regexdataparser(mapping_json)
       }
     parser
   }
