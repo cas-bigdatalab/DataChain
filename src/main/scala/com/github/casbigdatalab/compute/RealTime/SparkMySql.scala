@@ -17,7 +17,7 @@ object SparkMySql {
     StreamingLogLevels.setStreamingLogLevels()
 
     val sparkConf = new SparkConf().setAppName("spark sql test")
-      .setMaster("spark://*:7077")
+      .setMaster("spark://10.0.71.28:7077")
       .set("spark.driver.memory", "3g")
       .set("spark.executor.memory", "10g")
       .set("spark.cores.max", "24")
@@ -32,7 +32,7 @@ object SparkMySql {
     val topicSet = topic.split(" ").toSet
 
     //create direct kafka stream with brokers and topics
-    val kafkaParams = Map[String, String]("metadata.broker.list" -> "*:9092,*:9092,*:9092", "group.id" -> "test-consumer-group")
+    val kafkaParams = Map[String, String]("metadata.broker.list" -> "10.0.71.20:9092,10.0.71.26:9092,10.0.71.27:9092", "group.id" -> "test-consumer-group")
 
     val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
       ssc, kafkaParams, topicSet
@@ -64,7 +64,7 @@ object SparkMySql {
                        |CREATE TEMPORARY TABLE test
                        |USING org.apache.spark.sql.jdbc
                        |OPTIONS (
-                       |  url    'jdbc:mysql://*:3306/test?user=root&password=root',
+                       |  url    'jdbc:mysql://10.0.71.7:3306/test?user=root&password=root',
                        |  dbtable     'user1'
                        |)""".stripMargin)
 

@@ -15,6 +15,7 @@ import org.apache.spark.{SparkConf, SparkContext}
   * Created by duyuanyuan on 2016/6/12.
   */
 object Kafka2SparkStreaming {
+
   /*
   args: 0 数据流的时间间隔
         1 kafka Topic
@@ -30,12 +31,12 @@ object Kafka2SparkStreaming {
     StreamingLogLevels.setStreamingLogLevels()
 
     val conf = new SparkConf().setAppName("RealTime Compute")
-//      .setMaster("spark://*:7077")
-//      .set("spark.driver.memory", "3g")
-//      .set("spark.executor.memory", "10g")
-//      .set("spark.cores.max", "24")
-//      .set("spark.driver.allowMultipleContexts", "true")
-//      .setJars(List("D:\\DataChain\\classes\\artifacts\\datachain_jar\\datachain.jar"))
+      .setMaster("spark://*:7077")
+      .set("spark.driver.memory", "3g")
+      .set("spark.executor.memory", "10g")
+      .set("spark.cores.max", "24")
+      .set("spark.driver.allowMultipleContexts", "true")
+      .setJars(List("D:\\DataChain\\classes\\artifacts\\datachain_jar\\datachain.jar"))
 
     val sc = new SparkContext(conf)
     val ssc = new StreamingContext(sc, Seconds(duration.toInt))
@@ -51,13 +52,14 @@ object Kafka2SparkStreaming {
       }.toMap
 
     // Generate the schema based on the string of schema
-    val fields : Array[StructField] = Array[StructField]()
-    for (fieldName <- schemaSrc.split(" ")) {
-      fields.+:(DataTypes.createStructField(fieldName, DataTypes.StringType, true))
+    var fields : Array[StructField] = Array[StructField]()
+    val schemas = schemaSrc.split(" ")
+    for (fieldName <- schemas) {
+      fields = DataTypes.createStructField(fieldName, DataTypes.StringType, true) +: fields
     }
-
     val schema = DataTypes.createStructType(fields)
 
+    //Create Kafka Stream and currently only support kafka with String messages
     val kafkaStream = KafkaUtils.createStream[
       String,
       String,
@@ -65,24 +67,21 @@ object Kafka2SparkStreaming {
       StringDecoder
       ](ssc, kafkaParams, topics, StorageLevel.MEMORY_AND_DISK_SER_2)
 
+    //Get the messages and execute operations
     val lines = kafkaStream.map(_._2)
-
-    val filedsLength = sc.broadcast(fields.length)
-
     lines.foreachRDD((rdd: RDD[String], time: Time) => {
       val sqlContext = SQLContextSingleton.getInstance(rdd.sparkContext)
-      import sqlContext.implicits._
+      //Get Row RDD
       val srcRDD = rdd.map(line => {
         val fields = line.split(",").toSeq
-//            for(i <- 0 until filedsLength.value){
-//
-//            }
-        Row(fields)
+        Row.fromSeq(fields)
       })
+
       // Apply the schema to the RDD.
       val srcDataFrame = sqlContext.createDataFrame(srcRDD, schema)
-      srcDataFrame.registerTempTable(srcName)
+      srcDataFrame.registerTempTable("user")
 
+     //Execute SQL tasks
       sqlContext.sql(createDecTable)
       sqlContext.sql(execSql)
 
@@ -97,8 +96,8 @@ object Kafka2SparkStreaming {
   def main(args: Array[String]): Unit = {
 
     val duration = "1"
-    val topics = "user:3"
-    val kafkaParam = "metadata.broker.list->*:9092,*:9092,*:9092;group.id->test-consumer-group"
+    val topics = "user:1"
+    val kafkaParam = "zookeeper.connect->*:2181,*:2181,*:2181;group.id->test-consumer-group"
     val schemaSrc = "name age"
     val srcName = "user"
     val createDecTable = """
@@ -109,7 +108,7 @@ object Kafka2SparkStreaming {
                            |  dbtable     'user1'
                            |)""".stripMargin
     val execSql = """
-                    |INSERT OVERWRITE table test
+                    |INSERT INTO table test
                     |SELECT * FROM user
                   """.stripMargin
     run(duration, topics, kafkaParam, schemaSrc, srcName, createDecTable, execSql)
