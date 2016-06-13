@@ -4,7 +4,7 @@
     "columns": ["year","make","model","comment","blank"],
     "delimiter": ",",
     "dimensionsMap":  {
-      "dimensions" : ["year","make","model","comment","blank"]
+      "dimensions" : ["year","make","model","comment"]
     }
   }
 }
