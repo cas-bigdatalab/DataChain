@@ -20,7 +20,8 @@ libraryDependencies ++=Seq(
   "mysql" % "mysql-connector-java" % "5.1.39",
   "org.apache.zookeeper" % "zookeeper" % "3.4.5" exclude("org.jboss.netty", "netty"),
   "com.yammer.metrics" % "metrics-core" % "2.2.0",
-  "org.apache.commons" % "commons-csv" % "1.4"
+  "org.apache.commons" % "commons-csv" % "1.4",
+  "joda-time" % "joda-time" % "2.9.3"
 )
 
 fork in Test := true

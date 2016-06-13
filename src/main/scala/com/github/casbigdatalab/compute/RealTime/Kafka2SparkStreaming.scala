@@ -1,21 +1,22 @@
 package com.github.casbigdatalab.compute.RealTime
 
 
-import com.github.casbigdatalab.utils.StreamingLogLevels
+import com.github.casbigdatalab.utils.{FieldTypeUtil, StreamingLogLevels}
 import kafka.serializer.StringDecoder
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{Row, RowFactory, SQLContext}
-import org.apache.spark.sql.types.{DataTypes, StructField, StructType}
+import org.apache.spark.sql.{Row, SQLContext}
+import org.apache.spark.sql.types.{DataTypes, StructField}
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.kafka.KafkaUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext, Time}
 import org.apache.spark.{SparkConf, SparkContext}
 
+import scala.collection.mutable.ArrayBuffer
+
 /**
   * Created by duyuanyuan on 2016/6/12.
   */
 object Kafka2SparkStreaming {
-
   /*
   args: 0 数据流的时间间隔
         1 kafka Topic
@@ -31,33 +32,34 @@ object Kafka2SparkStreaming {
     StreamingLogLevels.setStreamingLogLevels()
 
     val conf = new SparkConf().setAppName("RealTime Compute")
-      .setMaster("spark://*:7077")
-      .set("spark.driver.memory", "3g")
-      .set("spark.executor.memory", "10g")
-      .set("spark.cores.max", "24")
-      .set("spark.driver.allowMultipleContexts", "true")
-      .setJars(List("D:\\DataChain\\classes\\artifacts\\datachain_jar\\datachain.jar"))
+//      .setMaster("spark://*:7077")
+//      .set("spark.driver.memory", "3g")
+//      .set("spark.executor.memory", "10g")
+//      .set("spark.cores.max", "24")
+//      .set("spark.driver.allowMultipleContexts", "true")
+//      .setJars(List("D:\\DataChain\\classes\\artifacts\\datachain_jar\\datachain.jar"))
 
     val sc = new SparkContext(conf)
     val ssc = new StreamingContext(sc, Seconds(duration.toInt))
 
-    val topics = topic.split(",").map { s =>
+    val topics = topic.replaceAll(" ", "").split(",").map { s =>
       val a = s.split(":")
       (a(0), a(1).toInt)
     }.toMap
 
-    val kafkaParams = kafkaParam.split(";").map { s =>
+    val kafkaParams = kafkaParam.replaceAll(" ", "").split(";").map { s =>
         val a = s.split("->")
         (a(0), a(1))
       }.toMap
 
     // Generate the schema based on the string of schema
     var fields : Array[StructField] = Array[StructField]()
-    val schemas = schemaSrc.split(" ")
-    for (fieldName <- schemas) {
-      fields = DataTypes.createStructField(fieldName, DataTypes.StringType, true) +: fields
+    val schemas = schemaSrc.replaceAll(" ", "").split(",")
+    for (field <- schemas) {
+      val Array(fieldName, fieldType) = field.split(":")
+      fields = DataTypes.createStructField(fieldName, FieldTypeUtil.stringToDataType(fieldType), true) +: fields
     }
-    val schema = DataTypes.createStructType(fields)
+    val schema = DataTypes.createStructType(fields.reverse)
 
     //Create Kafka Stream and currently only support kafka with String messages
     val kafkaStream = KafkaUtils.createStream[
@@ -73,13 +75,18 @@ object Kafka2SparkStreaming {
       val sqlContext = SQLContextSingleton.getInstance(rdd.sparkContext)
       //Get Row RDD
       val srcRDD = rdd.map(line => {
-        val fields = line.split(",").toSeq
-        Row.fromSeq(fields)
+        val fields = line.split(",")
+        var row = new ArrayBuffer[Any]()
+        for(i <- 0 until fields.length){
+          val value = FieldTypeUtil.parseDataType(schemas(i).split(":")(1), fields(i).trim)
+          row += value
+        }
+        Row.fromSeq(row.toArray.toSeq)
       })
 
       // Apply the schema to the RDD.
       val srcDataFrame = sqlContext.createDataFrame(srcRDD, schema)
-      srcDataFrame.registerTempTable("user")
+      srcDataFrame.registerTempTable(srcName)
 
      //Execute SQL tasks
       sqlContext.sql(createDecTable)
@@ -96,9 +103,9 @@ object Kafka2SparkStreaming {
   def main(args: Array[String]): Unit = {
 
     val duration = "1"
-    val topics = "user:1"
-    val kafkaParam = "zookeeper.connect->*:2181,*:2181,*:2181;group.id->test-consumer-group"
-    val schemaSrc = "name age"
+    val topics = "user :1"
+    val kafkaParam = "zookeeper.connect->* :2181,*:2181,*:2181;group.id->test-consumer-group"
+    val schemaSrc = "name :String,age:Int"
     val srcName = "user"
     val createDecTable = """
                            |CREATE TEMPORARY TABLE test
