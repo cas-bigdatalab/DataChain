@@ -13,6 +13,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 import scala.collection.mutable.ArrayBuffer
 
+
 /**
   * Created by duyuanyuan on 2016/6/12.
   */
@@ -37,7 +38,12 @@ object Kafka2SparkStreaming {
 //      .set("spark.executor.memory", "10g")
 //      .set("spark.cores.max", "24")
 //      .set("spark.driver.allowMultipleContexts", "true")
-//      .setJars(List("D:\\DataChain\\classes\\artifacts\\datachain_jar\\datachain.jar"))
+//      .setJars(List("D:\\DataChain\\classes\\artifacts\\datachain_jar\\datachain.jar",
+//        "D:\\DataChain\\lib\\mongo-java-driver-2.13.0.jar",
+//        "D:\\DataChain\\lib\\casbah-commons_2.10-2.8.0.jar",
+//        "D:\\DataChain\\lib\\casbah-core_2.10-2.8.0.jar",
+//        "D:\\DataChain\\lib\\casbah-query_2.10-2.8.0.jar",
+//        "D:\\DataChain\\lib\\spark-mongodb_2.10-0.9.3-RC1-SNAPSHOT.jar"))
 
     val sc = new SparkContext(conf)
     val ssc = new StreamingContext(sc, Seconds(duration.toInt))
@@ -107,13 +113,24 @@ object Kafka2SparkStreaming {
     val kafkaParam = "zookeeper.connect->* :2181,*:2181,*:2181;group.id->test-consumer-group"
     val schemaSrc = "name :String,age:Int"
     val srcName = "user"
+//    val createDecTable = """
+//                           |CREATE TEMPORARY TABLE test
+//                           |USING org.apache.spark.sql.jdbc
+//                           |OPTIONS (
+//                           |  url    'jdbc:mysql://*:3306/test?user=root&password=root',
+//                           |  dbtable     'user1'
+//                           |)""".stripMargin
+
     val createDecTable = """
-                           |CREATE TEMPORARY TABLE test
-                           |USING org.apache.spark.sql.jdbc
+                           |CREATE TEMPORARY TABLE test(
+                           | name String, age Int
+                           |)USING com.stratio.datasource.mongodb
                            |OPTIONS (
-                           |  url    'jdbc:mysql://*:3306/test?user=root&password=root',
-                           |  dbtable     'user1'
+                           |  host '*:27017',
+                           |  database 'test',
+                           |  collection 'age'
                            |)""".stripMargin
+
     val execSql = """
                     |INSERT INTO table test
                     |SELECT * FROM user

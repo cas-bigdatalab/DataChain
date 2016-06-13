@@ -21,7 +21,11 @@ libraryDependencies ++=Seq(
   "org.apache.zookeeper" % "zookeeper" % "3.4.5" exclude("org.jboss.netty", "netty"),
   "com.yammer.metrics" % "metrics-core" % "2.2.0",
   "org.apache.commons" % "commons-csv" % "1.4",
-  "joda-time" % "joda-time" % "2.9.3"
+  "joda-time" % "joda-time" % "2.9.3",
+  "org.mongodb" % "casbah-commons_2.10" % "2.8.0",
+  "org.mongodb" % "casbah-core_2.10" % "2.8.0",
+  "org.mongodb" % "casbah-query_2.10" % "2.8.0",
+  "org.mongodb" % "mongo-java-driver" % "2.13.0"
 )
 
 fork in Test := true
