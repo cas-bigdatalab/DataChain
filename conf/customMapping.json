@@ -1,0 +1,8 @@
+{
+  "mappingSpec": {
+    "type": "customMapping",
+    "dimensionsMap":  {
+      "dimensions" : ["ip","user","timestamp","request","status","length"]
+    },
+  }
+}
