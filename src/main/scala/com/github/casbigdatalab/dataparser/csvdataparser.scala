@@ -22,34 +22,35 @@ class csvdataparser(mapping_conf : String) extends common{
     // parser here
     val msg_in = new ByteArrayInputStream(msg.getBytes())
     val msg_reader = new InputStreamReader(msg_in)
-
+    //csv parser
     val records = CSVFormat.DEFAULT.withDelimiter(delimiter).parse(msg_reader)
-
     var k = 0
     val subrecords = records.getRecords
     //println("size of subrecords " + subrecords.size())
     //parser the whole line of csv
+    //columns
+    val columnslist = tools.jsonMap2Columns(jmapping)
 
     val result = new util.ArrayList[Map[String, Any]]()
-
-    //
+    //traverse
     while(k < subrecords.size()) {
       val record = subrecords.get(k)
       //println("record_size " + record.size())
       //get each item of csv line
-      if(record.size() != schemaList.length) println("field number of record(" + record.size() + ") is not equal to (" + schemaList.length + ") of dimensions" )
+      if(record.size() != columnslist.length) println("field number of record(" + record.size() + ") is not equal to (" + columnslist.length + ") of dimensions" )
       var cnt = 0
-      while (cnt < record.size() && cnt < schemaList.length) {
-//        print(schemaList(k).get("field_name").get + ": " + record.get(cnt) + ", ")
-        val map= Map(schemaList(cnt).toString -> record.get(cnt))
-        result.add(map)
+      while (cnt < record.size() && cnt < columnslist.length) {
+//        println(columnslist(cnt) + ": " + record.get(cnt) + ", ")
+        //extract
+        if(schemaList.contains(columnslist(cnt))) {
+          val map = Map(columnslist(cnt).toString -> record.get(cnt))
+          result.add(map)
+        }
         cnt += 1
       }
-      print("\n")
 
       k+=1
     }
-
     result
   }
 }

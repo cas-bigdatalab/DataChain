@@ -18,11 +18,11 @@ class jsondataparser(mapping_conf : String) extends common {
     val jsonMsg:HashMap[String, Any] = tools.jsonStr2HashMap(msg)
 
     val result = new util.ArrayList[Map[String, Any]]()
+    //extract
     for(item <- schemaList) {
       val map= Map(item.toString -> jsonMsg.get(item.toString).get.asInstanceOf[String])
       result.add(map)
     }
     result
   }
-
 }
