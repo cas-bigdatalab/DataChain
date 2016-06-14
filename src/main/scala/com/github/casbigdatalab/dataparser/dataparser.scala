@@ -20,6 +20,7 @@ object parserCreater {
         case "csvMapping" => new csvdataparser(mapping_json)
         case "jsonMapping" => new jsondataparser(mapping_json)
         case "regexMapping" => new regexdataparser(mapping_json)
+        case _ => throw new IllegalArgumentException( mapping_type + " could not be found, please use the customMapping!")
       }
     parser
   }
