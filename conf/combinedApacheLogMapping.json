@@ -3,7 +3,7 @@
     "type": "regexMapping",
     "columns": ["ip","user","timestamp","request","status","length","referer","user-agent"],
     "dimensionsMap":  {
-      "dimensions" : ["ip","user","timestamp","request","status","length"]
+      "dimensions" : ["ip","user","timestamp","request","status","length","referer"]
     },
     "pattern": "^([0-9.]+)\\s[\\w.-]+\\s([\\w.-]+)\\s(\\[[^\\[\\]]+\\d+])\\s\"((?:[^\"]|\\\")+)\"\\s(\\d{3})\\s(\\d+|-)\\s\"((?:[^\"]|\\\")+)\"\\s\"((?:[^\"]|\\\")+)\"$"
   }

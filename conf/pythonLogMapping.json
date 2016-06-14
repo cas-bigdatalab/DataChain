@@ -1,0 +1,10 @@
+{
+  "mappingSpec": {
+    "type": "regexMapping",
+    "columns": ["asctime","filename","lineno","levelno","levelname","pathname","module","funcName","created","thread","threadName","process","name","message"],
+    "dimensionsMap":  {
+      "dimensions" : ["asctime","filename","lineno","levelno","levelname","pathname","module","funcName","created","thread","threadName","process","name","message"]
+    },
+    "pattern": "(\\d+-\\d+-\\d+\\s\\S+)\\s-\\s([^:]+):(\\d+)\\s+-\\s+(\\d+)\\s+(\\w+)\\s+(\\S+)\\s+(\\w+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\w+)\\s+(\\d+)\\s+(\\w+)\\s+-\\s+(.*)"
+  }
+}
