@@ -1,7 +1,7 @@
-package com.github.casbigdatalab.compute.RealTime
+package cn.cnic.bigdatalab.compute.RealTime
 
-
-import com.github.casbigdatalab.utils.{FieldTypeUtil, StreamingLogLevels}
+import cn.cnic.bigdatalab.utils.{FieldTypeUtil, StreamingLogLevels}
+import com.github.casbigdatalab.utils.StreamingLogLevels
 import kafka.serializer.StringDecoder
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.hive.HiveContext

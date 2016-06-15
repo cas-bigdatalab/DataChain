@@ -1,4 +1,4 @@
-package com.github.casbigdatalab.compute
+package cn.cnic.bigdatalab.compute
 
 /**
  * Created by cnic on 2016/5/25.

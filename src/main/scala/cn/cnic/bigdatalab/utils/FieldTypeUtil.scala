@@ -1,4 +1,4 @@
-package com.github.casbigdatalab.utils
+package cn.cnic.bigdatalab.utils
 
 import org.apache.spark.sql.types.{DataType, DataTypes}
 import org.joda.time.DateTime

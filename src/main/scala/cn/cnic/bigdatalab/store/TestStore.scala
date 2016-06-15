@@ -1,4 +1,4 @@
-package com.github.casbigdatalab.store
+package cn.cnic.bigdatalab.store
 
 /**
  * Created by cnic on 2016/5/25.

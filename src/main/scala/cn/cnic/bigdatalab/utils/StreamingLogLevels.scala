@@ -1,4 +1,4 @@
-package com.github.casbigdatalab.utils
+package cn.cnic.bigdatalab.utils
 
 import org.apache.log4j.{Level, Logger}
 
