@@ -4,6 +4,7 @@ package com.github.casbigdatalab.compute.RealTime
 import com.github.casbigdatalab.utils.{FieldTypeUtil, StreamingLogLevels}
 import kafka.serializer.StringDecoder
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.sql.types.{DataTypes, StructField}
 import org.apache.spark.storage.StorageLevel
@@ -18,6 +19,12 @@ import scala.collection.mutable.ArrayBuffer
   * Created by duyuanyuan on 2016/6/12.
   */
 object Kafka2SparkStreaming {
+
+  def getSqlContext(sqlType : String, sparkContext : SparkContext): SQLContext = sqlType.toLowerCase() match {
+    case "hive" => HiveSQLContextSingleton.getInstance(sparkContext)
+    case _ => SQLContextSingleton.getInstance(sparkContext)
+  }
+
   /*
   args: 0 数据流的时间间隔
         1 kafka Topic
@@ -28,7 +35,7 @@ object Kafka2SparkStreaming {
         6 Execute Sql
    */
   def run(duration : String, topic : String, kafkaParam : String,
-          schemaSrc : String, srcName : String, createDecTable : String, execSql : String) {
+          schemaSrc : String, srcName : String, createDecTable : String, execSql : String, sqlType: String="") {
 
     StreamingLogLevels.setStreamingLogLevels()
 
@@ -78,7 +85,8 @@ object Kafka2SparkStreaming {
     //Get the messages and execute operations
     val lines = kafkaStream.map(_._2)
     lines.foreachRDD((rdd: RDD[String], time: Time) => {
-      val sqlContext = SQLContextSingleton.getInstance(rdd.sparkContext)
+      val sqlContext = getSqlContext(sqlType, rdd.sparkContext)
+
       //Get Row RDD
       val srcRDD = rdd.map(line => {
         val fields = line.split(",")
@@ -110,32 +118,38 @@ object Kafka2SparkStreaming {
 
     val duration = "1"
     val topics = "user :1"
-    val kafkaParam = "zookeeper.connect->* :2181,*:2181,*:2181;group.id->test-consumer-group"
+    val kafkaParam = "zookeeper.connect->*;group.id->test-consumer-group"
     val schemaSrc = "name :String,age:Int"
     val srcName = "user"
 //    val createDecTable = """
 //                           |CREATE TEMPORARY TABLE test
 //                           |USING org.apache.spark.sql.jdbc
 //                           |OPTIONS (
-//                           |  url    'jdbc:mysql://*:3306/test?user=root&password=root',
+//                           |  url    'jdbc:mysql://10.0.71.7:3306/test?user=root&password=root',
 //                           |  dbtable     'user1'
 //                           |)""".stripMargin
 
+//    val createDecTable = """
+//                           |CREATE TEMPORARY TABLE test(
+//                           | name String, age Int
+//                           |)USING com.stratio.datasource.mongodb
+//                           |OPTIONS (
+//                           |  host '*:27017',
+//                           |  database 'test',
+//                           |  collection 'age'
+//                           |)""".stripMargin
+
     val createDecTable = """
-                           |CREATE TEMPORARY TABLE test(
-                           | name String, age Int
-                           |)USING com.stratio.datasource.mongodb
-                           |OPTIONS (
-                           |  host '*:27017',
-                           |  database 'test',
-                           |  collection 'age'
+                           |CREATE TABLE IF NOT EXISTS test3(
+                           |name STRING, age INT
                            |)""".stripMargin
 
     val execSql = """
-                    |INSERT INTO table test
+                    |INSERT INTO table test3
                     |SELECT * FROM user
                   """.stripMargin
-    run(duration, topics, kafkaParam, schemaSrc, srcName, createDecTable, execSql)
+    val sqlType = "hive"
+    run(duration, topics, kafkaParam, schemaSrc, srcName, createDecTable, execSql, sqlType)
   }
 }
 
@@ -147,6 +161,19 @@ object SQLContextSingleton {
   def getInstance(sparkContext: SparkContext): SQLContext = {
     if (instance == null) {
       instance = new SQLContext(sparkContext)
+    }
+    instance
+  }
+}
+
+/** Lazily instantiated singleton instance of SQLContext */
+object HiveSQLContextSingleton {
+
+  @transient private var instance: HiveContext = _
+
+  def getInstance(sparkContext: SparkContext): HiveContext = {
+    if (instance == null) {
+      instance = new HiveContext(sparkContext)
     }
     instance
   }

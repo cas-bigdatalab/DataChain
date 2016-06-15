@@ -22,7 +22,7 @@ object FieldTypeUtil {
     case "null" => DataTypes.NullType
     case "short" => DataTypes.ShortType
     case "timestamp" => DataTypes.TimestampType
-    case "calendarinterval" => DataTypes.CalendarIntervalType
+//    case "calendarinterval" => DataTypes.CalendarIntervalType
     case _ => throw new IllegalArgumentException("field could not find the matched DataType.")
   }
 
