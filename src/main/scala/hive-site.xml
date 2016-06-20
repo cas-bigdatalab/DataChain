@@ -20,6 +20,10 @@
   <!-- WARNING!!! You must make your changes in hive-site.xml instead.         -->
   <!-- Hive Execution Parameters -->
   <property>
+    <name>hbase.zookeeper.quorum</name>
+    <value>spark161-master,spark161-slave1,spark161-slave2,spark161-slave3</value>
+  </property>
+  <property>
     <name>hive.exec.script.wrapper</name>
     <value/>
     <description/>
