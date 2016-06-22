@@ -2,8 +2,6 @@ package cn.cnic.bigdatalab
 
 import cn.cnic.bigdatalab.Task.{StoreTask, OfflineTask, RealTimeTask}
 import cn.cnic.bigdatalab.datachain._
-import com.github.casbigdatalab.datachain.transformer.csvtransformer
-import org.apache.flume.source.DefaultSourceFactory
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 /**
