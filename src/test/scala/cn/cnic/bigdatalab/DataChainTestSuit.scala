@@ -1,7 +1,12 @@
 package cn.cnic.bigdatalab
 
+import cn.cnic.bigdatalab.Collection.{HdfsSink, SpoolDirSource}
 import cn.cnic.bigdatalab.Task.{StoreTask, OfflineTask, RealTimeTask}
 import cn.cnic.bigdatalab.datachain._
+
+import com.github.casbigdatalab.datachain.transformer.csvtransformer
+import org.apache.flume.sink.AvroSink
+import org.apache.flume.source.{SpoolDirectorySource, DefaultSourceFactory}
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 /**
@@ -41,7 +46,10 @@ abstract class DataChainTestSuit extends FunSuite with BeforeAndAfterAll{
 
   test("Chain: csv->kafka->realTime->mongodb") {
 
-    val collectionStep = new CollectionStep().setSource(sourceJsonStr).setSink(sinkjsonStr)
+    val source = new SpoolDirSource("spooldir","src1")
+    val sink = new HdfsSink("hdfs","sink1")
+
+    val collectionStep = new CollectionStep().setSource(source).setSink(sink)
     val transformerStep = new TransformerStep().setMappingFile(mapping_conf)
     //val taskStep = new TaskStep().setOfflineTask(new OfflineTask(sql))
     val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(sql,topic))
