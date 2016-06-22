@@ -1,7 +1,6 @@
 package cn.cnic.bigdatalab.compute.RealTime
 
 import cn.cnic.bigdatalab.utils.StreamingLogLevels
-import StreamingLogLevels
 import kafka.serializer.StringDecoder
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.kafka.KafkaUtils

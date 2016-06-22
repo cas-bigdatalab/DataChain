@@ -26,7 +26,7 @@ object transformerCreater {
   }
 }
 
-class transformer(mapping_json: String, parser: common) {
+class Transformer(mapping_json: String, parser: common) {
   def this(mapping: String) = {
     this(mapping, transformerCreater.creater(mapping))
   }
