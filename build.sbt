@@ -38,7 +38,8 @@ libraryDependencies ++=Seq(
   "org.datanucleus" % "datanucleus-api-jdo" % "3.2.6",
   "com.typesafe.akka" % "akka-remote_2.10" % "2.3.4",
   "com.typesafe.akka" % "akka-actor_2.10" % "2.3.4",
-  "com.typesafe.akka" % "akka-slf4j_2.10" % "2.3.4"
+  "com.typesafe.akka" % "akka-slf4j_2.10" % "2.3.4",
+  "org.scalatest" %% "scalatest" % "2.2.1" % "test"
 )
 
 fork in Test := true

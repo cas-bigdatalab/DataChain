@@ -145,15 +145,24 @@ object Kafka2SparkStreaming {
 //                           |name STRING, age INT
 //                           |)""".stripMargin
 
-    //Hbase test
-    val createDecTable = """
-                           |CREATE TABLE IF NOT EXISTS hbase_table(key int, name string, age int)
-                           |STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
-                           |WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,cf1:name,cf2:age")
-                           |TBLPROPERTIES ("hbase.table.name" = "user", "hbase.mapred.output.outputtable" = "user")""".stripMargin
+//    //Hbase test
+//    val createDecTable = """
+//                           |CREATE TABLE IF NOT EXISTS hbase_table(key int, name string, age int)
+//                           |STORED BY 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+//                           |WITH SERDEPROPERTIES ("hbase.columns.mapping" = ":key,cf1:name,cf2:age")
+//                           |TBLPROPERTIES ("hbase.table.name" = "user", "hbase.mapred.output.outputtable" = "user")""".stripMargin
 
+    val createDecTable =
+      """
+        |CREATE TEMPORARY TABLE test
+        |USING solr
+        |OPTIONS (
+        |  zkhost    'jdbc:mysql://10.0.71.7:3306/test?user=root&password=root',
+        |  collection     'user1',
+        |  soft_commit_secs
+        |)""".stripMargin
     val execSql = """
-                    |INSERT INTO table hbase_table
+                    |INSERT INTO table test
                     |SELECT * FROM user
                   """.stripMargin
     val sqlType = "hive"
