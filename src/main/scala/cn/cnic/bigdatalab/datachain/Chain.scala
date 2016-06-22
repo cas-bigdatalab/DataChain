@@ -7,9 +7,9 @@ import cn.cnic.bigdatalab.datachain.TransformerStep
   */
 class Chain {
 
-  var collection:CollectionStep = _
-  var transformer:TransformerStep = _
-  var task:TaskStep = _
+  var collectionStep:CollectionStep = _
+  var transformerStep:TransformerStep = _
+  var taskStep:TaskStep = _
 
   def addStep(obj: Object): Chain = {
 
@@ -18,7 +18,6 @@ class Chain {
 
 
   def run()={
-
 
   }
 
