@@ -1,5 +1,7 @@
 package cn.cnic.bigdatalab.datachain
 
+import java.util
+
 import cn.cnic.bigdatalab.datachain.TransformerStep
 
 /**
@@ -7,19 +9,17 @@ import cn.cnic.bigdatalab.datachain.TransformerStep
   */
 class Chain {
 
-  var collection:CollectionStep = _
-  var transformer:TransformerStep = _
-  var task:TaskStep = _
+  private val stepList: util.ArrayList[Step] =  new util.ArrayList[Step]()
 
-  def addStep(obj: Object): Chain = {
-
+  def addStep(step: Step): Chain = {
+    this.stepList.add(step)
     this
   }
 
-
   def run()={
-
-
+    for(i <- stepList.size() -1){
+      stepList.get(i).run
+    }
   }
 
 }

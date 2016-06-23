@@ -5,7 +5,7 @@ import cn.cnic.bigdatalab.Task.{StoreTask, OfflineTask, RealTimeTask, BaseTask}
 /**
   * Created by cnic on 2016/6/21.
   */
-class TaskStep() {
+class TaskStep() extends Step{
   var task: BaseTask = _
 
   def setRealTimeTask(task:RealTimeTask): TaskStep ={
@@ -25,5 +25,8 @@ class TaskStep() {
     this
   }
 
+  override def run: Unit = {
+    this.task.run
+  }
 }
 

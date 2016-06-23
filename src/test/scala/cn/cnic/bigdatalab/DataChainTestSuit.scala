@@ -1,12 +1,13 @@
 package cn.cnic.bigdatalab
 
-import cn.cnic.bigdatalab.Collection.{HdfsSink, SpoolDirSource}
-import cn.cnic.bigdatalab.Task.{StoreTask, OfflineTask, RealTimeTask}
+import cn.cnic.bigdatalab.Collection.{AgentSink, AgentSource, HdfsSink, SpoolDirSource}
+import cn.cnic.bigdatalab.Task.{OfflineTask, RealTimeTask, StoreTask}
 import cn.cnic.bigdatalab.datachain._
-
+import cn.cnic.bigdatalab.entity.Schema
+import cn.cnic.bigdatalab.transformer.Mapping
 import com.github.casbigdatalab.datachain.transformer.csvtransformer
 import org.apache.flume.sink.AvroSink
-import org.apache.flume.source.{SpoolDirectorySource, DefaultSourceFactory}
+import org.apache.flume.source.{DefaultSourceFactory, SpoolDirectorySource}
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 /**
@@ -30,6 +31,15 @@ abstract class DataChainTestSuit extends FunSuite with BeforeAndAfterAll{
   val sql = "insert into mysqlTable select * from src"
   val topic = "Test"
 
+  val sinkConf = Map(
+    "type" -> "org.apache.flume.sink.kafka.KafkaSink",
+    "brokerList" -> "NameNode:9092,DataNode-1:9092,DataNode-2:9092",
+    "topic" -> "Test"
+  )
+
+  val sourceConf = Map(
+    "type" -> "spooldir", "spooldir" -> "/opt/flumeTest"
+  )
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
@@ -44,15 +54,19 @@ abstract class DataChainTestSuit extends FunSuite with BeforeAndAfterAll{
     }
   }
 
+
+
   test("Chain: csv->kafka->realTime->mongodb") {
 
-    val source = new SpoolDirSource("spooldir","src1")
-    val sink = new HdfsSink("hdfs","sink1")
+    val source = new AgentSource("src1", sourceConf)
+    val sink = new AgentSink("sink1", sinkConf)
+    val schema = new Schema()
 
-    val collectionStep = new CollectionStep().setSource(source).setSink(sink)
-    val transformerStep = new TransformerStep().setMappingFile(mapping_conf)
+    val mapping:Mapping = new Mapping()
+    val collectionStep = new CollectionStep().initAgent("test").setSource(source).setSink(sink)
+    val transformerStep = new TransformerStep().setTransformer(mapping)
     //val taskStep = new TaskStep().setOfflineTask(new OfflineTask(sql))
-    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(sql,topic))
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(sql, topic, schema, transformerStep.getTransformer()))
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(transformerStep).addStep(taskStep).run()
