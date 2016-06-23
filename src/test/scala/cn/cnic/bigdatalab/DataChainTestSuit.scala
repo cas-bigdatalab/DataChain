@@ -1,6 +1,6 @@
 package cn.cnic.bigdatalab
 
-import cn.cnic.bigdatalab.Collection.{AgentSink, AgentSource, HdfsSink, SpoolDirSource}
+import cn.cnic.bigdatalab.Collection.{AgentSink, AgentSource}
 import cn.cnic.bigdatalab.Task.{OfflineTask, RealTimeTask, StoreTask}
 import cn.cnic.bigdatalab.datachain._
 import cn.cnic.bigdatalab.entity.Schema

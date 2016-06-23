@@ -12,7 +12,7 @@ class CollectionStep extends Step{
 
   def initAgent(name: String): CollectionStep ={
     if (agent == null) {
-      agent = new Agent(name)
+      agent = new Agent(name, "")
     }
     this
   }
