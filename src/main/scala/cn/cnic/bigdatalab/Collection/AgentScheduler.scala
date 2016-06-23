@@ -1,15 +1,26 @@
-package cn.cnic.bigdatalab.Collection
+package cn.cnic.bigdatalab.collection
+
+import java.io.{PrintWriter, File}
+import scala.sys.process._
+
 
 /**
   * Created by cnic on 2016/6/21.
   */
 class AgentScheduler(agent: Agent) {
+  val flumeHome = "/usr/lib/flume"
+  val localConfDir = "/tmp"
 
   def launch(): Unit ={
-    val content = getContent()
-    createConfFile(content.toString)
 
-    //远程启动flume agent
+    //generate conf file
+    createConfFile(getContent().toString)
+
+    //copy confFile to flume agent conf path
+    copyConf2Server()
+
+    //launch flume-ng
+    runFlumeOnServer()
 
   }
 
@@ -19,24 +30,67 @@ class AgentScheduler(agent: Agent) {
     //define source, sink, channel name
     val defineSource = agent.getName() + ".sources = " + agent.getAgentSource().getName() + "\n"
     content.append(defineSource)
+    val defineChannel = agent.getName() + ".channels = " + agent.getAgentChannel().getName() + "\n"
+    content.append(defineChannel)
     val defineSink = agent.getName() + ".sinks = " + agent.getAgentSink().getName() + "\n"
     content.append(defineSink)
 
-    //configure source
-    for((key, value) <- agent.getAgentSource().getConf()){
-      content.append(agent.getName() + ".sources." + key + " = " + value + "\n")
+    content.append("\n")
+
+    //configure channel
+    for((key, value) <- agent.getAgentChannel().getParameters()){
+      content.append(agent.getName() + ".channels." + agent.getAgentChannel().getName() + "." + key + " = " + value + "\n")
     }
 
+    content.append("\n")
+
+    //configure source
+    for((key, value) <- agent.getAgentSource().getParameters()){
+      content.append(agent.getName() + ".sources."  + agent.getAgentSource().getName() + "." + key + " = " + value + "\n")
+    }
+
+    content.append("\n")
+
     //configure sink
-    for((key, value) <- agent.getAgentSink().getConf()){
-      content.append(agent.getName() + ".sinks." + key + " = " + value + "\n")
+    for((key, value) <- agent.getAgentSink().getParameters()){
+      content.append(agent.getName() + ".sinks." + agent.getAgentSink().getName() + "." + key + " = " + value + "\n")
     }
     content
   }
 
   private def createConfFile(content : String): Unit ={
     //Generate configure file
+    val confFilePath = getConfFilePath()
+    val confWriter = new PrintWriter(new File(confFilePath))
+    confWriter.write(content)
+    confWriter.close()
 
+  }
+
+  private def copyConf2Server(): Unit ={
+    //val copyConfFileCmd = "scp " + getConfFilePath() + "root@" + agent.getHost() + ":" + flumeHome + "/conf/"
+    val copyConfFileCmd = "cp " + getConfFilePath() + " " + flumeHome+"/conf"
+    copyConfFileCmd !
+  }
+
+  private def runFlumeOnServer(): Unit ={
+    //val launchCmd =  "ssh root@" + agent.getHost() + " /bin/bash cd " + flumeHome + ";" + "bin/flume-ng agent --conf conf --conf-file conf/" + getConfFileName() + " --name " + agent.getName() + "-Dflume.root.logger=INFO,console"
+    val cdCmd = "cd " + flumeHome
+    val flumeCmd = "bin/flume-ng agent --conf conf --conf-file conf/" + getConfFileName() + " --name " + agent.getName() + " -Dflume.root.logger=INFO,LOGFILE"
+
+    val command = cdCmd + " && " + flumeCmd
+    Process(Seq("bash","-c",command)).!
+
+  }
+
+  private def getConfFilePath():String ={
+
+    val agentConfPath = localConfDir + "/" + getConfFileName()
+    agentConfPath
+  }
+
+  private def getConfFileName():String = {
+    agent.getName() + ".properties"
   }
 
 }

@@ -16,7 +16,7 @@ class Chain {
   }
 
   def run()={
-    for(i <- 0 to stepList.size()-1){
+    for(i <- stepList.size() -1 to 0){
       stepList.get(i).run
     }
   }

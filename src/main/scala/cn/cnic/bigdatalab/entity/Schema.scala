@@ -41,6 +41,4 @@ class Schema {
     this.columns = columns
   }
 
-
-
 }

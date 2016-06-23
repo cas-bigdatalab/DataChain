@@ -1,4 +1,4 @@
-package cn.cnic.bigdatalab.Collection
+package cn.cnic.bigdatalab.collection
 
 import org.apache.flume.source.DefaultSourceFactory
 import org.apache.flume.{Context, Source}
@@ -9,23 +9,15 @@ import org.apache.flume.{Context, Source}
 
 
 
-class AgentSource(sourceName:String, sourceConf:Map[String,String]){
+class AgentSource(sourceName:String, parameters:Map[String,String]){
 
   def getName(): String ={
     sourceName
   }
 
-  def getConf(): Map[String, String] ={
-    sourceConf
+  def getParameters(): Map[String, String] ={
+    parameters
   }
 
 }
 
-//class SpoolDirSource(sourceType:String, sourceName:String) extends AgentSource(sourceType:String, sourceName:String){
-//
-//  var channels: String = _
-//  val spooldir: String = _
-//  var fileHeader: String = _
-//
-//
-//}
