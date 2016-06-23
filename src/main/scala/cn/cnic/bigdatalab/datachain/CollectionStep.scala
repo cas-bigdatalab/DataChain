@@ -1,6 +1,6 @@
 package cn.cnic.bigdatalab.datachain
 
-import cn.cnic.bigdatalab.Collection._
+import cn.cnic.bigdatalab.collection._
 import org.apache.flume.{Sink, Source}
 
 /**
@@ -10,9 +10,9 @@ class CollectionStep extends Step{
 
   private var agent: Agent = _
 
-  def initAgent(name: String): CollectionStep ={
+  def initAgent(name: String, host:String): CollectionStep ={
     if (agent == null) {
-      agent = new Agent(name)
+      agent = new Agent(name,host)
     }
     this
   }
@@ -24,6 +24,11 @@ class CollectionStep extends Step{
 
   def setSink(sk:AgentSink): CollectionStep ={
     if (agent != null) agent.setAgentSink(sk)
+    this
+  }
+
+  def setChannel(ch: AgentChannel): CollectionStep ={
+    if (agent != null) agent.setAgentChannel(ch)
     this
   }
 

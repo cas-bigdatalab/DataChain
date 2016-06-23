@@ -1,6 +1,6 @@
 package cn.cnic.bigdatalab
 
-import cn.cnic.bigdatalab.Collection.{AgentSink, AgentSource, HdfsSink, SpoolDirSource}
+import cn.cnic.bigdatalab.collection._
 import cn.cnic.bigdatalab.Task.{OfflineTask, RealTimeTask, StoreTask}
 import cn.cnic.bigdatalab.datachain._
 import cn.cnic.bigdatalab.entity.Schema
@@ -13,32 +13,31 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite}
 /**
   * Created by xjzhu@cnic.cn on 2016/6/20.
   */
-abstract class DataChainTestSuit extends FunSuite with BeforeAndAfterAll{
-
-  val sourceJsonStr = """'source':{
-                            |'name':'src1',
-                            |'type':'spooldir',
-                            |'spooldir':'/opt/flumeTest'}""".stripMargin
-
-  val sinkjsonStr = """'sink':{
-                          |'name':'sink1',
-                          |'type':'org.apache.flume.sink.kafka.KafkaSink',
-                          |'brokerList':'NameNode:9092,DataNode-1:9092,DataNode-2:9092',
-                          |'topic:'Test'}}"""".stripMargin
+abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll{
 
   val mapping_conf = "/opt/mappingConf.json"
 
   val sql = "insert into mysqlTable select * from src"
   val topic = "Test"
 
-  val sinkConf = Map(
-    "type" -> "org.apache.flume.sink.kafka.KafkaSink",
-    "brokerList" -> "NameNode:9092,DataNode-1:9092,DataNode-2:9092",
-    "topic" -> "Test"
+  //agent related parameters
+  val agentHost = "172.16.106.3"
+  val agentName = "spoolAgent"
+  val agentChannel = "channel1"
+  val agentSource = "src1"
+  val agentSink = "sink1"
+  val channelParameters = Map(
+    "type" -> "memory"
   )
-
-  val sourceConf = Map(
-    "type" -> "spooldir", "spooldir" -> "/opt/flumeTest"
+  val sinkParameters = Map(
+    "channel" -> "channel1",
+    "type" -> "logger"
+  )
+  val sourceParameters = Map(
+    "channels" -> "channel1",
+    "type" -> "spooldir",
+    "spoolDir" -> "/tmp/flumeSourceDir",
+    "fileHeader" -> "true"
   )
 
   override protected def beforeAll(): Unit = {
@@ -58,17 +57,26 @@ abstract class DataChainTestSuit extends FunSuite with BeforeAndAfterAll{
 
   test("Chain: csv->kafka->realTime->mongodb") {
 
-    val source = new AgentSource("src1", sourceConf)
-    val sink = new AgentSink("sink1", sinkConf)
+    //1. Define table schema
     val schema = new Schema()
 
-    val mapping:Mapping = new Mapping()
-    val collectionStep = new CollectionStep().initAgent("test").setSource(source).setSink(sink)
-    val transformerStep = new TransformerStep().setTransformer(mapping)
-    //val taskStep = new TaskStep().setOfflineTask(new OfflineTask(sql))
-    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(sql, topic, schema, transformerStep.getTransformer()))
+    //2. Define agent source & sink
+    val channel = new AgentChannel(agentChannel, channelParameters)
+    val source = new AgentSource(agentSource, sourceParameters)
+    val sink = new AgentSink(agentSink, sinkParameters)
 
-    val chain = new Chain()
-    chain.addStep(collectionStep).addStep(transformerStep).addStep(taskStep).run()
+
+    val mapping:Mapping = new Mapping()
+    val collectionStep = new CollectionStep().initAgent(agentName,agentHost).setChannel(channel).setSource(source).setSink(sink).run()
+    //val transformerStep = new TransformerStep().setTransformer(mapping)
+    //val taskStep = new TaskStep().setOfflineTask(new OfflineTask(sql))
+    //val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(sql, topic, schema, transformerStep.getTransformer()))
+
+    //val chain = new Chain()
+    //chain.addStep(collectionStep).addStep(transformerStep).addStep(taskStep).run()
   }
+}
+
+class DataChainTestSuit extends AbstractDataChainTestSuit{
+
 }
