@@ -67,13 +67,13 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
 
     val mapping:Mapping = new Mapping()
-    val collectionStep = new CollectionStep().initAgent(agentName,agentHost).setChannel(channel).setSource(source).setSink(sink).run()
-    //val transformerStep = new TransformerStep().setTransformer(mapping)
+    val collectionStep = new CollectionStep().initAgent(agentName,agentHost).setChannel(channel).setSource(source).setSink(sink)
+    val transformerStep = new TransformerStep().setTransformer(mapping)
     //val taskStep = new TaskStep().setOfflineTask(new OfflineTask(sql))
-    //val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(sql, topic, schema, transformerStep.getTransformer()))
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(sql, topic, schema, transformerStep.getTransformer()))
 
-    //val chain = new Chain()
-    //chain.addStep(collectionStep).addStep(transformerStep).addStep(taskStep).run()
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(transformerStep).addStep(taskStep).run()
   }
 }
 
