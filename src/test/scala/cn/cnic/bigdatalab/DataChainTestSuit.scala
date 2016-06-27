@@ -5,9 +5,6 @@ import cn.cnic.bigdatalab.collection.{AgentChannel, AgentSink, AgentSource}
 import cn.cnic.bigdatalab.datachain._
 import cn.cnic.bigdatalab.entity.Schema
 import cn.cnic.bigdatalab.transformer.Mapping
-import com.github.casbigdatalab.datachain.transformer.csvtransformer
-import org.apache.flume.sink.AvroSink
-import org.apache.flume.source.{DefaultSourceFactory, SpoolDirectorySource}
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 /**
@@ -17,7 +14,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   val mapping_conf = "/opt/mappingConf.json"
 
-  val sql = "insert into mysqlTable select * from src"
+  val sql = "insert into mysqlTable select * from srcTable"
   val topic = "Test"
   val name = "test"
   val taskType = "realtime"
@@ -42,9 +39,24 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     "fileHeader" -> "true"
   )
 
+  var mysqlTableSchema:Schema = new Schema()
+  var mongodbTableSchema = new Schema()
+
+  //mysql table schema params
+  val mysqlDB: String = "spark"
+  val mysqlTable: String = "student"
+  val mysqlColumns = Map("name"->"string", "age"->"int")
+
+  //mongodb table schema params
+  val mongoDatabase: String = "spark"
+  val mongoTable: String = "student"
+  val mongoColumns = Map("name"->"string", "age"->"int")
+
+
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    //sqlContext = new SQLContext(new SparkContext("local[2]", "MemcachedSuite"))
+    mysqlTableSchema.setDriver("mysql").setDb(mysqlDB).setTable(mysqlTable).setColumns(mysqlColumns)
+    mongodbTableSchema.setDriver("mongodb").setDb(mongoDatabase).setTable(mongoTable).setColumns(mongoColumns)
   }
 
   override protected def afterAll(): Unit = {
@@ -58,7 +70,6 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
 
   test("Chain: csv->kafka->realTime->mongodb") {
-
     //1. Define table schema
     val schema = new Schema()
 
@@ -70,8 +81,6 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val mapping:Mapping = new Mapping()
 
     val task = new TaskInstance().init(name, taskType, sql, topic, schema, mapping.toString)
-
-
 
     val collectionStep = new CollectionStep().initAgent(agentName,agentHost).setChannel(channel).setSource(source).setSink(sink)
     val transformerStep = new TransformerStep().setTransformer(mapping)

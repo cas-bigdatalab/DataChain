@@ -1,6 +1,8 @@
 package cn.cnic.bigdatalab.collection
 
 import java.io.{PrintWriter, File}
+import cn.cnic.bigdatalab.utils.PropertyUtil
+
 import scala.sys.process._
 
 
@@ -8,8 +10,6 @@ import scala.sys.process._
   * Created by cnic on 2016/6/21.
   */
 class AgentScheduler(agent: Agent) {
-  val flumeHome = "/usr/lib/flume"
-  val localConfDir = "/tmp"
 
   def launch(): Unit ={
 
@@ -68,14 +68,14 @@ class AgentScheduler(agent: Agent) {
   }
 
   private def copyConf2Server(): Unit ={
-    //val copyConfFileCmd = "scp " + getConfFilePath() + "root@" + agent.getHost() + ":" + flumeHome + "/conf/"
-    val copyConfFileCmd = "cp " + getConfFilePath() + " " + flumeHome+"/conf"
+    //val copyConfFileCmd = "scp " + getConfFilePath() + "root@" + agent.getHost() + ":" + PropertyUtil.getPropertyValue("flume_home") + "/conf/"
+    val copyConfFileCmd = "cp " + getConfFilePath() + " " + PropertyUtil.getPropertyValue("flume_home") +"/conf"
     copyConfFileCmd !
   }
 
   private def runFlumeOnServer(): Unit ={
     //val launchCmd =  "ssh root@" + agent.getHost() + " /bin/bash cd " + flumeHome + ";" + "bin/flume-ng agent --conf conf --conf-file conf/" + getConfFileName() + " --name " + agent.getName() + "-Dflume.root.logger=INFO,console"
-    val cdCmd = "cd " + flumeHome
+    val cdCmd = "cd " + PropertyUtil.getPropertyValue("flume_home")
     val flumeCmd = "bin/flume-ng agent --conf conf --conf-file conf/" + getConfFileName() + " --name " + agent.getName() + " -Dflume.root.logger=INFO,LOGFILE"
 
     val command = cdCmd + " && " + flumeCmd
@@ -85,7 +85,7 @@ class AgentScheduler(agent: Agent) {
 
   private def getConfFilePath():String ={
 
-    val agentConfPath = localConfDir + "/" + getConfFileName()
+    val agentConfPath = PropertyUtil.getPropertyValue("flume_conf_localDir") + "/" + getConfFileName()
     agentConfPath
   }
 
