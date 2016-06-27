@@ -1,7 +1,7 @@
 package cn.cnic.bigdatalab
 
-import cn.cnic.bigdatalab.collection._
-import cn.cnic.bigdatalab.Task.{OfflineTask, RealTimeTask, StoreTask}
+import cn.cnic.bigdatalab.Task.{OfflineTask, RealTimeTask, StoreTask, TaskInstance}
+import cn.cnic.bigdatalab.collection.{AgentChannel, AgentSink, AgentSource}
 import cn.cnic.bigdatalab.datachain._
 import cn.cnic.bigdatalab.entity.Schema
 import cn.cnic.bigdatalab.transformer.Mapping
@@ -19,6 +19,8 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   val sql = "insert into mysqlTable select * from src"
   val topic = "Test"
+  val name = "test"
+  val taskType = "realtime"
 
   //agent related parameters
   val agentHost = "172.16.106.3"
@@ -65,12 +67,16 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val source = new AgentSource(agentSource, sourceParameters)
     val sink = new AgentSink(agentSink, sinkParameters)
 
-
     val mapping:Mapping = new Mapping()
+
+    val task = new TaskInstance().init(name, taskType, sql, topic, schema, mapping.toString)
+
+
+
     val collectionStep = new CollectionStep().initAgent(agentName,agentHost).setChannel(channel).setSource(source).setSink(sink)
     val transformerStep = new TransformerStep().setTransformer(mapping)
     //val taskStep = new TaskStep().setOfflineTask(new OfflineTask(sql))
-    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(sql, topic, schema, transformerStep.getTransformer()))
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(task))
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(transformerStep).addStep(taskStep).run()

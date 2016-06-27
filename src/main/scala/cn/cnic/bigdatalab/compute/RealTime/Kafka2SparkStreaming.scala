@@ -32,9 +32,12 @@ object Kafka2SparkStreaming {
         4 src schema name
         5 Create Table Sql
         6 Execute Sql
+        7 transformer
+        8 sql type
+
    */
   def run(duration : String, topic : String, kafkaParam : String,
-          schemaSrc : String, srcName : String, createDecTable : String, execSql : String, sqlType: String="") {
+          schemaSrc : String, srcName : String, createDecTable : String, execSql : String, mapping:String, sqlType: String="") {
 
     StreamingLogLevels.setStreamingLogLevels()
 
@@ -88,6 +91,7 @@ object Kafka2SparkStreaming {
 
       //Get Row RDD
       val srcRDD = rdd.map(line => {
+        //call transformer
         val fields = line.split(",")
         var row = new ArrayBuffer[Any]()
         for(i <- 0 until fields.length){

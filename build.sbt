@@ -44,4 +44,8 @@ libraryDependencies ++=Seq(
   "org.apache.flume" % "flume-ng-sdk" % "1.6.0"
 )
 
+libraryDependencies ++=Seq(
+  "org.scala-lang" % "scala-actors" % "2.10.4"
+)
+
 fork in Test := true

@@ -6,20 +6,28 @@ import cn.cnic.bigdatalab.utils.{PropertyUtil, SqlUtil}
 /**
   * Created by Flora on 2016/6/23.
   */
-class TaskParams {
+object TaskUtils {
+  private val param_delimiter = "\""
+
+  def wrapDelimiter(name: String): String ={
+    if(name != null && !name.equals("") && !name.equals(param_delimiter))
+       return param_delimiter + name + param_delimiter
+    name
+  }
+
   //kafkaParams
   def getKafkaParams(): String ={
     val params: StringBuffer = new StringBuffer()
     params.append("zookeeper.connect->").append(PropertyUtil.getPropertyValue("zookeeper.connect")).append(";")
     params.append("group.id->").append(PropertyUtil.getPropertyValue("group.id"))
-    params.toString
+    wrapDelimiter(params.toString)
   }
 
   //topics
   def getTopic(topic: String): String ={
     val params: StringBuffer = new StringBuffer()
     params.append(topic).append(":").append(1)
-    params.toString
+    wrapDelimiter(params.toString)
   }
 
   //schema columns
@@ -30,7 +38,7 @@ class TaskParams {
       params.append(key).append(":").append(value).append(",")
     }
     params.deleteCharAt(params.length()-1)
-    params.toString
+    wrapDelimiter(params.toString)
   }
 
   //spark streaming duration
@@ -40,7 +48,7 @@ class TaskParams {
 
   //table name
   def getSchemaName(schema: Schema): String ={
-    schema.getTable()
+    wrapDelimiter(schema.getTable())
   }
 
   //Conform sqlType
@@ -56,9 +64,9 @@ class TaskParams {
   def getCreateTableSql(schema: Schema): String ={
     val sqlType = getSqlType(schema.getDriver())
     if(sqlType.equals("mysql")){
-      return SqlUtil.mysql(schema)
+      return wrapDelimiter(SqlUtil.mysql(schema))
     }else if(sqlType.equals("mongo")){
-      return SqlUtil.mongo(schema)
+      return wrapDelimiter(SqlUtil.mongo(schema))
     }
     null
   }
@@ -72,7 +80,7 @@ object test{
     schema.setDb("test")
     schema.setTable("user")
     schema.setColumns(Map("id" -> "Int", "name" -> "String", "age" -> "String"))
-//    println(new TaskParams().getSchemaColumns(schema))
-    println(new TaskParams().getCreateTableSql(schema))
+//    println(TaskUtils.getSchemaColumns(schema))
+    println(TaskUtils.getCreateTableSql(schema))
   }
 }
