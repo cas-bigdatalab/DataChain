@@ -26,7 +26,7 @@ object customized_transformer {
   def main(agrs: Array[String]): Unit = {
     val mapping_conf = "conf\\" + "regexMapping.json"
     val msg = "custom-defined-message"
-    val customparser = new transformer(mapping_conf, new customized_transformer(mapping_conf))
+    val customparser = new Transformer(mapping_conf, new customized_transformer(mapping_conf))
     println("msg: " + msg)
     println("parse result: : " + customparser.transform((msg)))
   }

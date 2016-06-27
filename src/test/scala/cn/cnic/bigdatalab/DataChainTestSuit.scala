@@ -5,9 +5,6 @@ import cn.cnic.bigdatalab.Task.{OfflineTask, RealTimeTask, StoreTask}
 import cn.cnic.bigdatalab.datachain._
 import cn.cnic.bigdatalab.entity.Schema
 import cn.cnic.bigdatalab.transformer.Mapping
-import com.github.casbigdatalab.datachain.transformer.csvtransformer
-import org.apache.flume.sink.AvroSink
-import org.apache.flume.source.{DefaultSourceFactory, SpoolDirectorySource}
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 /**
@@ -17,7 +14,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   val mapping_conf = "/opt/mappingConf.json"
 
-  val sql = "insert into mysqlTable select * from src"
+  val sql = "insert into mysqlTable select * from srcTable"
   val topic = "Test"
 
   //agent related parameters
@@ -40,9 +37,24 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     "fileHeader" -> "true"
   )
 
+  var mysqlTableSchema:Schema = new Schema()
+  var mongodbTableSchema = new Schema()
+
+  //mysql table schema params
+  val mysqlDB: String = "spark"
+  val mysqlTable: String = "student"
+  val mysqlColumns = Map("name"->"string", "age"->"int")
+
+  //mongodb table schema params
+  val mongoDatabase: String = "spark"
+  val mongoTable: String = "student"
+  val mongoColumns = Map("name"->"string", "age"->"int")
+
+
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    //sqlContext = new SQLContext(new SparkContext("local[2]", "MemcachedSuite"))
+    mysqlTableSchema.setDriver("mysql").setDb(mysqlDB).setTable(mysqlTable).setColumns(mysqlColumns)
+    mongodbTableSchema.setDriver("mongodb").setDb(mongoDatabase).setTable(mongoTable).setColumns(mongoColumns)
   }
 
   override protected def afterAll(): Unit = {
@@ -57,23 +69,20 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   test("Chain: csv->kafka->realTime->mongodb") {
 
-    //1. Define table schema
-    val schema = new Schema()
+    //1. Define agent source & sink
+//    val channel = new AgentChannel(agentChannel, channelParameters)
+//    val source = new AgentSource(agentSource, sourceParameters)
+//    val sink = new AgentSink(agentSink, sinkParameters)
+//
+//
+//    val mapping:Mapping = new Mapping()
+//    val collectionStep = new CollectionStep().initAgent(agentName,agentHost).setChannel(channel).setSource(source).setSink(sink)
+//    val transformerStep = new TransformerStep().setTransformer(mapping)
+    val taskStep = new TaskStep().setOfflineTask(new OfflineTask(sql, mysqlTableSchema, mongodbTableSchema)).run
+    //val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(sql, topic, schema, transformerStep.getTransformer()))
 
-    //2. Define agent source & sink
-    val channel = new AgentChannel(agentChannel, channelParameters)
-    val source = new AgentSource(agentSource, sourceParameters)
-    val sink = new AgentSink(agentSink, sinkParameters)
-
-
-    val mapping:Mapping = new Mapping()
-    val collectionStep = new CollectionStep().initAgent(agentName,agentHost).setChannel(channel).setSource(source).setSink(sink)
-    val transformerStep = new TransformerStep().setTransformer(mapping)
-    //val taskStep = new TaskStep().setOfflineTask(new OfflineTask(sql))
-    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(sql, topic, schema, transformerStep.getTransformer()))
-
-    val chain = new Chain()
-    chain.addStep(collectionStep).addStep(transformerStep).addStep(taskStep).run()
+    //val chain = new Chain()
+    //chain.addStep(collectionStep).addStep(transformerStep).addStep(taskStep).run()
   }
 }
 
