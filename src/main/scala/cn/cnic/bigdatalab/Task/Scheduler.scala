@@ -17,6 +17,8 @@ import scala.sys.process.Process
 trait Scheduler{
   def deploy(taskInstance: TaskInstance)
 
+  def cancel(name: String)
+
   def execute(taskInstance: TaskInstance): Unit ={
     val command: StringBuffer = new StringBuffer()
     command.append("cd ").append(PropertyUtil.getPropertyValue("spark_home")).append(";")
@@ -30,9 +32,9 @@ trait Scheduler{
 
     val deployCmd =  "ssh root@" + PropertyUtil.getPropertyValue("spark_host") + " /bin/bash " + command
 
-//    println(deployCmd)
+    println(deployCmd)
 
-    Process(Seq("bash","-c", deployCmd)).!
+//    Process(Seq("bash","-c", deployCmd)).!
   }
 }
 
@@ -41,6 +43,8 @@ class RealTimeScheduler extends Scheduler{
   override def deploy(taskInstance: TaskInstance): Unit ={
     this.execute(taskInstance)
   }
+
+  override def cancel(name: String): Unit = ???
 }
 
 class OfflineActor(taskInstance: TaskInstance) extends Actor{
@@ -54,15 +58,16 @@ class OfflineActor(taskInstance: TaskInstance) extends Actor{
 class OfflineScheduler extends Scheduler{
   val system = ActorSystem("offline-timer")
   var tasks = Map[String, Cancellable]()
+
   override def deploy(taskInstance: TaskInstance): Unit ={
     import scala.concurrent.ExecutionContext.Implicits.global
-    val act1 = system.actorOf(Props(new OfflineActor(taskInstance)), taskInstance.getTaskType()+"_"+taskInstance.getName())
+    val act = system.actorOf(Props(new OfflineActor(taskInstance)), taskInstance.getTaskType()+"_"+taskInstance.getName())
     implicit val time = Timeout(5 seconds)
-    val cancellable = system.scheduler.schedule(0 milliseconds,taskInstance.getInterval() seconds,act1,this)
+    val cancellable = system.scheduler.schedule(0 milliseconds,taskInstance.getInterval() seconds, act, this)
     tasks += (taskInstance.getTaskType()+"_"+taskInstance.getName() -> cancellable)
   }
 
-  def cancel(name: String): Unit ={
+  override def cancel(name: String): Unit ={
     tasks.get(name).get.cancel()
   }
 
@@ -97,9 +102,13 @@ object SchedulerTest{
     val sql1 = "select * from user"
 
     val task1: TaskInstance = new TaskInstance().init("test_task1", "offline", sql, topic, schema, "mapping")
-    task.setInterval(10)
+    task1.setInterval(10)
 
-    offlineScheduler.deploy(task)
+    offlineScheduler.deploy(task1)
+
+    Thread.sleep(20 * 1000)
+
+    offlineScheduler.cancel(task1.getTaskType()+"_"+task1.getName())
 
   }
 }
