@@ -41,7 +41,8 @@ libraryDependencies ++=Seq(
   "com.typesafe.akka" % "akka-slf4j_2.10" % "2.3.4",
   "org.scalatest" %% "scalatest" % "2.2.1" % "test",
   "org.apache.flume" % "flume-ng-core" % "1.6.0",
-  "org.apache.flume" % "flume-ng-sdk" % "1.6.0"
+  "org.apache.flume" % "flume-ng-sdk" % "1.6.0",
+  "ch.ethz.ganymed" % "ganymed-ssh2" % "build210"
 )
 
 libraryDependencies ++=Seq(
