@@ -56,7 +56,7 @@ class Schema {
 
     var i = 1
     for((key,value) <- columns){
-      columnsBuffer.append(value + " " + key)
+      columnsBuffer.append(key + " " + value)
       if(i < columns.size){
         columnsBuffer.append(", ")
       }

@@ -51,6 +51,11 @@ object TaskUtils {
     wrapDelimiter(schema.getTable())
   }
 
+  //table type
+  def getSchemaDriver(schema: Schema): String = {
+    wrapDelimiter(schema.getDriver())
+  }
+
   //Conform sqlType
   def getSqlType(driver: String): String ={
     val hivedb = PropertyUtil.getPropertyValue("hive_db").split(",")
@@ -67,6 +72,8 @@ object TaskUtils {
       return wrapDelimiter(SqlUtil.mysql(schema))
     }else if(sqlType.equals("mongo")){
       return wrapDelimiter(SqlUtil.mongo(schema))
+    }else if(sqlType.equals("hive")){
+      return wrapDelimiter(SqlUtil.hive(schema))
     }
     null
   }

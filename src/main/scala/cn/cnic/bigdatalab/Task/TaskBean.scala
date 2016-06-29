@@ -6,7 +6,7 @@ import cn.cnic.bigdatalab.utils.PropertyUtil
 /**
   * Created by duyuanyuan on 2016/6/24.
   */
-class TaskInstance() {
+class TaskBean() {
   private var name: String = _
   private var taskType: String = _
   private var priority: Int = _
@@ -15,7 +15,7 @@ class TaskInstance() {
   private var taskParams: Map[String, String] = _
   private var sparkParams: Map[String, String] = _
 
-  def init(name: String, taskType: String, sql: String, topic: String, schema: Schema, mapping:String): TaskInstance ={
+  def init(name: String, taskType: String, sql: String, topic: String, schema: Schema, mapping:String): TaskBean ={
     this.name = name
     this.taskType = taskType
 
@@ -28,6 +28,31 @@ class TaskInstance() {
     //init task params
     this.taskParams = Map("class" -> PropertyUtil.getPropertyValue("realtime_class"),
       "path" -> PropertyUtil.getPropertyValue("realtime_path"))
+
+    //init spark params
+    this.sparkParams = Map("master" -> PropertyUtil.getPropertyValue("master"), "executor-memory" -> PropertyUtil.getPropertyValue("executor-memory"),
+      "total-executor-cores" -> PropertyUtil.getPropertyValue("total-executor-cores"))
+
+    this
+
+  }
+
+  def initOffline(name: String, sql: String, srcSchema: Schema, destSchema: Schema): TaskBean ={
+    this.name = name
+    this.taskType = "offline"
+
+    //init app params
+    this.appParams = List(
+      TaskUtils.getCreateTableSql(srcSchema),
+      TaskUtils.getSchemaDriver(srcSchema),
+      TaskUtils.getCreateTableSql(destSchema),
+      TaskUtils.getSchemaDriver(destSchema),
+      TaskUtils.wrapDelimiter(sql)
+    )
+
+    //init task params
+    this.taskParams = Map("class" -> PropertyUtil.getPropertyValue("offline_class"),
+      "path" -> PropertyUtil.getPropertyValue("offline_path"))
 
     //init spark params
     this.sparkParams = Map("master" -> PropertyUtil.getPropertyValue("master"), "executor-memory" -> PropertyUtil.getPropertyValue("executor-memory"),

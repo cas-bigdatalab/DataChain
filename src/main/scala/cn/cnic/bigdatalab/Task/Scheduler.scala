@@ -15,11 +15,11 @@ import scala.sys.process.Process
   */
 
 trait Scheduler{
-  def deploy(taskInstance: TaskInstance)
+  def deploy(taskInstance: TaskBean)
 
   def cancel(name: String)
 
-  def execute(taskInstance: TaskInstance): Unit ={
+  def execute(taskInstance: TaskBean): Unit ={
     val command: StringBuffer = new StringBuffer()
     command.append("cd ").append(PropertyUtil.getPropertyValue("spark_home")).append(";")
       .append("./bin/spark-submit ").append("--class ").append(taskInstance.getTaskParams.get("class").get)
@@ -30,24 +30,24 @@ trait Scheduler{
 
     command.append(taskInstance.getAppParams.mkString(" ", " ",""))
 
-    val deployCmd =  "ssh root@" + PropertyUtil.getPropertyValue("spark_host") + " /bin/bash " + command
+    val deployCmd =  "ssh xjzhu@" + PropertyUtil.getPropertyValue("spark_host;") + " /bin/bash " + command
 
     println(deployCmd)
 
-//    Process(Seq("bash","-c", deployCmd)).!
+    Process(Seq("bash","-c", deployCmd)).!
   }
 }
 
 class RealTimeScheduler extends Scheduler{
 
-  override def deploy(taskInstance: TaskInstance): Unit ={
+  override def deploy(taskInstance: TaskBean): Unit ={
     this.execute(taskInstance)
   }
 
   override def cancel(name: String): Unit = ???
 }
 
-class OfflineActor(taskInstance: TaskInstance) extends Actor{
+class OfflineActor(taskInstance: TaskBean) extends Actor{
 
   def receive = {
     case task: OfflineScheduler => task.execute(taskInstance)
@@ -59,7 +59,7 @@ class OfflineScheduler extends Scheduler{
   val system = ActorSystem("offline-timer")
   var tasks = Map[String, Cancellable]()
 
-  override def deploy(taskInstance: TaskInstance): Unit ={
+  override def deploy(taskInstance: TaskBean): Unit ={
     import scala.concurrent.ExecutionContext.Implicits.global
     val act = system.actorOf(Props(new OfflineActor(taskInstance)), taskInstance.getTaskType()+"_"+taskInstance.getName())
     implicit val time = Timeout(5 seconds)
@@ -86,7 +86,7 @@ object SchedulerTest{
 
     val sql = "select * from user"
 
-    val task: TaskInstance = new TaskInstance().init("test_task", "realtime", sql, topic, schema, "mapping")
+    val task: TaskBean = new TaskBean().init("test_task", "realtime", sql, topic, schema, "mapping")
 
     scheduler.deploy(task)
 
@@ -101,7 +101,7 @@ object SchedulerTest{
 
     val sql1 = "select * from user"
 
-    val task1: TaskInstance = new TaskInstance().init("test_task1", "offline", sql, topic, schema, "mapping")
+    val task1: TaskBean = new TaskBean().init("test_task1", "offline", sql, topic, schema, "mapping")
     task1.setInterval(10)
 
     offlineScheduler.deploy(task1)

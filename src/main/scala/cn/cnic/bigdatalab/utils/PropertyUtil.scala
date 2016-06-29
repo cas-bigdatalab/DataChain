@@ -1,6 +1,6 @@
 package cn.cnic.bigdatalab.utils
 
-import java.io.InputStream
+import java.io.{FileInputStream, InputStream}
 import java.util.Properties
 
 
@@ -12,8 +12,9 @@ object PropertyUtil {
   private val prop: Properties = new Properties()
   var fis: InputStream = null
   try{
-    fis = this.getClass.getResourceAsStream("/config.properties")
-    prop.load(fis)
+    val path = Thread.currentThread().getContextClassLoader.getResource("config.properties").getPath
+    //fis = this.getClass.getResourceAsStream("")
+    prop.load(new FileInputStream(path))
   } catch{
     case ex: Exception => ex.printStackTrace()
   }

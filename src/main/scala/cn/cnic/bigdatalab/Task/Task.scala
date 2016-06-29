@@ -16,7 +16,7 @@ abstract class BaseTask() {
 
 }
 
-class RealTimeTask(taskInstance: TaskInstance) extends BaseTask() {
+class RealTimeTask(taskInstance: TaskBean) extends BaseTask() {
   this.scheduler = new RealTimeScheduler
 
   override def run(): Unit = {
@@ -27,7 +27,7 @@ class RealTimeTask(taskInstance: TaskInstance) extends BaseTask() {
   override def cancel(name: String): Unit = ???
 }
 
-class OfflineTask(taskInstance: TaskInstance) extends BaseTask() {
+class OfflineTask(taskInstance: TaskBean) extends BaseTask() {
   this.scheduler = new OfflineScheduler
 
   override def run(): Unit = {
@@ -40,7 +40,7 @@ class OfflineTask(taskInstance: TaskInstance) extends BaseTask() {
 
 }
 
-class StoreTask(taskInstance: TaskInstance) extends BaseTask() {
+class StoreTask(taskInstance: TaskBean) extends BaseTask() {
   override def run(): Unit = {
     //create task
     //scheduler.deploy
@@ -62,7 +62,7 @@ object TaskTest {
 
     val sql = "select * from user"
 
-    val task: TaskInstance = new TaskInstance().init("test_task", "realtime", sql, topic, schema, "mapping")
+    val task: TaskBean = new TaskBean().init("test_task", "realtime", sql, topic, schema, "mapping")
 
     val realTimeTask = new RealTimeTask(task)
     realTimeTask.run()
@@ -76,7 +76,7 @@ object TaskTest {
 
     val sql1 = "select * from user"
 
-    val task1: TaskInstance = new TaskInstance().init("test_task1", "offline", sql, topic, schema, "mapping")
+    val task1: TaskBean = new TaskBean().init("test_task1", "offline", sql, topic, schema, "mapping")
     task1.setInterval(5)
 
     val offlineTask = new OfflineTask(task1)

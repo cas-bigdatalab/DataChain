@@ -1,6 +1,6 @@
 package cn.cnic.bigdatalab
 
-import cn.cnic.bigdatalab.Task.{OfflineTask, RealTimeTask, StoreTask, TaskInstance}
+import cn.cnic.bigdatalab.Task.{OfflineTask, RealTimeTask, StoreTask, TaskBean}
 import cn.cnic.bigdatalab.collection.{AgentChannel, AgentSink, AgentSource}
 import cn.cnic.bigdatalab.datachain._
 import cn.cnic.bigdatalab.entity.Schema
@@ -14,7 +14,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   val mapping_conf = "/opt/mappingConf.json"
 
-  val sql = "insert into mysqlTable select * from srcTable"
+  val sql = "insert into user select * from test"
   val topic = "Test"
   val name = "test"
   val taskType = "realtime"
@@ -41,10 +41,11 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   var mysqlTableSchema:Schema = new Schema()
   var mongodbTableSchema = new Schema()
+  var hiveTableSchema = new Schema()
 
   //mysql table schema params
   val mysqlDB: String = "spark"
-  val mysqlTable: String = "student"
+  val mysqlTable: String = "user"
   val mysqlColumns = Map("name"->"string", "age"->"int")
 
   //mongodb table schema params
@@ -52,11 +53,17 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   val mongoTable: String = "student"
   val mongoColumns = Map("name"->"string", "age"->"int")
 
+  //hive table schema params
+  val hiveTable: String = "test"
+  val hiveColumns = Map("name"->"string", "age"->"int")
+
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
     mysqlTableSchema.setDriver("mysql").setDb(mysqlDB).setTable(mysqlTable).setColumns(mysqlColumns)
     mongodbTableSchema.setDriver("mongodb").setDb(mongoDatabase).setTable(mongoTable).setColumns(mongoColumns)
+    hiveTableSchema.setDriver("hive").setTable(hiveTable).setColumns(hiveColumns)
+
   }
 
   override protected def afterAll(): Unit = {
@@ -70,25 +77,26 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
 
   test("Chain: csv->kafka->realTime->mongodb") {
-    //1. Define table schema
-    val schema = new Schema()
 
-    //2. Define agent source & sink
+    //1. Define agent source & sink
     val channel = new AgentChannel(agentChannel, channelParameters)
     val source = new AgentSource(agentSource, sourceParameters)
     val sink = new AgentSink(agentSink, sinkParameters)
 
+    //2. Define Mapping
     val mapping:Mapping = new Mapping()
 
-    val task = new TaskInstance().init(name, taskType, sql, topic, schema, mapping.toString)
+    //3. Define Task
+    //val task = new TaskInstance().init(name, taskType, sql, topic, mysqlTableSchema, mapping.toString)
+    val taskBean = new TaskBean().initOffline(name, sql, hiveTableSchema, mysqlTableSchema)
 
-    val collectionStep = new CollectionStep().initAgent(agentName,agentHost).setChannel(channel).setSource(source).setSink(sink)
-    val transformerStep = new TransformerStep().setTransformer(mapping)
-    //val taskStep = new TaskStep().setOfflineTask(new OfflineTask(sql))
-    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(task))
+    //val collectionStep = new CollectionStep().initAgent(agentName,agentHost).setChannel(channel).setSource(source).setSink(sink)
+    //val transformerStep = new TransformerStep().setTransformer(mapping)
+    val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean)).run
+    //val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(task))
 
-    val chain = new Chain()
-    chain.addStep(collectionStep).addStep(transformerStep).addStep(taskStep).run()
+    //val chain = new Chain()
+    //chain.addStep(collectionStep).addStep(transformerStep).addStep(taskStep).run()
   }
 }
 
