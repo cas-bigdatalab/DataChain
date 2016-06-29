@@ -37,9 +37,10 @@ class TaskBean() {
 
   }
 
-  def initOffline(name: String, sql: String, srcSchema: Schema, destSchema: Schema): TaskBean ={
+  def initOffline(name: String, sql: String, srcSchema: Schema, destSchema: Schema, interval: Long = -1): TaskBean ={
     this.name = name
     this.taskType = "offline"
+    this.interval = interval
 
     //init app params
     this.appParams = List(

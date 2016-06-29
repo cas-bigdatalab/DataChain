@@ -21,18 +21,21 @@ trait Scheduler{
 
   def execute(taskInstance: TaskBean): Unit ={
     val command: StringBuffer = new StringBuffer()
-    command.append("cd ").append(PropertyUtil.getPropertyValue("spark_home")).append(";")
-      .append("./bin/spark-submit ").append("--class ").append(taskInstance.getTaskParams.get("class").get)
+    //command.append("cd ").append(PropertyUtil.getPropertyValue("spark_home")).append(";")
+    command.append("spark-submit ").append("--class ").append(taskInstance.getTaskParams.get("class").get)
       .append(" --master ").append(taskInstance.getSparkParams.get("master").get)
       .append(" --executor-memory ").append(taskInstance.getSparkParams.get("executor-memory").get)
       .append(" --total-executor-cores ").append(taskInstance.getSparkParams.get("total-executor-cores").get)
       .append(" ").append(taskInstance.getTaskParams.get("path").get)
 
+
     command.append(taskInstance.getAppParams.mkString(" ", " ",""))
 
-    val deployCmd =  "ssh xjzhu@" + PropertyUtil.getPropertyValue("spark_host;") + " /bin/bash " + command
+    //val deployCmd =  "ssh -t -t xjzhu@" + PropertyUtil.getPropertyValue("spark_host") + " &&  /bin/bash " + command
+    val deployCmd =  command.toString
 
     println(deployCmd)
+
 
     Process(Seq("bash","-c", deployCmd)).!
   }
@@ -63,7 +66,15 @@ class OfflineScheduler extends Scheduler{
     import scala.concurrent.ExecutionContext.Implicits.global
     val act = system.actorOf(Props(new OfflineActor(taskInstance)), taskInstance.getTaskType()+"_"+taskInstance.getName())
     implicit val time = Timeout(5 seconds)
-    val cancellable = system.scheduler.schedule(0 milliseconds,taskInstance.getInterval() seconds, act, this)
+
+    val interval = taskInstance.getInterval()
+    //val cancellable = system.scheduler.schedule(0 milliseconds,interval seconds, act, this)
+    //val cancellable = system.scheduler.scheduleOnce(0 milliseconds, act, this)
+    val cancellable = interval match {
+      case -1 => system.scheduler.scheduleOnce(0 milliseconds, act, this)
+      case x => system.scheduler.schedule(0 milliseconds,x seconds, act, this)
+    }
+
     tasks += (taskInstance.getTaskType()+"_"+taskInstance.getName() -> cancellable)
   }
 

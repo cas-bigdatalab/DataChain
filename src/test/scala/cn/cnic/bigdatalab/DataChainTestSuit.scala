@@ -55,7 +55,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   //hive table schema params
   val hiveTable: String = "test"
-  val hiveColumns = Map("name"->"string", "age"->"int")
+  val hiveColumns = Map("name"->"STRING", "age"->"INT")
 
 
   override protected def beforeAll(): Unit = {
@@ -94,6 +94,8 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     //val transformerStep = new TransformerStep().setTransformer(mapping)
     val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean)).run
     //val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(task))
+
+    Thread.sleep(20 * 1000)
 
     //val chain = new Chain()
     //chain.addStep(collectionStep).addStep(transformerStep).addStep(taskStep).run()
