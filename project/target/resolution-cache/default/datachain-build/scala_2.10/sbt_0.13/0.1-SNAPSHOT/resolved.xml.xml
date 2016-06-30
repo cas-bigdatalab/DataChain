@@ -4,7 +4,7 @@
 		module="datachain-build"
 		revision="0.1-SNAPSHOT"
 		status="integration"
-		publication="20160525160845"
+		publication="20160630091303"
 		e:scalaVersion="2.10" e:sbtVersion="0.13"
 	>
 		<description>

@@ -1,4 +1,4 @@
-[info] Updating {file:/E:/DataChain/project/}datachain-build...
+[info] Updating {file:/Project/DataChain/project/}datachain-build...
 [debug] :: resolving dependencies :: default#datachain-build;0.1-SNAPSHOT
 [debug] 	confs: [compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool]
 [debug] 	validate = true
@@ -16,7 +16,7 @@
 [debug] == resolving dependencies for default#datachain-build;0.1-SNAPSHOT [provided]
 [debug] == resolving dependencies default#datachain-build;0.1-SNAPSHOT->org.scala-lang#scala-library;2.10.4 [provided->default(compile)]
 [info] Resolving org.scala-lang#scala-library;2.10.4 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@2abba40a
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@4497ac1b
 [debug] sbt-chain: module revision found in cache: org.scala-lang#scala-library;2.10.4
 [debug] 	typesafe-ivy-releases: revision in cache: org.scala-lang#scala-library;2.10.4
 [debug] 	found org.scala-lang#scala-library;2.10.4 in sbt-chain
@@ -1337,19 +1337,19 @@
 [debug] 	[NOT REQUIRED] org.scala-sbt#apply-macro;0.13.5!apply-macro.jar
 [debug] 	[NOT REQUIRED] org.scala-lang#jline;2.10.4!jline.jar
 [debug] 	[NOT REQUIRED] org.fusesource.jansi#jansi;1.4!jansi.jar
-[debug] :: resolution report :: resolve 1919ms :: artifacts dl 48ms
-[debug] 	report for default#datachain-build;0.1-SNAPSHOT compile produced in E:\DataChain\project\target\resolution-cache\reports\default-datachain-build-compile.xml
-[debug] 	report for default#datachain-build;0.1-SNAPSHOT runtime produced in E:\DataChain\project\target\resolution-cache\reports\default-datachain-build-runtime.xml
-[debug] 	report for default#datachain-build;0.1-SNAPSHOT test produced in E:\DataChain\project\target\resolution-cache\reports\default-datachain-build-test.xml
-[debug] 	report for default#datachain-build;0.1-SNAPSHOT provided produced in E:\DataChain\project\target\resolution-cache\reports\default-datachain-build-provided.xml
-[debug] 	report for default#datachain-build;0.1-SNAPSHOT optional produced in E:\DataChain\project\target\resolution-cache\reports\default-datachain-build-optional.xml
-[debug] 	report for default#datachain-build;0.1-SNAPSHOT compile-internal produced in E:\DataChain\project\target\resolution-cache\reports\default-datachain-build-compile-internal.xml
-[debug] 	report for default#datachain-build;0.1-SNAPSHOT runtime-internal produced in E:\DataChain\project\target\resolution-cache\reports\default-datachain-build-runtime-internal.xml
-[debug] 	report for default#datachain-build;0.1-SNAPSHOT test-internal produced in E:\DataChain\project\target\resolution-cache\reports\default-datachain-build-test-internal.xml
-[debug] 	report for default#datachain-build;0.1-SNAPSHOT plugin produced in E:\DataChain\project\target\resolution-cache\reports\default-datachain-build-plugin.xml
-[debug] 	report for default#datachain-build;0.1-SNAPSHOT sources produced in E:\DataChain\project\target\resolution-cache\reports\default-datachain-build-sources.xml
-[debug] 	report for default#datachain-build;0.1-SNAPSHOT docs produced in E:\DataChain\project\target\resolution-cache\reports\default-datachain-build-docs.xml
-[debug] 	report for default#datachain-build;0.1-SNAPSHOT pom produced in E:\DataChain\project\target\resolution-cache\reports\default-datachain-build-pom.xml
-[debug] 	report for default#datachain-build;0.1-SNAPSHOT scala-tool produced in E:\DataChain\project\target\resolution-cache\reports\default-datachain-build-scala-tool.xml
-[debug] 	resolve done (1919ms resolve - 48ms download)
+[debug] :: resolution report :: resolve 3117ms :: artifacts dl 69ms
+[debug] 	report for default#datachain-build;0.1-SNAPSHOT compile produced in /Project/DataChain/project/target/resolution-cache/reports/default-datachain-build-compile.xml
+[debug] 	report for default#datachain-build;0.1-SNAPSHOT runtime produced in /Project/DataChain/project/target/resolution-cache/reports/default-datachain-build-runtime.xml
+[debug] 	report for default#datachain-build;0.1-SNAPSHOT test produced in /Project/DataChain/project/target/resolution-cache/reports/default-datachain-build-test.xml
+[debug] 	report for default#datachain-build;0.1-SNAPSHOT provided produced in /Project/DataChain/project/target/resolution-cache/reports/default-datachain-build-provided.xml
+[debug] 	report for default#datachain-build;0.1-SNAPSHOT optional produced in /Project/DataChain/project/target/resolution-cache/reports/default-datachain-build-optional.xml
+[debug] 	report for default#datachain-build;0.1-SNAPSHOT compile-internal produced in /Project/DataChain/project/target/resolution-cache/reports/default-datachain-build-compile-internal.xml
+[debug] 	report for default#datachain-build;0.1-SNAPSHOT runtime-internal produced in /Project/DataChain/project/target/resolution-cache/reports/default-datachain-build-runtime-internal.xml
+[debug] 	report for default#datachain-build;0.1-SNAPSHOT test-internal produced in /Project/DataChain/project/target/resolution-cache/reports/default-datachain-build-test-internal.xml
+[debug] 	report for default#datachain-build;0.1-SNAPSHOT plugin produced in /Project/DataChain/project/target/resolution-cache/reports/default-datachain-build-plugin.xml
+[debug] 	report for default#datachain-build;0.1-SNAPSHOT sources produced in /Project/DataChain/project/target/resolution-cache/reports/default-datachain-build-sources.xml
+[debug] 	report for default#datachain-build;0.1-SNAPSHOT docs produced in /Project/DataChain/project/target/resolution-cache/reports/default-datachain-build-docs.xml
+[debug] 	report for default#datachain-build;0.1-SNAPSHOT pom produced in /Project/DataChain/project/target/resolution-cache/reports/default-datachain-build-pom.xml
+[debug] 	report for default#datachain-build;0.1-SNAPSHOT scala-tool produced in /Project/DataChain/project/target/resolution-cache/reports/default-datachain-build-scala-tool.xml
+[debug] 	resolve done (3117ms resolve - 69ms download)
 [info] Done updating.
