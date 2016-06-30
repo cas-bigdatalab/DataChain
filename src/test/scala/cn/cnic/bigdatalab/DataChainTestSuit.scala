@@ -118,7 +118,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val mapping:Mapping = new Mapping()
 
     //3. Define real Task
-    val task = new TaskBean().init(name, taskType, sql, topic, streamingTableSchema, mysqlTableSchema, "mapping")
+    val task = new TaskBean().initRealtime(name, sql, topic, streamingTableSchema, mysqlTableSchema, "mapping")
     //val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
 
 
@@ -129,6 +129,30 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
   }
+
+  test("Chain: csv->kafka->store") {
+
+    //1. Define agent source & sink
+    val channel = new AgentChannel(agentChannel, channelParameters)
+    val source = new AgentSource(agentSource, sourceParameters)
+    val sink = new AgentSink(agentSink, kafkaSinkParameters)
+
+    //2. Define Mapping
+    val mapping:Mapping = new Mapping()
+
+    //3. Define real Task
+    val task = new TaskBean().initStore(name, topic, streamingTableSchema, mysqlTableSchema, "mapping")
+    //val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
+
+
+    val collectionStep = new CollectionStep().initAgent(agentName,agentHost,agentUsername, agentPassword).setChannel(channel).setSource(source).setSink(sink)
+    val taskStep = new TaskStep().setStoreTask(new StoreTask(task))
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+  }
+
 }
 
 class DataChainTestSuit extends AbstractDataChainTestSuit{

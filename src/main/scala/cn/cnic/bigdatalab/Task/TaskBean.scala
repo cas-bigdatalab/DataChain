@@ -15,9 +15,9 @@ class TaskBean() {
   private var taskParams: Map[String, String] = _
   private var sparkParams: Map[String, String] = _
 
-  def init(name: String, taskType: String, sql: String, topic: String, srcSchema: Schema, destSchema: Schema, mapping:String): TaskBean ={
+  def initRealtime(name: String, sql: String, topic: String, srcSchema: Schema, destSchema: Schema, mapping:String): TaskBean ={
     this.name = name
-    this.taskType = taskType
+    this.taskType = "realtime"
 
     //init app params
     this.appParams = List(TaskUtils.getDuration(), TaskUtils.getTopic(topic),
@@ -50,10 +50,32 @@ class TaskBean() {
       TaskUtils.getSchemaDriver(destSchema),
       TaskUtils.wrapDelimiter(sql)
     )
-
     //init task params
     this.taskParams = Map("class" -> PropertyUtil.getPropertyValue("offline_class"),
       "path" -> PropertyUtil.getPropertyValue("offline_path"))
+
+    //init spark params
+    this.sparkParams = Map("master" -> PropertyUtil.getPropertyValue("master"), "executor-memory" -> PropertyUtil.getPropertyValue("executor-memory"),
+      "total-executor-cores" -> PropertyUtil.getPropertyValue("total-executor-cores"))
+
+    this
+
+  }
+
+  def initStore(name: String, topic: String, srcSchema: Schema, destSchema: Schema, mapping:String): TaskBean ={
+    this.name = name
+    this.taskType = taskType
+    val sql = "insert into table " + destSchema.getTable() + " select * from " + srcSchema.getTable()
+
+    //init app params
+    this.appParams = List(TaskUtils.getDuration(), TaskUtils.getTopic(topic),
+      TaskUtils.getKafkaParams(), TaskUtils.getSchemaColumns(srcSchema),
+      TaskUtils.getSchemaName(srcSchema), TaskUtils.getCreateTableSql(destSchema),
+      TaskUtils.wrapDelimiter(sql), mapping, TaskUtils.getSqlType(destSchema.getDriver()))
+
+    //init task params
+    this.taskParams = Map("class" -> PropertyUtil.getPropertyValue("realtime_class"),
+      "path" -> PropertyUtil.getPropertyValue("realtime_path"))
 
     //init spark params
     this.sparkParams = Map("master" -> PropertyUtil.getPropertyValue("master"), "executor-memory" -> PropertyUtil.getPropertyValue("executor-memory"),

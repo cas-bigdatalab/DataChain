@@ -102,7 +102,7 @@ object SchedulerTest{
 
     val sql = "select * from user"
 
-    val task: TaskBean = new TaskBean().init("test_task", "realtime", sql, topic, schema, schema, "mapping")
+    val task: TaskBean = new TaskBean().initRealtime("test_task", sql, topic, schema, schema, "mapping")
 
     scheduler.deploy(task)
 
@@ -117,7 +117,7 @@ object SchedulerTest{
 
     val sql1 = "select * from user"
 
-    val task1: TaskBean = new TaskBean().init("test_task1", "offline", sql, topic, schema, schema, "mapping")
+    val task1: TaskBean = new TaskBean().initOffline("test_task1", sql, schema, schema)
     task1.setInterval(10)
 
     offlineScheduler.deploy(task1)
