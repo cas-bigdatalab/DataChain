@@ -1,9 +1,6 @@
 package cn.cnic.bigdatalab.utils
 
-import ch.ethz.ssh2.ChannelCondition
-import ch.ethz.ssh2.Connection
-import ch.ethz.ssh2.Session
-import ch.ethz.ssh2.StreamGobbler
+import ch.ethz.ssh2._
 import org.apache.commons.io.IOUtils
 import java.io.{File, InputStream}
 import java.nio.charset.Charset
@@ -80,6 +77,24 @@ object SshUtil {
 //      IOUtils.closeQuietly(stdErr)
     }
     ret
+  }
+
+  def scp(srcFileName:String,destFileName: String,ip: String, username: String , password: String): Unit ={
+
+    try{
+      if (login(ip, username, password)) {
+        val client = new SCPClient(conn);
+        client.put(srcFileName, destFileName)
+      }else {
+        throw new Exception("scp远程机器失败:" + ip)
+      }
+    }finally {
+        if (conn != null) {
+          conn.close()
+        }
+    }
+
+
   }
 
   private def processStream(in: InputStream, charset: String): String = {

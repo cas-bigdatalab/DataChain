@@ -1,9 +1,9 @@
 package cn.cnic.bigdatalab.collection
 
 import java.io.{PrintWriter, File}
-import cn.cnic.bigdatalab.utils.PropertyUtil
+import cn.cnic.bigdatalab.utils.{SshUtil, PropertyUtil}
 
-import scala.sys.process._
+
 
 
 /**
@@ -69,17 +69,32 @@ class AgentScheduler(agent: Agent) {
 
   private def copyConf2Server(): Unit ={
     //val copyConfFileCmd = "scp " + getConfFilePath() + "root@" + agent.getHost() + ":" + PropertyUtil.getPropertyValue("flume_home") + "/conf/"
-    val copyConfFileCmd = "cp " + getConfFilePath() + " " + PropertyUtil.getPropertyValue("flume_home") +"/conf"
-    copyConfFileCmd !
+    val srcFile = getConfFilePath()
+    val destFile = PropertyUtil.getPropertyValue("flume_home") +"/conf"
+    SshUtil.scp(srcFile,destFile, agent.getHost(),agent.getUserName(),agent.getPassword())
+
+
   }
 
   private def runFlumeOnServer(): Unit ={
     //val launchCmd =  "ssh root@" + agent.getHost() + " /bin/bash cd " + flumeHome + ";" + "bin/flume-ng agent --conf conf --conf-file conf/" + getConfFileName() + " --name " + agent.getName() + "-Dflume.root.logger=INFO,console"
-    val cdCmd = "cd " + PropertyUtil.getPropertyValue("flume_home")
+    /*val cdCmd = "cd " + PropertyUtil.getPropertyValue("flume_home")
     val flumeCmd = "bin/flume-ng agent --conf conf --conf-file conf/" + getConfFileName() + " --name " + agent.getName() + " -Dflume.root.logger=INFO,LOGFILE"
 
     val command = cdCmd + " && " + flumeCmd
-    Process(Seq("bash","-c",command)).!
+    Process(Seq("bash","-c",command)).!*/
+
+    val command: StringBuffer = new StringBuffer()
+    command.append("cd ").append(PropertyUtil.getPropertyValue("flume_home")).append(";")
+      .append("./bin/flume-ng agent --conf conf ")
+      .append("--conf-file conf/").append(getConfFileName()).append(" ")
+      .append("--name ").append(agent.getName()).append(" ")
+      .append("-Dflume.root.logger=INFO,LOGFILE")
+
+    println(command.toString)
+
+    SshUtil.exec(command.toString, agent.getHost(), agent.getUserName(), agent.getPassword())
+
 
   }
 

@@ -21,6 +21,8 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   //agent related parameters
   val agentHost = "172.16.106.3"
+  val agentUsername = "root"
+  val agentPassword = "bigdata"
   val agentName = "spoolAgent"
   val agentChannel = "channel1"
   val agentSource = "src1"
@@ -96,10 +98,10 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val task = new TaskBean().init(name, taskType, sql, topic, streamingTableSchema, mysqlTableSchema, "mapping")
 //    val taskBean = new TaskBean().initOffline(name, sql, hiveTableSchema, mysqlTableSchema)
 
-    //val collectionStep = new CollectionStep().initAgent(agentName,agentHost).setChannel(channel).setSource(source).setSink(sink)
+    val collectionStep = new CollectionStep().initAgent(agentName,agentHost).setChannel(channel).setSource(source).setSink(sink)
     //val transformerStep = new TransformerStep().setTransformer(mapping)
-//    val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean)).run
-    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(task)).run
+    //val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean)).run
+    //val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(task)).run
 
     Thread.sleep(20 * 1000)
 

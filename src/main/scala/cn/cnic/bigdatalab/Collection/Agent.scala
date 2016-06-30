@@ -5,7 +5,7 @@ import cn.cnic.bigdatalab.collection.{AgentSource,AgentChannel,AgentSink}
 /**
   * Created by Flora on 2016/6/22.
   */
-class Agent(name:String, host: String) {
+class Agent(name:String, host: String, username: String, password: String) {
 
   private var source:AgentSource = _
   private var sink:AgentSink = _
@@ -41,5 +41,13 @@ class Agent(name:String, host: String) {
 
   def getHost(): String ={
     host
+  }
+
+  def getUserName(): String ={
+    username
+  }
+
+  def getPassword(): String ={
+    password
   }
 }
