@@ -6,7 +6,7 @@ import akka.util.Timeout
 import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import cn.cnic.bigdatalab.entity.Schema
-import cn.cnic.bigdatalab.utils.PropertyUtil
+import cn.cnic.bigdatalab.utils.{SshUtil, PropertyUtil}
 
 import scala.sys.process.Process
 
@@ -21,8 +21,8 @@ trait Scheduler{
 
   def execute(taskInstance: TaskBean): Unit ={
     val command: StringBuffer = new StringBuffer()
-    //command.append("cd ").append(PropertyUtil.getPropertyValue("spark_home")).append(";")
-    command.append("spark-submit ").append("--class ").append(taskInstance.getTaskParams.get("class").get)
+    command.append("cd ").append(PropertyUtil.getPropertyValue("spark_home")).append(";")
+    command.append("./bin/spark-submit ").append("--class ").append(taskInstance.getTaskParams.get("class").get)
       .append(" --master ").append(taskInstance.getSparkParams.get("master").get)
       .append(" --executor-memory ").append(taskInstance.getSparkParams.get("executor-memory").get)
       .append(" --total-executor-cores ").append(taskInstance.getSparkParams.get("total-executor-cores").get)
@@ -37,7 +37,11 @@ trait Scheduler{
     println(deployCmd)
 
 
-    Process(Seq("bash","-c", deployCmd)).!
+//    Process(Seq("bash","-c", deployCmd)).!
+
+    SshUtil.exec(deployCmd, PropertyUtil.getPropertyValue("spark_host"), PropertyUtil.getPropertyValue("spark_host_user"),
+      PropertyUtil.getPropertyValue("spark_host_password"))
+
   }
 }
 
@@ -97,7 +101,7 @@ object SchedulerTest{
 
     val sql = "select * from user"
 
-    val task: TaskBean = new TaskBean().init("test_task", "realtime", sql, topic, schema, "mapping")
+    val task: TaskBean = new TaskBean().init("test_task", "realtime", sql, topic, schema, schema, "mapping")
 
     scheduler.deploy(task)
 
@@ -112,7 +116,7 @@ object SchedulerTest{
 
     val sql1 = "select * from user"
 
-    val task1: TaskBean = new TaskBean().init("test_task1", "offline", sql, topic, schema, "mapping")
+    val task1: TaskBean = new TaskBean().init("test_task1", "offline", sql, topic, schema, schema, "mapping")
     task1.setInterval(10)
 
     offlineScheduler.deploy(task1)

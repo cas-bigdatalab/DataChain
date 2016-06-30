@@ -5,7 +5,7 @@ import ch.ethz.ssh2.Connection
 import ch.ethz.ssh2.Session
 import ch.ethz.ssh2.StreamGobbler
 import org.apache.commons.io.IOUtils
-import java.io.InputStream
+import java.io.{File, InputStream}
 import java.nio.charset.Charset
 
 
@@ -20,7 +20,20 @@ object SshUtil {
   def login(ip: String, username: String, password: String): Boolean ={
     conn = new Connection(ip)
     conn.connect()
-    conn.authenticateWithPassword(username, password)
+
+    if(conn.isAuthMethodAvailable(username, "password")){
+      System.out.println("-->password auth method supported by server")
+      conn.authenticateWithPassword(username, password)
+    }
+    else if(conn.isAuthMethodAvailable(username,"publickey")){
+      System.out.println("--> public key auth method supported by server")
+      conn.authenticateWithPublicKey(username,new File(PropertyUtil.getPropertyValue("ssh_dsa_path")),password)
+    }
+    else{
+      System.out.println("Can not connect to Server !!!!")
+      false
+    }
+
   }
 
   def execWithParams(scriptsLocation: String, ip: String, username: String, password: String, param: String*): Unit = {
