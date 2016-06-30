@@ -53,12 +53,12 @@
   </property>
   <property>
     <name>hive.exec.local.scratchdir</name>
-    <value>/data/hive</value>
+    <value>/opt/hive</value>
     <description>Local scratch space for Hive jobs</description>
   </property>
   <property>
     <name>hive.downloaded.resources.dir</name>
-    <value>/data/hive</value>
+    <value>/opt/hive</value>
     <description>Temporary local directory for added resources in the remote file system.</description>
   </property>
   <property>
@@ -341,7 +341,7 @@
   </property>
   <property>
     <name>hive.metastore.uris</name>
-    <value>thrift://172.16.106.3:9083</value>
+    <value>thrift://10.0.50.216:9083</value>
     <description>Thrift URI for the remote metastore. Used by metastore client to connect to remote metastore.</description>
   </property>
   <property>
@@ -397,7 +397,7 @@
   </property>
   <property>
     <name>javax.jdo.option.ConnectionURL</name>
-    <value>jdbc:mysql://172.16.106.3:3306/hive?=createDatabaseIfNotExist=true</value>
+    <value>jdbc:mysql://10.0.50.216:3306/hive?=createDatabaseIfNotExist=true</value>
     <description>JDBC connect string for a JDBC metastore</description>
   </property>
   <property>

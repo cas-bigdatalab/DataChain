@@ -47,28 +47,28 @@ object SshUtil {
   }
 
   def exec(scriptsLocation: String, ip: String, username: String , password: String): Int ={
-    var stdOut: InputStream = null
-    var stdErr: InputStream = null
-    var outStr: String = null
-    var outErr: String = null
-    var ret = -1
+//    var stdOut: InputStream = null
+//    var stdErr: InputStream = null
+//    var outStr: String = null
+//    var outErr: String = null
+    val ret = 1
     try {
       if (login(ip, username, password)) {
         val session: Session = conn.openSession()
         session.execCommand(scriptsLocation)
 
-        stdOut = new StreamGobbler(session.getStdout())
-        outStr = processStream(stdOut, charset)
+//        stdOut = new StreamGobbler(session.getStdout())
+//        outStr = processStream(stdOut, charset)
+//
+//        stdErr = new StreamGobbler(session.getStderr())
+//        outErr = processStream(stdErr, charset)
+//
+//        session.waitForCondition(ChannelCondition.EXIT_STATUS, TIME_OUT)
+//
+//        println("outStr=" + outStr)
+//        println("outErr=" + outErr)
 
-        stdErr = new StreamGobbler(session.getStderr())
-        outErr = processStream(stdErr, charset)
-
-        session.waitForCondition(ChannelCondition.EXIT_STATUS, TIME_OUT)
-
-        println("outStr=" + outStr)
-        println("outErr=" + outErr)
-
-        ret = session.getExitStatus()
+//        ret = session.getExitStatus()
       } else {
         throw new Exception("登录远程机器失败" + ip)
       }
@@ -76,8 +76,8 @@ object SshUtil {
       if (conn != null) {
         conn.close()
       }
-      IOUtils.closeQuietly(stdOut)
-      IOUtils.closeQuietly(stdErr)
+//      IOUtils.closeQuietly(stdOut)
+//      IOUtils.closeQuietly(stdErr)
     }
     ret
   }

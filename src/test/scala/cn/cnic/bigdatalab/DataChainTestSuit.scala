@@ -14,8 +14,8 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   val mapping_conf = "/opt/mappingConf.json"
 
-  val sql = "insert into user select * from test"
-  val topic = "Test"
+  val sql = "insert into table user select name, age from test"
+  val topic = "test"
   val name = "test"
   val taskType = "realtime"
 
@@ -39,9 +39,14 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     "fileHeader" -> "true"
   )
 
+  var streamingTableSchema = new Schema()
   var mysqlTableSchema:Schema = new Schema()
   var mongodbTableSchema = new Schema()
   var hiveTableSchema = new Schema()
+
+  //streaming table schema params
+  val streamingTable: String = "test"
+  val streamingColumns = Map("id" ->"int", "name" -> "string", "age" -> "int")
 
   //mysql table schema params
   val mysqlDB: String = "spark"
@@ -60,6 +65,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
+    streamingTableSchema.setDriver("streaming").setTable(streamingTable).setColumns(streamingColumns)
     mysqlTableSchema.setDriver("mysql").setDb(mysqlDB).setTable(mysqlTable).setColumns(mysqlColumns)
     mongodbTableSchema.setDriver("mongodb").setDb(mongoDatabase).setTable(mongoTable).setColumns(mongoColumns)
     hiveTableSchema.setDriver("hive").setTable(hiveTable).setColumns(hiveColumns)
@@ -87,13 +93,13 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val mapping:Mapping = new Mapping()
 
     //3. Define Task
-    //val task = new TaskInstance().init(name, taskType, sql, topic, mysqlTableSchema, mapping.toString)
-    val taskBean = new TaskBean().initOffline(name, sql, hiveTableSchema, mysqlTableSchema)
+    val task = new TaskBean().init(name, taskType, sql, topic, streamingTableSchema, mysqlTableSchema, "mapping")
+//    val taskBean = new TaskBean().initOffline(name, sql, hiveTableSchema, mysqlTableSchema)
 
     //val collectionStep = new CollectionStep().initAgent(agentName,agentHost).setChannel(channel).setSource(source).setSink(sink)
     //val transformerStep = new TransformerStep().setTransformer(mapping)
-    val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean)).run
-    //val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(task))
+//    val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean)).run
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(task)).run
 
     Thread.sleep(20 * 1000)
 

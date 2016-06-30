@@ -3,10 +3,11 @@ package cn.cnic.bigdatalab.Task
 import akka.actor._
 import akka.actor.Props
 import akka.util.Timeout
+
 import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import cn.cnic.bigdatalab.entity.Schema
-import cn.cnic.bigdatalab.utils.{SshUtil, PropertyUtil}
+import cn.cnic.bigdatalab.utils.{PropertyUtil, SshUtil}
 
 import scala.sys.process.Process
 
