@@ -15,15 +15,15 @@ class TaskBean() {
   private var taskParams: Map[String, String] = _
   private var sparkParams: Map[String, String] = _
 
-  def init(name: String, taskType: String, sql: String, topic: String, schema: Schema, mapping:String): TaskBean ={
+  def init(name: String, taskType: String, sql: String, topic: String, srcSchema: Schema, destSchema: Schema, mapping:String): TaskBean ={
     this.name = name
     this.taskType = taskType
 
     //init app params
     this.appParams = List(TaskUtils.getDuration(), TaskUtils.getTopic(topic),
-      TaskUtils.getKafkaParams(), TaskUtils.getSchemaColumns(schema),
-      TaskUtils.getSchemaName(schema), TaskUtils.getCreateTableSql(schema),
-      TaskUtils.wrapDelimiter(sql), mapping, TaskUtils.getSqlType(schema.getDriver()))
+      TaskUtils.getKafkaParams(), TaskUtils.getSchemaColumns(srcSchema),
+      TaskUtils.getSchemaName(srcSchema), TaskUtils.getCreateTableSql(destSchema),
+      TaskUtils.wrapDelimiter(sql), mapping, TaskUtils.getSqlType(destSchema.getDriver()))
 
     //init task params
     this.taskParams = Map("class" -> PropertyUtil.getPropertyValue("realtime_class"),

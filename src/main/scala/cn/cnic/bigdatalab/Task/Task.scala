@@ -62,7 +62,7 @@ object TaskTest {
 
     val sql = "select * from user"
 
-    val task: TaskBean = new TaskBean().init("test_task", "realtime", sql, topic, schema, "mapping")
+    val task: TaskBean = new TaskBean().init("test_task", "realtime", sql, topic, schema, schema, "mapping")
 
     val realTimeTask = new RealTimeTask(task)
     realTimeTask.run()
@@ -76,7 +76,7 @@ object TaskTest {
 
     val sql1 = "select * from user"
 
-    val task1: TaskBean = new TaskBean().init("test_task1", "offline", sql, topic, schema, "mapping")
+    val task1: TaskBean = new TaskBean().init("test_task1", "offline", sql, topic, schema, schema, "mapping")
     task1.setInterval(5)
 
     val offlineTask = new OfflineTask(task1)
