@@ -10,9 +10,9 @@ class CollectionStep extends Step{
 
   private var agent: Agent = _
 
-  def initAgent(name: String, host:String): CollectionStep ={
+  def initAgent(name: String, host:String, username: String, password:String): CollectionStep ={
     if (agent == null) {
-      agent = new Agent(name,host)
+      agent = new Agent(name,host,username,password)
     }
     this
   }

@@ -5,6 +5,7 @@ import cn.cnic.bigdatalab.collection.{AgentChannel, AgentSink, AgentSource}
 import cn.cnic.bigdatalab.datachain._
 import cn.cnic.bigdatalab.entity.Schema
 import cn.cnic.bigdatalab.transformer.Mapping
+import cn.cnic.bigdatalab.utils.PropertyUtil
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 /**
@@ -15,12 +16,13 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   val mapping_conf = "/opt/mappingConf.json"
 
   val sql = "insert into table user select name, age from test"
+  val sql1 = "insert into table user select name, age from test1"
   val topic = "test"
   val name = "test"
   val taskType = "realtime"
 
   //agent related parameters
-  val agentHost = "172.16.106.3"
+  val agentHost = "10.0.50.216"
   val agentUsername = "root"
   val agentPassword = "bigdata"
   val agentName = "spoolAgent"
@@ -34,10 +36,17 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     "channel" -> "channel1",
     "type" -> "logger"
   )
+
+  val kafkaSinkParameters = Map(
+    "channel" -> "channel1",
+    "type" -> "org.apache.flume.sink.kafka.KafkaSink",
+    "brokerList" -> PropertyUtil.getPropertyValue("kafka.brokerList"),
+    "topic" -> "test"
+  )
   val sourceParameters = Map(
     "channels" -> "channel1",
     "type" -> "spooldir",
-    "spoolDir" -> "/tmp/flumeSourceDir",
+    "spoolDir" -> "/opt/flumeSooldir",
     "fileHeader" -> "true"
   )
 
@@ -45,6 +54,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   var mysqlTableSchema:Schema = new Schema()
   var mongodbTableSchema = new Schema()
   var hiveTableSchema = new Schema()
+  var hiveTest1Schema = new Schema()
 
   //streaming table schema params
   val streamingTable: String = "test"
@@ -63,6 +73,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   //hive table schema params
   val hiveTable: String = "test"
   val hiveColumns = Map("name"->"STRING", "age"->"INT")
+  val hiveTable1: String = "test1"
 
 
   override protected def beforeAll(): Unit = {
@@ -71,6 +82,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     mysqlTableSchema.setDriver("mysql").setDb(mysqlDB).setTable(mysqlTable).setColumns(mysqlColumns)
     mongodbTableSchema.setDriver("mongodb").setDb(mongoDatabase).setTable(mongoTable).setColumns(mongoColumns)
     hiveTableSchema.setDriver("hive").setTable(hiveTable).setColumns(hiveColumns)
+    hiveTest1Schema.setDriver("hive").setTable(hiveTable1).setColumns(hiveColumns)
 
   }
 
@@ -84,29 +96,38 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
 
 
-  test("Chain: csv->kafka->realTime->mongodb") {
+  test("Chain: hive->mysql") {
+
+
+    //1. Define Task
+    val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
+    val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean))
+
+    val chain = new Chain()
+    chain.addStep(taskStep).run()
+  }
+
+  test("Chain: csv->kafka->realTime->mysql") {
 
     //1. Define agent source & sink
     val channel = new AgentChannel(agentChannel, channelParameters)
     val source = new AgentSource(agentSource, sourceParameters)
-    val sink = new AgentSink(agentSink, sinkParameters)
+    val sink = new AgentSink(agentSink, kafkaSinkParameters)
 
     //2. Define Mapping
     val mapping:Mapping = new Mapping()
 
-    //3. Define Task
+    //3. Define real Task
     val task = new TaskBean().init(name, taskType, sql, topic, streamingTableSchema, mysqlTableSchema, "mapping")
-//    val taskBean = new TaskBean().initOffline(name, sql, hiveTableSchema, mysqlTableSchema)
+    //val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
 
-    val collectionStep = new CollectionStep().initAgent(agentName,agentHost).setChannel(channel).setSource(source).setSink(sink)
-    //val transformerStep = new TransformerStep().setTransformer(mapping)
-    //val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean)).run
-    //val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(task)).run
 
-    Thread.sleep(20 * 1000)
+    val collectionStep = new CollectionStep().initAgent(agentName,agentHost,agentUsername, agentPassword).setChannel(channel).setSource(source).setSink(sink)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(task))
 
-    //val chain = new Chain()
-    //chain.addStep(collectionStep).addStep(transformerStep).addStep(taskStep).run()
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
   }
 }
 
