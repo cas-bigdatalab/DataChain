@@ -67,13 +67,15 @@ object TaskUtils {
 
   //create table sql
   def getCreateTableSql(schema: Schema): String ={
-    val sqlType = getSqlType(schema.getDriver())
+    val sqlType = schema.getDriver()
     if(sqlType.equals("mysql")){
       return wrapDelimiter(SqlUtil.mysql(schema))
     }else if(sqlType.equals("mongo")){
       return wrapDelimiter(SqlUtil.mongo(schema))
-    }else if(sqlType.equals("hive")){
+    }else if(sqlType.equals("hive") || sqlType.equals("impala")){
       return wrapDelimiter(SqlUtil.hive(schema))
+    }else if(sqlType.equals("hbase")){
+      return wrapDelimiter(SqlUtil.hhase(schema))
     }
     null
   }
@@ -83,7 +85,7 @@ object TaskUtils {
 object test{
   def main(args: Array[String]): Unit ={
     val schema = new Schema()
-    schema.setDriver("mongo")
+    schema.setDriver("hbase")
     schema.setDb("test")
     schema.setTable("user")
     schema.setColumns(Map("id" -> "Int", "name" -> "String", "age" -> "String"))

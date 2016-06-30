@@ -37,4 +37,26 @@ object SqlUtil {
     return temp.replace("%tablename%", dbtable).replace("%columns%", columns).stripMargin
   }
 
+  def hhase(schema: Schema): String ={
+    val temp = PropertyUtil.getPropertyValue("hbase_create_sql")
+    val using = PropertyUtil.getPropertyValue("hbase_driver")
+    val columns = schema.columnsToString()
+    val hiveDbtable = schema.getTable()
+    val hbaseDbtable = schema.getTable()
+
+    val hbaseColumns: StringBuffer = new StringBuffer()
+    hbaseColumns.append(":key,")
+
+    schema.getColumns().keySet.filter(_ != "id").foreach(key =>{
+      hbaseColumns.append("cf").append(key).append(":").append(key).append(",")
+    } )
+
+    hbaseColumns.deleteCharAt(hbaseColumns.length()-1)
+
+    return temp.replace("%tablename%", hiveDbtable).replace("%columns%", columns).
+      replace("%using%", using).replace("%hbase_columns%", hbaseColumns).
+      replaceAll("%hbase_tablename%", hbaseDbtable)
+
+  }
+
 }
