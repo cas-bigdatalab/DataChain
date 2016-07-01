@@ -4,7 +4,7 @@
 
 import java.util.regex.Pattern
 
-import  cn.cnic.bigdatalab.transformer.{Transformer}
+import cn.cnic.bigdatalab.transformer.{TMapping, Transformer}
 
 object transformerTest {
   def main(agrs: Array[String]): Unit = {
@@ -58,6 +58,11 @@ object transformerTest {
     println("msg: " + msg)
     println("parse result: " + regexparser.transform(msg))
     println("getSchema: " + regexparser.getSchema())
+
+    //Mapping test
+    val map = new TMapping(mapping_conf)
+    regexparser = new Transformer(map)
+    println("transform result " + regexparser.transform(msg))
 
     val patternstr = "(\\d+-\\d+-\\d+\\s\\S+)\\s-\\s([^:]+):(\\d+)\\s+-\\s+(\\d+)\\s+(\\w+)\\s+(\\S+)\\s+(\\w+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\w+)\\s+(\\d+)\\s+(\\w+)\\s+-\\s+(.*)"
     val pattern = Pattern.compile(patternstr)
