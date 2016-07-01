@@ -52,6 +52,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   var streamingTableSchema = new Schema()
   var mysqlTableSchema:Schema = new Schema()
+  var mysqlStoreTableSchema:Schema = new Schema()
   var mongodbTableSchema = new Schema()
   var hiveTableSchema = new Schema()
   var hiveTest1Schema = new Schema()
@@ -64,6 +65,11 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   val mysqlDB: String = "spark"
   val mysqlTable: String = "user"
   val mysqlColumns = Map("name"->"string", "age"->"int")
+
+  //mysql table schema params
+  val mysqlStoreDB: String = "spark"
+  val mysqlStoreTable: String = "user1"
+  val mysqlStoreColumns = Map("id" -> "int", "name"->"string", "age"->"int")
 
   //mongodb table schema params
   val mongoDatabase: String = "spark"
@@ -79,6 +85,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   override protected def beforeAll(): Unit = {
     super.beforeAll()
     streamingTableSchema.setDriver("streaming").setTable(streamingTable).setColumns(streamingColumns)
+    mysqlStoreTableSchema.setDriver("mysql").setDb(mysqlStoreDB).setTable(mysqlStoreTable).setColumns(mysqlStoreColumns)
     mysqlTableSchema.setDriver("mysql").setDb(mysqlDB).setTable(mysqlTable).setColumns(mysqlColumns)
     mongodbTableSchema.setDriver("mongodb").setDb(mongoDatabase).setTable(mongoTable).setColumns(mongoColumns)
     hiveTableSchema.setDriver("hive").setTable(hiveTable).setColumns(hiveColumns)
@@ -141,7 +148,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val mapping:Mapping = new Mapping()
 
     //3. Define real Task
-    val task = new TaskBean().initStore(name, topic, streamingTableSchema, mysqlTableSchema, "mapping")
+    val task = new TaskBean().initStore(name, topic, streamingTableSchema, mysqlStoreTableSchema, "mapping")
     //val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
 
 
