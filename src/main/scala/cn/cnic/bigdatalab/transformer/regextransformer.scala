@@ -1,36 +1,42 @@
-package com.github.casbigdatalab.datachain.transformer
+ package cn.cnic.bigdatalab.transformer
 
 import java.util
 import java.util.regex.Pattern;
+ import cn.cnic.bigdatalab.utils.FieldTypeUtil
 
-/**
+ import scala.collection.mutable.ArrayBuffer
+
+ /**
  * Created by cnic-liliang on 2016/6/13.
  */
 
-class regextransformer(mapping_conf : String) extends common{
-  val jmapping = tools.jsonfile2JsonMap(mapping_conf)
-  val schemaList =tools.jsonMap2SchemaList(jmapping)
+class regextransformer(tmap : Mapping) extends common{
+   val schema = tmap.dimensions
 
-  def transform(msg:String): util.ArrayList[String] = {
+   def getSchema():ArrayBuffer[String] = {
+     schema
+   }
+
+  def transform(msg:String): ArrayBuffer[Any] = {
     //regular expression
-    val patternstr = tools.jsonMap2RegexStr(jmapping)
+    val patternstr = tmap.pattern
     val pattern = Pattern.compile(patternstr)
     val m = pattern.matcher(msg)
     //columns
-    val columnslist = tools.jsonMap2Columns(jmapping)
-
-    val result = new util.ArrayList[String]()
-
+    val columns = tmap.columns
+    //
+    val result = new ArrayBuffer[Any]()
     //traverse
     if (m.find()){
       //m.group(0) refers to msg, so begining from 1 to m.groupCount()
       var i = 1
       while(i <= m.groupCount()) {
         //extract
-        if(schemaList.contains(columnslist(i-1))) {
+        if(schema.toList.contains(columns(i-1))) {
           //val map= Map(columnslist(i-1).toString -> m.group(i).toString)
           //println("map type " + map.getClass)
-          result.add(columnslist(i-1).toString + ": " + m.group(i).toString)
+          val value = FieldTypeUtil.parseDataType(columns(i-1).toString.split(":")(1), m.group(i).toString)
+          result += value //.add(columnslist(i-1).toString + ": " + m.group(i).toString)
         }
         i += 1
       }

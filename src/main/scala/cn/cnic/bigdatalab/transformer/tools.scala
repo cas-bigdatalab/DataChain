@@ -1,4 +1,4 @@
-package com.github.casbigdatalab.datachain.transformer
+package cn.cnic.bigdatalab.transformer
 
 /**
  * Created by cnic-liliang on 2016/6/6.
@@ -47,6 +47,12 @@ object tools{
   def jsonMap2Columns(mapping:Any):List[String] = {
     val jmmap:Map[String, Any] = mapping.asInstanceOf[Map[String, Any]].get("mappingSpec").get.asInstanceOf[Map[String, Any]]
     val colsList = jmmap.get("columns").get.asInstanceOf[List[String]]
+    colsList
+  }
+
+  def jsonMap2ColumnTypes(mapping:Any):List[String] = {
+    val jmmap:Map[String, Any] = mapping.asInstanceOf[Map[String, Any]].get("mappingSpec").get.asInstanceOf[Map[String, Any]]
+    val colsList = jmmap.get("columnsType").get.asInstanceOf[List[String]]
     colsList
   }
 

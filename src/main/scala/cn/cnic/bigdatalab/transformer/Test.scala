@@ -1,4 +1,4 @@
-package com.cnic.datachain.dataparser
+ package cn.cnic.bigdatalab.transformer
 
 import org.apache.spark.SparkConf
 

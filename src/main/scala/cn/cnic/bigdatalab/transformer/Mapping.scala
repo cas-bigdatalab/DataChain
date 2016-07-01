@@ -1,20 +1,14 @@
 package cn.cnic.bigdatalab.transformer
 
+import scala.collection.mutable.ArrayBuffer
+
 /**
   * Created by Flora on 2016/6/23.
   */
 class Mapping {
-  /*包含的属性：
-  {
-  "mappingSpec": {
-    "type": "regexMapping",
-    "columns": ["date","time","threadId","priority","category","message"],
-    "dimensionsMap":  {
-      "dimensions" : ["date","time","threadId","priority","category","message"]
-    },
-    "pattern": "^(\\d{4}-\\d{2}-\\d{2}) (\\d{2}:\\d{2}:\\d{2},\\d{3}) \\[(.*)\\] ([^ ]*) ([^ ]*) - (.*)$"
-  }
-}
-   */
-
+  var mapType:String = "csvString"
+  var columns: ArrayBuffer[String] = new ArrayBuffer[String]()
+  var dimensions: ArrayBuffer[String] = new ArrayBuffer[String]()
+  var pattern:String = ""
+  var delimiter:Char = ',' //default is ,
 }
