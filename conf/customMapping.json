@@ -2,7 +2,7 @@
   "mappingSpec": {
     "type": "customMapping",
     "dimensionsMap":  {
-      "dimensions" : ["ip","user","timestamp","request","status","length"]
-    },
+      "dimensions" : ["year:string","make:string","model:string","comment:string"]
+    }
   }
 }

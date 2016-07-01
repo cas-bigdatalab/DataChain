@@ -1,9 +1,9 @@
 {
   "mappingSpec": {
     "type": "regexMapping",
-    "columns": ["ip","user","timestamp","request","status","length","referer","user-agent"],
+    "columns": ["ip:string","user:string","timestamp:string","request:string","status:int","length:int","referer:string","user-agent:string"],
     "dimensionsMap":  {
-      "dimensions" : ["ip","user","timestamp","request","status","length","referer"]
+      "dimensions" : ["ip:string","user:string","timestamp:string","request:string","status:int","length:int","referer:string"]
     },
     "pattern": "^([0-9.]+)\\s[\\w.-]+\\s([\\w.-]+)\\s(\\[[^\\[\\]]+\\d+])\\s\"((?:[^\"]|\\\")+)\"\\s(\\d{3})\\s(\\d+|-)\\s\"((?:[^\"]|\\\")+)\"\\s\"((?:[^\"]|\\\")+)\"$"
   }

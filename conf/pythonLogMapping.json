@@ -1,9 +1,9 @@
 {
   "mappingSpec": {
     "type": "regexMapping",
-    "columns": ["asctime","filename","lineno","levelno","levelname","pathname","module","funcName","created","thread","threadName","process","name","message"],
+    "columns": ["asctime:string","filename:string","lineno:int","levelno:int","levelname:string","pathname:string","module:string","funcName:string","created:string","thread:long","threadName:string","process:int","name:string","message:string"],
     "dimensionsMap":  {
-      "dimensions" : ["asctime","filename","lineno","levelno","levelname","pathname","module","funcName","created","thread","threadName","process","name","message"]
+      "dimensions" : ["asctime:string","filename:string","lineno:int","levelno:int","levelname:string","pathname:string","module:string","funcName:string","created:string","thread:long","threadName:string","process:string","name:string","message:string"]
     },
     "pattern": "(\\d+-\\d+-\\d+\\s\\S+)\\s-\\s([^:]+):(\\d+)\\s+-\\s+(\\d+)\\s+(\\w+)\\s+(\\S+)\\s+(\\w+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\w+)\\s+(\\d+)\\s+(\\w+)\\s+-\\s+(.*)"
   }
