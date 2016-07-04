@@ -3,8 +3,9 @@
  */
 
 import java.util.regex.Pattern
-
+import scala.collection.mutable.ArrayBuffer
 import cn.cnic.bigdatalab.transformer.{TMapping, Transformer}
+
 
 object transformerTest {
   def main(agrs: Array[String]): Unit = {
@@ -64,9 +65,30 @@ object transformerTest {
     regexparser = new Transformer(map)
     println("transform result " + regexparser.transform(msg))
 
-    val patternstr = "(\\d+-\\d+-\\d+\\s\\S+)\\s-\\s([^:]+):(\\d+)\\s+-\\s+(\\d+)\\s+(\\w+)\\s+(\\S+)\\s+(\\w+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\w+)\\s+(\\d+)\\s+(\\w+)\\s+-\\s+(.*)"
-    val pattern = Pattern.compile(patternstr)
-    val m = pattern.matcher(msg)
-    println(m.groupCount())
+    //morphlines
+    //json
+    var morphlineFile = "E:\\bigdatalab\\DataChain" + "\\conf\\" + "morphlinesMapping.json"
+    var mortransformer = new Transformer(morphlineFile)
+    var mymsg = ""
+    mymsg = "{\"year\": \"1996\", \"make\": \"jeep\", \"model\": \"Grand Cherokee\", \"comment\": \"MUST SELL! air, moon roof, loaded\", \"blank\": \"4799\"}"//
+    println("msg: " + mymsg)
+    println("morphline parse result: " + mortransformer.transform(mymsg))
+    println("morphline schema: " +  mortransformer.getSchema())
+
+    //csv+tmap
+    morphlineFile = "E:\\bigdatalab\\DataChain" + "\\conf\\" + "morphlinesCSVMapping.json"
+    mymsg = "13457, Coral, Seatttle, 12545"//
+    var dim = new ArrayBuffer[String]()
+    val strArray = "id:int,name:string,city:string,number:int".split(",")
+    for(item <- strArray) dim += item.toString
+    val tmap = new TMapping()
+            .setMapType("morphlinesMapping")
+            .setConf( "E:\\bigdatalab\\DataChain\\conf\\morphlines.csf.conf")
+            .setDimensions(dim)
+    mortransformer = new Transformer(tmap)
+    println("msg: " + mymsg)
+    println("morphline csv result: " + mortransformer.transform(mymsg))
+    println("morphline csv schema: " +  mortransformer.getSchema())
+
   }
 }

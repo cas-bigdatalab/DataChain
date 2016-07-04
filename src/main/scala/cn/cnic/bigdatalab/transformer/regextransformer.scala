@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  * Created by cnic-liliang on 2016/6/13.
  */
 
-class regextransformer(tmap : TMapping) extends common{
+class RegexTransformer(tmap : TMapping) extends TransformerBase{
    val schema = tmap.dimensions
 
    def getSchema():ArrayBuffer[String] = {
