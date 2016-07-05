@@ -1,8 +1,11 @@
 package cn.cnic.bigdatalab.entity
 
+import cn.cnic.bigdatalab.transformer.tools
 import cn.cnic.bigdatalab.utils.PropertyUtil
 
+import scala.collection.mutable.ArrayBuffer
 import scala.tools.nsc.Driver
+import scala.util.parsing.json.JSON
 
 /**
   * Created by Flora on 2016/6/23.
@@ -63,6 +66,46 @@ class Schema {
       i = i + 1
     }
     columnsBuffer.toString
+  }
+
+}
+
+object Schema{
+
+  def parserJson(jsonStr:String, tableName:String):Schema={
+
+    val mapping = JSON.parseFull(jsonStr).get
+    val map: Map[String, Any] = mapping.asInstanceOf[Map[String, Any]].get(tableName).get.asInstanceOf[Map[String, Any]]
+
+    parserMap(map)
+
+  }
+
+  def parserMap(map: Map[String, Any]):Schema={
+
+    val schema = new Schema()
+
+    //val map: Map[String, Any] = mapping.asInstanceOf[Map[String, Any]].get(tableName).get.asInstanceOf[Map[String, Any]]
+
+    //driver
+    assert(!map.get("driver").get.asInstanceOf[String].isEmpty)
+    val driver = map.get("driver").get.asInstanceOf[String]
+
+    //db
+    if(!map.get("db").isEmpty){
+      val db = map.get("db").get.asInstanceOf[String]
+      schema.setDb(db)
+    }
+
+    //table
+    assert(!map.get("table").get.asInstanceOf[String].isEmpty)
+    val table = map.get("table").get.asInstanceOf[String]
+
+    //columns
+    assert(!map.get("columns").get.asInstanceOf[Map[String,String]].isEmpty)
+    val  columns = map.get("columns").get.asInstanceOf[Map[String,String]]
+
+    schema.setDriver(driver).setTable(table).setColumns(columns)
   }
 
 }

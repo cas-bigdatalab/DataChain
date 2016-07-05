@@ -3,6 +3,8 @@ package cn.cnic.bigdatalab.Task
 import cn.cnic.bigdatalab.entity.Schema
 import cn.cnic.bigdatalab.utils.PropertyUtil
 
+import scala.util.parsing.json.JSON
+
 /**
   * Created by duyuanyuan on 2016/6/24.
   */
@@ -139,6 +141,66 @@ class TaskBean() {
 
   def getSparkParams(): Map[String, String] ={
     this.sparkParams
+  }
+
+}
+
+object TaskBean{
+
+  def parseJson(jsonStr: String): TaskBean = {
+
+    val mapping = JSON.parseFull(jsonStr).get
+    val map: Map[String, Any] = mapping.asInstanceOf[Map[String, Any]].get("Task").get.asInstanceOf[Map[String, Any]]
+
+    parseMap(map)
+
+  }
+
+  def parseMap(map: Map[String, Any]): TaskBean ={
+
+    val taskBean: TaskBean = new TaskBean()
+
+    //name
+    assert(!map.get("name").get.asInstanceOf[String].isEmpty)
+    val name = map.get("name").get.asInstanceOf[String]
+
+    //taskType
+    assert(!map.get("taskType").get.asInstanceOf[String].isEmpty)
+    val taskType = map.get("taskType").get.asInstanceOf[String]
+
+    //sql
+    assert(!map.get("sql").get.asInstanceOf[String].isEmpty)
+    val sql = map.get("sql").get.asInstanceOf[String]
+
+    //srcTable
+    assert(!map.get("srcTable").get.asInstanceOf[Map[String, Any]].isEmpty)
+    val srcSchema = Schema.parserMap(map.get("srcTable").get.asInstanceOf[Map[String, Any]])
+
+    //destTable
+    assert(!map.get("destTable").get.asInstanceOf[Map[String, Any]].isEmpty)
+    val destSchema = Schema.parserMap(map.get("destTable").get.asInstanceOf[Map[String, Any]])
+
+
+    taskType match {
+      case "realtime" =>{
+
+        //topic for realtime task
+        assert(!map.get("topic").get.asInstanceOf[String].isEmpty)
+        val topic = map.get("topic").get.asInstanceOf[String]
+
+        taskBean.initRealtime(name,sql,topic,srcSchema,destSchema,"")
+
+      }
+      case "offline" =>{
+        var interval:Long = -1
+        if(!map.get("interval").get.asInstanceOf[String].isEmpty)
+          interval = map.get("interval").get.asInstanceOf[String].toLong
+        taskBean.initOffline(name,sql, srcSchema, destSchema, interval)
+      }
+    }
+
+    taskBean
+
   }
 
 }

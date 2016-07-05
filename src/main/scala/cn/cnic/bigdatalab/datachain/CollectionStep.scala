@@ -17,6 +17,11 @@ class CollectionStep extends Step{
     this
   }
 
+  def initAgent(agent:Agent): CollectionStep ={
+    this.agent = agent
+    this
+  }
+
   def setSource(src:AgentSource): CollectionStep ={
     if (agent != null) agent.setAgentSource(src)
     this

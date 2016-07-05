@@ -1,7 +1,7 @@
 package cn.cnic.bigdatalab.datachain
 
-import cn.cnic.bigdatalab.transformer.Mapping
-import com.github.casbigdatalab.datachain.transformer.Transformer
+import cn.cnic.bigdatalab.transformer.{Transformer, Mapping}
+
 
 /**
   * Created by cnic on 2016/6/21.

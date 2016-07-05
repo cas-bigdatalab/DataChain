@@ -4,8 +4,8 @@ import cn.cnic.bigdatalab.Task.{OfflineTask, RealTimeTask, StoreTask, TaskBean}
 import cn.cnic.bigdatalab.collection.{AgentChannel, AgentSink, AgentSource}
 import cn.cnic.bigdatalab.datachain._
 import cn.cnic.bigdatalab.entity.Schema
-import cn.cnic.bigdatalab.transformer.Mapping
-import cn.cnic.bigdatalab.utils.PropertyUtil
+import cn.cnic.bigdatalab.transformer.{TMapping, Mapping}
+import cn.cnic.bigdatalab.utils.{FileUtil, PropertyUtil}
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 /**
@@ -13,6 +13,9 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite}
   */
 abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll{
 
+  val json_path = PropertyUtil.getPropertyValue("json_path")
+  val agent_json_path = json_path + "/" + "agent.json"
+  val task_json_path = json_path + "/" + "task.json"
   val mapping_conf = "/opt/mappingConf.json"
 
   val sql = "insert into table user select name, age from test"
@@ -75,6 +78,9 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   val hiveColumns = Map("name"->"STRING", "age"->"INT")
   val hiveTable1: String = "test1"
 
+  //transformer mapping
+  val mappingJson = ""
+
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
@@ -115,7 +121,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val sink = new AgentSink(agentSink, kafkaSinkParameters)
 
     //2. Define Mapping
-    val mapping:Mapping = new Mapping()
+    val mapping:TMapping = new TMapping(mappingJson)
 
     //3. Define real Task
     val task = new TaskBean().initRealtime(name, sql, topic, streamingTableSchema, mysqlTableSchema, "mapping")
@@ -147,6 +153,23 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val collectionStep = new CollectionStep().initAgent(agentName,agentHost,agentUsername, agentPassword).setChannel(channel).setSource(source).setSink(sink)
     val taskStep = new TaskStep().setStoreTask(new StoreTask(task))
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+  }
+
+
+  //use json file
+  test("Chain: csv->kafka->realTime->mysql") {
+
+    //1.define Collection
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define real Task
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
 
 
     val chain = new Chain()
