@@ -1,0 +1,28 @@
+{
+  "Task":{
+    "name":"realTimeTask",
+    "taskType":"realtime",
+    "sql":"insert into table user select name, age from test",
+    "topic":"test",
+
+    "srcTable":{
+      "driver":"streaming",
+      "table":"test",
+      "columns":{"id":"Int","name":"String","age":"Int"}
+    },
+
+    "mappingSpec": {
+      "type": "morphlinesMapping",
+      "dimensionsMap":  {
+        "dimensions" : ["year:int","make:string","model:string","comment:string","blank:float"]
+      }
+    },
+
+    "destTable":{
+      "driver":"mysql",
+      "db":"spark",
+      "table":"user",
+      "columns":{"name":"String","age":"Int"}
+    }
+  }
+}

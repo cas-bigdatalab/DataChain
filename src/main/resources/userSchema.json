@@ -1,0 +1,7 @@
+{ "Table":{
+    "driver":"mysql",
+    "db":"spark",
+    "table":"user",
+    "columns":{"name":"String","age":"Int"}
+  }
+}
