@@ -1,5 +1,6 @@
 package cn.cnic.bigdatalab.compute.RealTime
 
+import cn.cnic.bigdatalab.transformer.Transformer
 import cn.cnic.bigdatalab.utils.{FieldTypeUtil, StreamingLogLevels}
 import kafka.serializer.StringDecoder
 import org.apache.spark.rdd.RDD
@@ -42,12 +43,13 @@ object Kafka2SparkStreaming {
     StreamingLogLevels.setStreamingLogLevels()
 
     val conf = new SparkConf().setAppName(appName)
-//      .setMaster("spark://10.0.50.216:7077")
-//      .set("spark.driver.memory", "3g")
-//      .set("spark.executor.memory", "10g")
-//      .set("spark.cores.max", "12")
-//      .set("spark.driver.allowMultipleContexts", "true")
-//      .setJars(List("D:\\DataChain\\classes\\artifacts\\datachain_jar\\datachain.jar"))
+      .setMaster("spark://10.0.71.1:7077")
+      .set("spark.driver.memory", "3g")
+      .set("spark.executor.memory", "10g")
+      .set("spark.cores.max", "12")
+      .set("spark.driver.allowMultipleContexts", "true")
+      .setJars(List("D:\\DataChain\\classes\\artifacts\\datachain_jar\\datachain.jar",
+        "D:\\DataChain\\lib\\mysql-connector-java-5.1.39-bin.jar"))
 
     val sc = new SparkContext(conf)
     val ssc = new StreamingContext(sc, Seconds(duration.toInt))
@@ -79,8 +81,8 @@ object Kafka2SparkStreaming {
       StringDecoder
       ](ssc, kafkaParams, topics, StorageLevel.MEMORY_AND_DISK_SER_2)
 
-    //Create transformer
-//    val transfomer = new Transformer(mapping)
+//    Create transformer
+    @transient val transfomer = new Transformer(mapping)
 
     //Get the messages and execute operations
     val lines = kafkaStream.map(_._2)
@@ -90,14 +92,14 @@ object Kafka2SparkStreaming {
       //Get Row RDD
       val srcRDD = rdd.map(line => {
         //call transformer
-        //val row = transfomer.transform(line)
+        val row = transfomer.transform(line)
 
-        val fields = line.split(",")
-        var row = new ArrayBuffer[Any]()
-        for(i <- 0 until fields.length){
-          val value = FieldTypeUtil.parseDataType(schemas(i).split(":")(1), fields(i).trim)
-          row += value
-        }
+//        val fields = line.split(",")
+//        var row = new ArrayBuffer[Any]()
+//        for(i <- 0 until fields.length){
+//          val value = FieldTypeUtil.parseDataType(schemas(i).split(":")(1), fields(i).trim)
+//          row += value
+//        }
         Row.fromSeq(row.toArray.toSeq)
       })
 
@@ -121,11 +123,11 @@ object Kafka2SparkStreaming {
 
     //mysql test
 //    val createDecTable = """
-//                           |CREATE TEMPORARY TABLE test
+//                           |CREATE TEMPORARY TABLE user
 //                           |USING org.apache.spark.sql.jdbc
 //                           |OPTIONS (
-//                           |  url    'jdbc:mysql://10.0.71.7:3306/test?user=root&password=root',
-//                           |  dbtable     'user1'
+//                           |  url    'jdbc:mysql://10.0.50.216:3306/spark?user=root&password=root',
+//                           |  dbtable     'user'
 //                           |)""".stripMargin
 // mongodb test
 //    val createDecTable = """
@@ -161,9 +163,17 @@ object Kafka2SparkStreaming {
 //        |  soft_commit_secs '5'
 //        |)""".stripMargin
 //    val execSql = """
-//                    |INSERT INTO table test
-//                    |SELECT name, age FROM user
+//                    |INSERT INTO table user
+//                    |SELECT name, age FROM test
 //                  """.stripMargin
+//    val appName = "transformer test"
+//    val duration = "1"
+//    val topics = "test :1"
+//    val kafkaParam = "zookeeper.connect->10.0.71.20:2181,10.0.71.26:2181,10.0.71.27:2181;group.id->test-consumer-group"
+//    val schemaSrc = "id:Int,name :String,age:Int"
+//    val srcName = "test"
+//    val mapping = "D:\\DataChain\\conf\\csvMapping.json"
+//    val sqlType = "mysql"
 
     val appName = args(0)
     val duration = args(1)
@@ -177,7 +187,7 @@ object Kafka2SparkStreaming {
     val sqlType = args(9)
 
     println("create dec table sql:" + createDecTable)
-    println("exec sql:" + createDecTable)
+    println("exec sql:" + execSql)
 
     run(appName, duration, topics, kafkaParam, schemaSrc, srcName, createDecTable, execSql, mapping, sqlType)
   }

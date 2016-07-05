@@ -1,10 +1,10 @@
 {
   "mappingSpec": {
     "type": "csvMapping",
-    "columns": ["year:int","make:string","model:string","comment:string","blank:float"],
+    "columns": ["id:int","name:string","age:int"],
     "delimiter": ",",
     "dimensionsMap":  {
-      "dimensions" : ["year:int","make:string","model:string","comment:float"]
+      "dimensions" : ["id:int","name:string","age:int"]
     }
   }
 }
