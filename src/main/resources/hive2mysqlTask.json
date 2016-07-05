@@ -1,0 +1,27 @@
+{
+  "Task":{
+    "name":"offlineTask",
+    "taskType":"offline",
+    "sql":"insert into table user select name, age from test1",
+
+    "srcTable":{
+      "driver":"hive",
+      "table":"test1",
+      "columns":{"name":"String","age":"Int"}
+    },
+
+    "mappingSpec": {
+      "type": "morphlinesMapping",
+      "dimensionsMap":  {
+        "dimensions" : ["year:int","make:string","model:string","comment:string","blank:float"]
+      }
+    },
+
+    "destTable":{
+      "driver":"mysql",
+      "db":"spark",
+      "table":"user",
+      "columns":{"name":"String","age":"Int"}
+    }
+  }
+}
