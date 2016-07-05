@@ -8,6 +8,7 @@ val hadoopVersion = "2.6.0"
 
 val sparkVersion = "1.6.1"
 
+val kiteVersion = "0.16.0"
 
 libraryDependencies ++=Seq(
   "org.apache.spark" %% "spark-core" % sparkVersion exclude("com.typesafe.akka", "akka-actor_2.10")
@@ -42,7 +43,13 @@ libraryDependencies ++=Seq(
   "org.scalatest" %% "scalatest" % "2.2.1" % "test",
   "org.apache.flume" % "flume-ng-core" % "1.6.0",
   "org.apache.flume" % "flume-ng-sdk" % "1.6.0",
-  "ch.ethz.ganymed" % "ganymed-ssh2" % "build210"
+  "ch.ethz.ganymed" % "ganymed-ssh2" % "build210",
+  "org.kitesdk" % "kite-morphlines-core" % kiteVersion,
+  "org.kitesdk" % "kite-morphlines-avro" % kiteVersion,
+  "org.kitesdk" % "kite-morphlines-hadoop-core" % kiteVersion,
+  "org.kitesdk" % "kite-morphlines-json" % kiteVersion,
+  "org.kitesdk" % "kite-morphlines-solr-cell" % kiteVersion,
+  "org.kitesdk" % "kite-morphlines-solr-core" % kiteVersion
 )
 
 libraryDependencies ++=Seq(
