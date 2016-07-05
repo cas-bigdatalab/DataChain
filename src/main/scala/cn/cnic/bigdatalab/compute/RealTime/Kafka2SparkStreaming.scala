@@ -43,13 +43,13 @@ object Kafka2SparkStreaming {
     StreamingLogLevels.setStreamingLogLevels()
 
     val conf = new SparkConf().setAppName(appName)
-      .setMaster("spark://10.0.71.1:7077")
-      .set("spark.driver.memory", "3g")
-      .set("spark.executor.memory", "10g")
-      .set("spark.cores.max", "12")
-      .set("spark.driver.allowMultipleContexts", "true")
-      .setJars(List("D:\\DataChain\\classes\\artifacts\\datachain_jar\\datachain.jar",
-        "D:\\DataChain\\lib\\mysql-connector-java-5.1.39-bin.jar"))
+//      .setMaster("spark://10.0.71.1:7077")
+//      .set("spark.driver.memory", "3g")
+//      .set("spark.executor.memory", "10g")
+//      .set("spark.cores.max", "12")
+//      .set("spark.driver.allowMultipleContexts", "true")
+//      .setJars(List("D:\\DataChain\\classes\\artifacts\\datachain_jar\\datachain.jar",
+//        "D:\\DataChain\\lib\\mysql-connector-java-5.1.39-bin.jar"))
 
     val sc = new SparkContext(conf)
     val ssc = new StreamingContext(sc, Seconds(duration.toInt))
