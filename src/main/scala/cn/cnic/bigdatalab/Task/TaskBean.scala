@@ -194,10 +194,9 @@ object TaskBean{
 
       }
       case "offline" =>{
-        var interval:Long = -1
-        if(!map.get("interval").get.asInstanceOf[String].isEmpty)
-          interval = map.get("interval").get.asInstanceOf[String].toLong
-        taskBean.initOffline(name,sql, srcSchema, destSchema, interval)
+
+        val interval = map.getOrElse("interval", "-1").asInstanceOf[String]
+        taskBean.initOffline(name,sql, srcSchema, destSchema, interval.toLong)
       }
     }
 

@@ -109,7 +109,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
 
 
-  test("Chain: hive->mysql") {
+  /*test("Chain: hive->mysql") {
 
     //1. Define Task
     val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
@@ -180,6 +180,21 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
+  }*/
+
+  test("Chain By JSON: hive->mysql") {
+
+    //1. Define Task
+
+    val task_json_path = json_path + "/" + "hive2mysqlTask.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean))
+
+    val chain = new Chain()
+    chain.addStep(taskStep).run()
+
+    Thread.sleep(100000)
+
   }
 
 }
