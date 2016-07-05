@@ -4,7 +4,7 @@ import cn.cnic.bigdatalab.Task.{OfflineTask, RealTimeTask, StoreTask, TaskBean}
 import cn.cnic.bigdatalab.collection.{AgentChannel, AgentSink, AgentSource}
 import cn.cnic.bigdatalab.datachain._
 import cn.cnic.bigdatalab.entity.Schema
-import cn.cnic.bigdatalab.transformer.{TMapping, Mapping}
+import cn.cnic.bigdatalab.transformer.{TMapping}
 import cn.cnic.bigdatalab.utils.{FileUtil, PropertyUtil}
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
@@ -111,7 +111,6 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   test("Chain: hive->mysql") {
 
-
     //1. Define Task
     val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
     val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean))
@@ -151,7 +150,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val sink = new AgentSink(agentSink, kafkaSinkParameters)
 
     //2. Define Mapping
-    val mapping:Mapping = new Mapping()
+    val mapping:TMapping = new TMapping()
 
     //3. Define real Task
     val task = new TaskBean().initStore(name, topic, streamingTableSchema, mysqlStoreTableSchema, "mapping")
@@ -168,7 +167,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
 
   //use json file
-  test("Chain: csv->kafka->realTime->mysql") {
+  test("Chain By JSON: csv->kafka->realTime->mysql") {
 
     //1.define Collection
     val agent = FileUtil.agentReader(agent_json_path)

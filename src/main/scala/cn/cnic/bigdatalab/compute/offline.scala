@@ -20,18 +20,6 @@ object Offline {
   def run(createSrcTable : String, srcType:String, createDestTable : String, destType: String, execSql : String) {
 
     val conf = new SparkConf().setAppName("Offline Compute")
-//      .setMaster("spark://172.16.106.3:7077")
-//      .set("spark.driver.memory", "512m")
-//      .set("spark.executor.memory", "1g")
-//      .set("spark.cores.max", "4")
-//      .set("spark.driver.allowMultipleContexts", "true")
-//      .setJars(List("/Project/DataChain/classes/artifacts/datachain_jar/datachain.jar"
-//        "D:\\DataChain\\lib\\mongo-java-driver-2.13.0.jar",
-//        "D:\\DataChain\\lib\\casbah-commons_2.10-2.8.0.jar",
-//        "D:\\DataChain\\lib\\casbah-core_2.10-2.8.0.jar",
-//        "D:\\DataChain\\lib\\casbah-query_2.10-2.8.0.jar",
-//        "D:\\DataChain\\lib\\spark-mongodb_2.10-0.9.3-RC1-SNAPSHOT.jar"
-//      ))
 
     val sc = new SparkContext(conf)
     val sqlContextType:String = if(srcType == "hive" || destType == "hive") "hive" else ""

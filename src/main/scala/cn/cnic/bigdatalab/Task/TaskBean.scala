@@ -190,7 +190,7 @@ object TaskBean{
         assert(!map.get("topic").get.asInstanceOf[String].isEmpty)
         val topic = map.get("topic").get.asInstanceOf[String]
 
-        taskBean.initRealtime(name,sql,topic,srcSchema,destSchema,"")
+        taskBean.initRealtime(name,sql,topic,srcSchema,destSchema,"mapping")
 
       }
       case "offline" =>{

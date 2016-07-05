@@ -20,7 +20,7 @@
       "parameters" : {
         "channels" : "channel1",
         "type" : "spooldir",
-        "spoolDir" : "/opt/flumeSooldir",
+        "spoolDir" : "/opt/flumeSpooldir",
         "fileHeader" : "true"
       }
     },
