@@ -14,8 +14,8 @@ object CustomizedTransformer {
   class CustomizedTransformer(mapping_conf : String) extends TransformerBase {
     println(mapping_conf)
 
-    val jmapping = tools.jsonfile2JsonMap(mapping_conf)
-    val schemaList =tools.jsonMap2SchemaList(jmapping)
+    val jmapping = Tools.jsonfile2JsonMap(mapping_conf)
+    val schemaList =Tools.jsonMap2SchemaList(jmapping)
 
     override def getSchema():ArrayBuffer[String] = {
       var row = ArrayBuffer[String]()
@@ -25,6 +25,7 @@ object CustomizedTransformer {
       }
       row
     }
+
 
     override def transform(msg:String): ArrayBuffer[Any] = {
       val result = new ArrayBuffer[Any]()

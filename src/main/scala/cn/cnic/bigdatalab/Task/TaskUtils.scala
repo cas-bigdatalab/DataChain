@@ -26,7 +26,7 @@ object TaskUtils {
   //topics
   def getTopic(topic: String): String ={
     val params: StringBuffer = new StringBuffer()
-    params.append(topic).append(":").append(1)
+    params.append(topic).append(":").append(3)
     wrapDelimiter(params.toString)
   }
 
@@ -76,6 +76,8 @@ object TaskUtils {
       return wrapDelimiter(SqlUtil.hive(schema))
     }else if(sqlType.equals("hbase")){
       return wrapDelimiter(SqlUtil.hhase(schema))
+    }else if(sqlType.equals("solr")){
+      return wrapDelimiter(SqlUtil.solr(schema))
     }
     null
   }
@@ -85,7 +87,7 @@ object TaskUtils {
 object test{
   def main(args: Array[String]): Unit ={
     val schema = new Schema()
-    schema.setDriver("hbase")
+    schema.setDriver("solr")
     schema.setDb("test")
     schema.setTable("user")
     schema.setColumns(Map("id" -> "Int", "name" -> "String", "age" -> "String"))

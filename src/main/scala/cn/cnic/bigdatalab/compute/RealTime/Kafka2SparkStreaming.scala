@@ -1,7 +1,6 @@
 package cn.cnic.bigdatalab.compute.RealTime
 
 import cn.cnic.bigdatalab.utils.{FieldTypeUtil, StreamingLogLevels}
-import com.github.casbigdatalab.datachain.transformer.Transformer
 import kafka.serializer.StringDecoder
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.hive.HiveContext
@@ -157,9 +156,9 @@ object Kafka2SparkStreaming {
 //        |CREATE TEMPORARY TABLE test
 //        |USING solr
 //        |OPTIONS (
-//        |  zkhost    'jdbc:mysql://10.0.71.7:3306/test?user=root&password=root',
+//        |  zkhost    '10.0.71.14:2181,10.0.71.17:2181,10.0.71.38:2181',
 //        |  collection     'user1',
-//        |  soft_commit_secs
+//        |  soft_commit_secs '5'
 //        |)""".stripMargin
 //    val execSql = """
 //                    |INSERT INTO table test

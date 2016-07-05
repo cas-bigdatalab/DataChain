@@ -9,6 +9,7 @@ import java.util
  */
 
 trait TransformerBase {
+
    def transform(msg:String): ArrayBuffer[Any]
    def getSchema():ArrayBuffer[String]
 }

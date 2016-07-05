@@ -15,6 +15,7 @@ class TMapping(mapconf: String){
   var delimiter:Char = ',' //default is ,
   var conf:String = ""
   var mapjsonconf:String = mapconf
+
   //init
   if(mapjsonconf.length > 0) init(mapjsonconf)
 
@@ -53,7 +54,7 @@ class TMapping(mapconf: String){
   }
 
   def init(mapjson:String) = {
-    val mapping = tools.jsonfile2JsonMap(mapjson)
+    val mapping = Tools.jsonfile2JsonMap(mapjson)
     val map: Map[String, Any] = mapping.asInstanceOf[Map[String, Any]].get("mappingSpec").get.asInstanceOf[Map[String, Any]]
 
     //type
@@ -70,7 +71,7 @@ class TMapping(mapconf: String){
     //columns
     if(map.get("columns").isEmpty == false) {
       var value:ArrayBuffer[String] = new ArrayBuffer[String]()
-      val loccolumns =tools.jsonMap2Columns(mapping)
+      val loccolumns =Tools.jsonMap2Columns(mapping)
       for(item <- loccolumns) value += item.toString
       columns = value
     }
@@ -78,7 +79,7 @@ class TMapping(mapconf: String){
     if(map.get("delimiter").isEmpty == false) delimiter = map.get("delimiter").get.toString.trim.charAt(0)
     //dimensions
     val svalue = new ArrayBuffer[String]()
-    val schemalist = tools.jsonMap2SchemaList(mapping)
+    val schemalist = Tools.jsonMap2SchemaList(mapping)
     for(item <- schemalist) svalue += item.toString
     dimensions = svalue
     //pattern

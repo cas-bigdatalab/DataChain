@@ -34,6 +34,7 @@ class MorphlinesTransformer(tmap : TMapping) extends TransformerBase {
     tmap.dimensions
   }
 
+
   override def transform(msg: String): ArrayBuffer[Any] = {
     collector.reset()
     morphline.process(msg)
