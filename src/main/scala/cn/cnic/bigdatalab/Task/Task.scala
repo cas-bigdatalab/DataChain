@@ -1,8 +1,6 @@
 package cn.cnic.bigdatalab.Task
 
 import cn.cnic.bigdatalab.entity.Schema
-import cn.cnic.bigdatalab.utils.PropertyUtil
-
 
 /**
   * Created by cnic on 2016/6/21.

@@ -1,7 +1,7 @@
 package cn.cnic.bigdatalab.datachain
 
-import cn.cnic.bigdatalab.transformer.{Transformer, Mapping}
-
+import cn.cnic.bigdatalab.transformer.{Transformer, TMapping}
+import cn.cnic.bigdatalab.transformer.{TMapping, Transformer}
 
 /**
   * Created by cnic on 2016/6/21.
@@ -15,7 +15,7 @@ class TransformerStep extends Step{
     transformer
   }
 
-  def setTransformer(mapping:Mapping):TransformerStep ={
+  def setTransformer(mapping:TMapping):TransformerStep ={
 
     if (transformer == null){
       assert(mapping!=null)

@@ -59,4 +59,16 @@ object SqlUtil {
 
   }
 
+  def solr(schema: Schema): String ={
+    val temp = PropertyUtil.getPropertyValue("solr_create_sql")
+    val using = PropertyUtil.getPropertyValue("solr_driver")
+    val zkhost = PropertyUtil.getPropertyValue("solr_zkhost")
+    val columns = schema.getColumns().keySet.mkString("", "," ,"")
+    val solrDbtable = schema.getTable()
+
+    return temp.replace("%tablename%", solrDbtable).replace("%using%", using).
+      replace("%zkhost%", zkhost).replace("%columns%", columns)
+
+  }
+
 }

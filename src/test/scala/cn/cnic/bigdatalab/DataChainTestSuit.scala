@@ -6,6 +6,8 @@ import cn.cnic.bigdatalab.datachain._
 import cn.cnic.bigdatalab.entity.Schema
 import cn.cnic.bigdatalab.transformer.{TMapping}
 import cn.cnic.bigdatalab.utils.{FileUtil, PropertyUtil}
+import cn.cnic.bigdatalab.transformer.TMapping
+import cn.cnic.bigdatalab.utils.PropertyUtil
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
 /**
@@ -20,6 +22,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   val sql = "insert into table user select name, age from test"
   val sql1 = "insert into table user select name, age from test1"
+  val sqlAny = "insert into table user select * from test"
   val topic = "test"
   val name = "test"
   val taskType = "realtime"
@@ -59,6 +62,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   var mongodbTableSchema = new Schema()
   var hiveTableSchema = new Schema()
   var hiveTest1Schema = new Schema()
+  var solrTableSchema = new Schema()
 
   //streaming table schema params
   val streamingTable: String = "test"
@@ -87,6 +91,9 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   //transformer mapping
   val mappingJson = ""
 
+  //solr table schema params
+  val solrTable: String = "user"
+  val solrColumns = Map("id" ->"int", "name"->"string", "age" -> "int")
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
@@ -96,6 +103,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     mongodbTableSchema.setDriver("mongodb").setDb(mongoDatabase).setTable(mongoTable).setColumns(mongoColumns)
     hiveTableSchema.setDriver("hive").setTable(hiveTable).setColumns(hiveColumns)
     hiveTest1Schema.setDriver("hive").setTable(hiveTable1).setColumns(hiveColumns)
+    solrTableSchema.setDriver("solr").setTable(solrTable).setColumns(solrColumns)
 
   }
 
@@ -106,7 +114,6 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
       super.afterAll()
     }
   }
-
 
 
   test("Chain: hive->mysql") {
@@ -150,15 +157,38 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val sink = new AgentSink(agentSink, kafkaSinkParameters)
 
     //2. Define Mapping
-    val mapping:TMapping = new TMapping()
+    val mapping: TMapping = new TMapping()
 
     //3. Define real Task
     val task = new TaskBean().initStore(name, topic, streamingTableSchema, mysqlStoreTableSchema, "mapping")
     //val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
 
 
-    val collectionStep = new CollectionStep().initAgent(agentName,agentHost,agentUsername, agentPassword).setChannel(channel).setSource(source).setSink(sink)
+    val collectionStep = new CollectionStep().initAgent(agentName, agentHost, agentUsername, agentPassword).setChannel(channel).setSource(source).setSink(sink)
     val taskStep = new TaskStep().setStoreTask(new StoreTask(task))
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+  }
+
+  test("Chain: csv->kafka->realTime->solr") {
+
+    //1. Define agent source & sink
+    val channel = new AgentChannel(agentChannel, channelParameters)
+    val source = new AgentSource(agentSource, sourceParameters)
+    val sink = new AgentSink(agentSink, kafkaSinkParameters)
+
+    //2. Define Mapping
+    //    val mapping:TMapping = new TMapping()
+
+    //3. Define real Task
+    val task = new TaskBean().initRealtime(name, sqlAny, topic, streamingTableSchema, solrTableSchema, "mapping")
+
+
+    val collectionStep = new CollectionStep().initAgent(agentName,agentHost,agentUsername, agentPassword).setChannel(channel).setSource(source).setSink(sink)
+
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(task))
 
 
     val chain = new Chain()
