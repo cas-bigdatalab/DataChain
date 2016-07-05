@@ -1,6 +1,6 @@
 package cn.cnic.bigdatalab.entity
 
-import cn.cnic.bigdatalab.transformer.tools
+import cn.cnic.bigdatalab.transformer.Tools
 import cn.cnic.bigdatalab.utils.PropertyUtil
 
 import scala.collection.mutable.ArrayBuffer
