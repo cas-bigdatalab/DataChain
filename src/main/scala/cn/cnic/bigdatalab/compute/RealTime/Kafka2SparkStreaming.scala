@@ -37,12 +37,12 @@ object Kafka2SparkStreaming {
         8 sql type
 
    */
-  def run(duration : String, topic : String, kafkaParam : String,
+  def run(appName: String, duration : String, topic : String, kafkaParam : String,
           schemaSrc : String, srcName : String, createDecTable : String, execSql : String, mapping:String, sqlType: String="") {
 
     StreamingLogLevels.setStreamingLogLevels()
 
-    val conf = new SparkConf().setAppName("RealTime Compute")
+    val conf = new SparkConf().setAppName(appName)
 //      .setMaster("spark://10.0.50.216:7077")
 //      .set("spark.driver.memory", "3g")
 //      .set("spark.executor.memory", "10g")
@@ -166,20 +166,21 @@ object Kafka2SparkStreaming {
 //                    |SELECT name, age FROM user
 //                  """.stripMargin
 
-    val duration = args(0)
-    val topics = args(1)
-    val kafkaParam = args(2)
-    val schemaSrc = args(3)
-    val srcName = args(4)
-    val createDecTable = args(5)
-    val execSql = args(6)
-    val mapping = args(7)
-    val sqlType = args(8)
+    val appName = args(0)
+    val duration = args(1)
+    val topics = args(2)
+    val kafkaParam = args(3)
+    val schemaSrc = args(4)
+    val srcName = args(5)
+    val createDecTable = args(6)
+    val execSql = args(7)
+    val mapping = args(8)
+    val sqlType = args(9)
 
     println("create dec table sql:" + createDecTable)
     println("exec sql:" + createDecTable)
 
-    run(duration, topics, kafkaParam, schemaSrc, srcName, createDecTable, execSql, mapping, sqlType)
+    run(appName, duration, topics, kafkaParam, schemaSrc, srcName, createDecTable, execSql, mapping, sqlType)
   }
 }
 

@@ -8,7 +8,7 @@ import scala.collection.immutable.HashMap
  /**
  * Created by cnic-liliang on 2016/6/12.
  */
-class jsontransformer(tmap : TMapping) extends common {
+class JsonTransformer(tmap : TMapping) extends TransformerBase {
    val schema = tmap.dimensions
 
    def getSchema():ArrayBuffer[String] = {

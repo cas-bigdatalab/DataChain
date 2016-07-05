@@ -35,7 +35,7 @@ object Offline {
 
     val sc = new SparkContext(conf)
     val sqlContextType:String = if(srcType == "hive" || destType == "hive") "hive" else ""
-    val sqlContext = SQLContext.getInstance(sqlContextType,sc)
+    val sqlContext = SelfSQLContext.getInstance(sqlContextType,sc)
 
 
     //Execute SQL tasks

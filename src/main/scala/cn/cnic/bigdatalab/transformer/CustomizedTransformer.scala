@@ -10,8 +10,8 @@ import java.util
  import cn.cnic.bigdatalab.utils.FieldTypeUtil
 
  // example about defining customized_parser
-object customized_transformer {
-  class customized_transformer(mapping_conf : String) extends common {
+object CustomizedTransformer {
+  class CustomizedTransformer(mapping_conf : String) extends TransformerBase {
     println(mapping_conf)
 
     val jmapping = tools.jsonfile2JsonMap(mapping_conf)
@@ -25,6 +25,7 @@ object customized_transformer {
       }
       row
     }
+
     override def transform(msg:String): ArrayBuffer[Any] = {
       val result = new ArrayBuffer[Any]()
       //extract and assembl
@@ -40,7 +41,7 @@ object customized_transformer {
   def main(agrs: Array[String]): Unit = {
     val mapping_conf = "conf\\" + "customMapping.json"
     val msg = "custom-defined-message"
-    val customparser = new Transformer(new customized_transformer(mapping_conf))
+    val customparser =new CustomizedTransformer(mapping_conf)
     println("msg: " + msg)
     println("parse result: : " + customparser.transform((msg)))
   }

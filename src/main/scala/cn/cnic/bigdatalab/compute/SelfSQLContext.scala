@@ -7,7 +7,7 @@ import org.apache.spark.sql.hive.HiveContext
 /**
   * Created by xjzhu on 16/6/24.
   */
-object SQLContext {
+object SelfSQLContext {
 
   def getInstance(sqlType : String, sparkContext : SparkContext): SQLContext = sqlType.toLowerCase() match {
     case "hive" => HiveSQLContextSingleton.getInstance(sparkContext)
