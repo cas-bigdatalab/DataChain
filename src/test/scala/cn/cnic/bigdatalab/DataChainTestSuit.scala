@@ -115,7 +115,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   }
 
 
-  test("Chain: hive->mysql") {
+  /*test("Chain: hive->mysql") {
 
     //1. Define Task
     val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
@@ -192,7 +192,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
-  }
+  }*/
 
 
   //use json file
@@ -211,10 +211,11 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
+    Thread.sleep(100000)
   }
 
 
-  test("Chain By JSON: hive->mysql") {
+  /*test("Chain By JSON: hive->mysql") {
 
     //1. Define Task
 
@@ -227,7 +228,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     Thread.sleep(100000)
 
-  }
+  }*/
 
 
 }

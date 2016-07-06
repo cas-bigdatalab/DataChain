@@ -85,17 +85,17 @@ class AgentScheduler(agent: Agent) {
     Process(Seq("bash","-c",command)).!*/
 
     val command: StringBuffer = new StringBuffer()
-    /*command.append("cd ").append(PropertyUtil.getPropertyValue("flume_home")).append(";")
+    command.append("cd ").append(PropertyUtil.getPropertyValue("flume_home")).append(";")
       .append("./bin/flume-ng agent --conf conf ")
       .append("--conf-file conf/").append(getConfFileName()).append(" ")
       .append("--name ").append(agent.getName()).append(" ")
-      .append("-Dflume.root.logger=INFO,console")*/
+      .append("> "+ PropertyUtil.getPropertyValue("flume_log_dir") + " 2>&1 &")
 
     //command.append("cd ").append(PropertyUtil.getPropertyValue("flume_home")).append(";")
-      .append("/bin/bash " + PropertyUtil.getPropertyValue("flume_home") + "/bin/flume-ng agent --conf conf ")
+     /* .append("/bin/bash " + PropertyUtil.getPropertyValue("flume_home") + "/bin/flume-ng agent --conf conf ")
       .append("--conf-file "+ PropertyUtil.getPropertyValue("flume_home")+ "/conf/").append(getConfFileName()).append(" ")
       .append("--name ").append(agent.getName()).append(" ")
-      .append("> "+ PropertyUtil.getPropertyValue("flume_log_dir") + " 2>&1 &")
+      .append("> "+ PropertyUtil.getPropertyValue("flume_log_dir") + " 2>&1 &")*/
 
     println(command.toString)
 
