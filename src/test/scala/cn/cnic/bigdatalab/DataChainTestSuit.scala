@@ -230,7 +230,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   }
 
-  /*test("Chain By Json: csv->kafka->store") {
+  test("Chain By Json: csv->kafka->store") {
 
     //1.define Collection
     val agent_json_path = json_path + "/" + "agent.json"
@@ -238,17 +238,15 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val collectionStep = new CollectionStep().initAgent(agent)
 
     //3. Define store Task
-    val task = new TaskBean().initStore(name, topic, streamingTableSchema, mysqlStoreTableSchema, "mapping")
-    //val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
-
-
-    val collectionStep = new CollectionStep().initAgent(agentName, agentHost, agentUsername, agentPassword).setChannel(channel).setSource(source).setSink(sink)
-    val taskStep = new TaskStep().setStoreTask(new StoreTask(task))
-
+    val task_json_path = json_path + "/" + "storeTask.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setStoreTask(new StoreTask(taskBean))
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
-  }*/
+
+    Thread.sleep(100000)
+  }
 
 }
 

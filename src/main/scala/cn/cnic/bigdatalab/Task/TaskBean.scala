@@ -200,10 +200,6 @@ object TaskBean{
     assert(!map.get("taskType").get.asInstanceOf[String].isEmpty)
     val taskType = map.get("taskType").get.asInstanceOf[String]
 
-    //sql
-    assert(!map.get("sql").get.asInstanceOf[String].isEmpty)
-    val sql = map.get("sql").get.asInstanceOf[String]
-
     //srcTable
     assert(!map.get("srcTable").get.asInstanceOf[Map[String, Any]].isEmpty)
     //val srcSchema = Schema.parserMap(map.get("srcTable").get.asInstanceOf[Map[String, Any]])
@@ -218,6 +214,10 @@ object TaskBean{
     taskType match {
       case "realtime" =>{
 
+        //sql
+        assert(!map.get("sql").get.asInstanceOf[String].isEmpty)
+        val sql = map.get("sql").get.asInstanceOf[String]
+
         //topic for realtime task
         assert(!map.get("topic").get.asInstanceOf[String].isEmpty)
         val topic = map.get("topic").get.asInstanceOf[String]
@@ -227,10 +227,22 @@ object TaskBean{
       }
       case "offline" =>{
 
+        //sql
+        assert(!map.get("sql").get.asInstanceOf[String].isEmpty)
+        val sql = map.get("sql").get.asInstanceOf[String]
+
+        //interval
         val interval = map.getOrElse("interval", "-1").asInstanceOf[String]
 
         taskBean.initOfflineMultiSchema(name,sql, srcSchemaList:::destSchemaList, interval.toLong)
 
+      }
+      case "store" =>{
+        //topic for realtime task
+        assert(!map.get("topic").get.asInstanceOf[String].isEmpty)
+        val topic = map.get("topic").get.asInstanceOf[String]
+
+        taskBean.initStore(name, topic, srcSchemaList(0), destSchemaList(0), "mapping")
       }
     }
 
