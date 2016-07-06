@@ -38,7 +38,7 @@ object TransformerCreater {
   }
 }
 
-class Transformer(transform: TransformerBase) {
+class Transformer(transform: TransformerBase) extends Serializable{
 
   def this(mapping: String) = {
     this(TransformerCreater.creater(mapping))
