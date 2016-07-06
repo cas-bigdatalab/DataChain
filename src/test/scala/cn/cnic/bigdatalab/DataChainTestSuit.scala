@@ -16,8 +16,7 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite}
 abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll{
 
   val json_path = PropertyUtil.getPropertyValue("json_path")
-  val agent_json_path = json_path + "/" + "agent.json"
-  val task_json_path = json_path + "/" + "task.json"
+
   val mapping_conf = "/opt/mappingConf.json"
 
   val sql = "insert into table user select name, age from test"
@@ -200,10 +199,12 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   test("Chain By JSON: csv->kafka->realTime->mysql") {
 
     //1.define Collection
+    val agent_json_path = json_path + "/" + "agent.json"
     val agent = FileUtil.agentReader(agent_json_path)
     val collectionStep = new CollectionStep().initAgent(agent)
 
     //2. Define real Task
+    val task_json_path = json_path + "/" + "task.json"
     val taskBean = FileUtil.taskReader(task_json_path)
     val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
 
@@ -217,7 +218,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     //1. Define Task
 
-    val task_json_path = json_path + "/" + "hive2mysqlTask.json"
+    val task_json_path = json_path + "/" + "multiTableTask.json"
     val taskBean = FileUtil.taskReader(task_json_path)
     val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean))
 

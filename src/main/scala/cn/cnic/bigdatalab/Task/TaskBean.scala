@@ -62,6 +62,36 @@ class TaskBean() {
 
   }
 
+  def initOfflineMultiSchema(name: String, sql: String, schemaList: List[Schema], interval: Long = -1): TaskBean ={
+    this.taskType = "offline"
+    this.interval = interval
+
+    //  init common params
+    init(name, taskType)
+
+
+    //init temporary table description
+    var contextType = ""
+    val temporaryTableDesc :StringBuilder = new StringBuilder()
+    for(index <- 0 to schemaList.length - 2){
+      val schema = schemaList(index)
+      temporaryTableDesc.append(TaskUtils.getCreateTableSqlNoWrap(schema)).append(PropertyUtil.getPropertyValue("create_sql_separator"))
+      if(schema.getDriver() == "hive" )
+        contextType = "hive"
+    }
+    temporaryTableDesc.append(TaskUtils.getCreateTableSqlNoWrap(schemaList(schemaList.length-1)))
+
+    //init app params
+    this.appParams = List(
+      TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
+      TaskUtils.wrapDelimiter(sql),
+      TaskUtils.wrapDelimiter(contextType)
+    )
+
+    this
+
+  }
+
   def initStore(name: String, topic: String, srcSchema: Schema, destSchema: Schema, mapping:String): TaskBean ={
     this.taskType = "store"
     val sql = "insert into table " + destSchema.getTable() + " select * from " + srcSchema.getTable()
@@ -176,11 +206,13 @@ object TaskBean{
 
     //srcTable
     assert(!map.get("srcTable").get.asInstanceOf[Map[String, Any]].isEmpty)
-    val srcSchema = Schema.parserMap(map.get("srcTable").get.asInstanceOf[Map[String, Any]])
+    //val srcSchema = Schema.parserMap(map.get("srcTable").get.asInstanceOf[Map[String, Any]])
+    val srcSchemaList : List[Schema] = Schema.parseMapList(map.get("srcTable").get.asInstanceOf[Map[String, Any]])
 
     //destTable
     assert(!map.get("destTable").get.asInstanceOf[Map[String, Any]].isEmpty)
-    val destSchema = Schema.parserMap(map.get("destTable").get.asInstanceOf[Map[String, Any]])
+    //val destSchema = Schema.parserMap(map.get("destTable").get.asInstanceOf[Map[String, Any]])
+    val destSchemaList : List[Schema] = Schema.parseMapList(map.get("destTable").get.asInstanceOf[Map[String, Any]])
 
 
     taskType match {
@@ -190,13 +222,15 @@ object TaskBean{
         assert(!map.get("topic").get.asInstanceOf[String].isEmpty)
         val topic = map.get("topic").get.asInstanceOf[String]
 
-        taskBean.initRealtime(name,sql,topic,srcSchema,destSchema,"mapping")
+        taskBean.initRealtime(name,sql,topic,srcSchemaList(0),destSchemaList(0),"mapping")
 
       }
       case "offline" =>{
 
         val interval = map.getOrElse("interval", "-1").asInstanceOf[String]
-        taskBean.initOffline(name,sql, srcSchema, destSchema, interval.toLong)
+
+        taskBean.initOfflineMultiSchema(name,sql, srcSchemaList:::destSchemaList, interval.toLong)
+
       }
     }
 

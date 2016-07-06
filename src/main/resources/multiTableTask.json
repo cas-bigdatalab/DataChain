@@ -1,0 +1,41 @@
+{
+  "Task":{
+    "name":"multiTableTask",
+    "taskType":"offline",
+    "sql":"insert into table user2 select test1.name, test1.age, test2.sex from test1,test2 where test1.name=test2.name",
+
+    "srcTable":{
+
+      "table1":{
+        "driver":"hive",
+        "table":"test1",
+        "columns":{"name":"String","age":"Int"}
+      },
+
+      "table2":{
+        "driver":"hive",
+        "table":"test2",
+        "columns":{"name":"String","sex":"String"}
+      }
+
+    },
+
+    "mappingSpec": {
+      "type": "morphlinesMapping",
+      "dimensionsMap":  {
+        "dimensions" : ["year:int","make:string","model:string","comment:string","blank:float"]
+      }
+    },
+
+    "destTable":{
+
+      "table1":{
+        "driver":"mysql",
+        "db":"spark",
+        "table":"user2",
+        "columns":{"name":"String","age":"Int", "sex":"String"}
+      }
+
+    }
+  }
+}

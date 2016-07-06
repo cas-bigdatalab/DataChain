@@ -1,6 +1,6 @@
 package cn.cnic.bigdatalab.compute
 
-import cn.cnic.bigdatalab.utils.{FieldTypeUtil, StreamingLogLevels}
+import cn.cnic.bigdatalab.utils.{PropertyUtil, FieldTypeUtil, StreamingLogLevels}
 import kafka.serializer.StringDecoder
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
@@ -17,7 +17,7 @@ import scala.collection.mutable.ArrayBuffer
   */
 object Offline {
 
-  def run(createSrcTable : String, srcType:String, createDestTable : String, destType: String, execSql : String) {
+  /*def run(createSrcTable : String, srcType:String, createDestTable : String, destType: String, execSql : String) {
 
     val conf = new SparkConf().setAppName("Offline Compute")
 
@@ -79,25 +79,40 @@ object Offline {
     println("Dest Table Type : " + destType)
     println("Sql statement: " + execSql)
 
-
-
-//    val createSrcTable = """
-//                           |CREATE TABLE IF NOT EXISTS test(
-//                           |name STRING, age INT
-//                           |)""".stripMargin
-//
-//    val createDestTable = """
-//                           |CREATE TEMPORARY TABLE user
-//                           |USING org.apache.spark.sql.jdbc
-//                           |OPTIONS (
-//                           |  url    'jdbc:mysql://172.16.106.3:3306/spark?user=root&password=root',
-//                           |  dbtable     'user'
-//                           |)""".stripMargin
-//
-//    val execSql = """Insert into user Select * from test"""
-
-
     run(createSrcTable, "hive", createDestTable, "mysql", execSql)
+  }*/
+
+  def run(temporaryTableDesc : String, execSql : String, contextType: String) {
+
+    val conf = new SparkConf().setAppName("Offline Compute")
+
+    //get sql context
+    val sc = new SparkContext(conf)
+    val sqlContext = SelfSQLContext.getInstance(contextType,sc)
+
+    //Execute SQL tasks
+    val tableDescList = temporaryTableDesc.split("#-#")
+    for( tableDesc <- tableDescList){
+      sqlContext.sql(tableDesc)
+    }
+
+    sqlContext.sql(execSql)
+
+  }
+
+  def main(args: Array[String]): Unit = {
+
+    val temporaryTableDesc = args(0)
+    val execSql = args(1)
+    val contextType = args(2)
+
+
+    println("TableDest : " + temporaryTableDesc)
+    println("Sql statement: " + execSql)
+    println("Context Type : " + contextType)
+
+
+    run(temporaryTableDesc , execSql, contextType)
   }
 
 

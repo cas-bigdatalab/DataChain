@@ -1,10 +1,7 @@
 package cn.cnic.bigdatalab.entity
 
-import cn.cnic.bigdatalab.transformer.Tools
-import cn.cnic.bigdatalab.utils.PropertyUtil
 
-import scala.collection.mutable.ArrayBuffer
-import scala.tools.nsc.Driver
+import scala.collection.mutable.ListBuffer
 import scala.util.parsing.json.JSON
 
 /**
@@ -106,6 +103,22 @@ object Schema{
     val  columns = map.get("columns").get.asInstanceOf[Map[String,String]]
 
     schema.setDriver(driver).setTable(table).setColumns(columns)
+  }
+
+  def parseMapList(map: Map[String, Any]) : List[Schema]={
+
+    val schemaListBuffer : ListBuffer[Schema] = new ListBuffer[Schema]()
+
+    //val schemaList : ArrayList[Schema] = new ArrayList[Schema]()
+
+    map.keys.foreach(key => {
+      val schemaMap = map.get(key).get.asInstanceOf[Map[String,Any]]
+      val sc = parserMap(schemaMap)
+      schemaListBuffer.append(sc)
+    })
+
+    schemaListBuffer.toList.asInstanceOf[List[Schema]]
+
   }
 
 }

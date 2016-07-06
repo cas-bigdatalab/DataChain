@@ -2,11 +2,7 @@ package cn.cnic.bigdatalab.utils
 
 import cn.cnic.bigdatalab.Task.TaskBean
 import cn.cnic.bigdatalab.collection.{AgentSink, AgentChannel, AgentSource, Agent}
-import cn.cnic.bigdatalab.entity.Schema
-import cn.cnic.bigdatalab.transformer.Tools
 
-import scala.collection.immutable.HashMap
-import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 import scala.util.parsing.json.JSON
 

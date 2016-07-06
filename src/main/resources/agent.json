@@ -1,8 +1,8 @@
 {"Agent":
   {
-    "agentHost" :"10.0.50.216",
+    "agentHost" :"10.0.71.32",
     "agentUsername" : "root",
-    "agentPassword" : "bigdata",
+    "agentPassword" : "root",
     "agentName" : "spoolAgent",
 
     "agentChannel" : {
@@ -30,7 +30,7 @@
       "parameters":{
         "channel" : "channel1",
         "type" : "org.apache.flume.sink.kafka.KafkaSink",
-        "brokerList" : "10.0.50.216:9092",
+        "brokerList" : "10.0.71.32:9092",
         "topic" : "test"
       }
     }

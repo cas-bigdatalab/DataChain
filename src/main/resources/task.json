@@ -6,9 +6,11 @@
     "topic":"test",
 
     "srcTable":{
-      "driver":"streaming",
-      "table":"test",
-      "columns":{"id":"Int","name":"String","age":"Int"}
+      "table1":{
+        "driver":"streaming",
+        "table":"test",
+        "columns":{"id":"Int","name":"String","age":"Int"}
+      }
     },
 
     "mappingSpec": {
@@ -19,10 +21,13 @@
     },
 
     "destTable":{
-      "driver":"mysql",
-      "db":"spark",
-      "table":"user",
-      "columns":{"name":"String","age":"Int"}
+      "table1":{
+        "driver":"mysql",
+        "db":"spark",
+        "table":"user",
+        "columns":{"name":"String","age":"Int"}
+      }
+
     }
   }
 }

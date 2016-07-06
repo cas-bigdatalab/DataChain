@@ -82,6 +82,22 @@ object TaskUtils {
     null
   }
 
+  def getCreateTableSqlNoWrap(schema: Schema): String ={
+    val sqlType = schema.getDriver()
+    if(sqlType.equals("mysql")){
+      return SqlUtil.mysql(schema)
+    }else if(sqlType.equals("mongo")){
+      return SqlUtil.mongo(schema)
+    }else if(sqlType.equals("hive") || sqlType.equals("impala")){
+      return SqlUtil.hive(schema)
+    }else if(sqlType.equals("hbase")){
+      return SqlUtil.hhase(schema)
+    }else if(sqlType.equals("solr")){
+      return SqlUtil.solr(schema)
+    }
+    null
+  }
+
 }
 
 object test{
