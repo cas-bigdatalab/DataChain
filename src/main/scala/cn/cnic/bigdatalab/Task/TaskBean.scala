@@ -42,6 +42,34 @@ class TaskBean() {
 
   }
 
+  def initRealtime(name: String, sql: String, topic: String, srcSchema: Schema, destSchema: List[Schema], mapping:String): TaskBean ={
+    this.taskType = "realtime"
+
+    //init common params
+    init(name, taskType)
+
+    //init temporary table description
+    var contextType = ""
+    val temporaryTableDesc :StringBuilder = new StringBuilder()
+    for(index <- 0 to destSchema.length - 2){
+      val schema = destSchema(index)
+      temporaryTableDesc.append(TaskUtils.getCreateTableSqlNoWrap(schema)).append(PropertyUtil.getPropertyValue("create_sql_separator"))
+      if(schema.getDriver() == "hive" )
+        contextType = "hive"
+    }
+    if (contextType.equals("")) contextType = destSchema(destSchema.length-1).getDriver()
+    temporaryTableDesc.append(TaskUtils.getCreateTableSqlNoWrap(destSchema(destSchema.length-1)))
+
+    //init app params
+    this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
+      TaskUtils.getKafkaParams(), TaskUtils.getSchemaColumns(srcSchema),
+      TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
+      TaskUtils.wrapDelimiter(sql), mapping, TaskUtils.wrapDelimiter(contextType))
+
+    this
+
+  }
+
   def initOffline(name: String, sql: String, srcSchema: Schema, destSchema: Schema, interval: Long = -1): TaskBean ={
     this.taskType = "offline"
     this.interval = interval
@@ -205,6 +233,9 @@ object TaskBean{
     //val srcSchema = Schema.parserMap(map.get("srcTable").get.asInstanceOf[Map[String, Any]])
     val srcSchemaList : List[Schema] = Schema.parseMapList(map.get("srcTable").get.asInstanceOf[Map[String, Any]])
 
+    assert(!map.get("mapping").get.asInstanceOf[String].isEmpty)
+    val mapping = map.get("mapping").get.asInstanceOf[String]
+
     //destTable
     assert(!map.get("destTable").get.asInstanceOf[Map[String, Any]].isEmpty)
     //val destSchema = Schema.parserMap(map.get("destTable").get.asInstanceOf[Map[String, Any]])
@@ -222,7 +253,7 @@ object TaskBean{
         assert(!map.get("topic").get.asInstanceOf[String].isEmpty)
         val topic = map.get("topic").get.asInstanceOf[String]
 
-        taskBean.initRealtime(name,sql,topic,srcSchemaList(0),destSchemaList(0),"mapping")
+        taskBean.initRealtime(name,sql,topic,srcSchemaList(0), destSchemaList, mapping)
 
       }
       case "offline" =>{

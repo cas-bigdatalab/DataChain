@@ -136,7 +136,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val mapping:TMapping = new TMapping(mappingJson)
 
     //3. Define real Task
-    val task = new TaskBean().initRealtime(name, sql, topic, streamingTableSchema, mysqlTableSchema, "mapping")
+    val task = new TaskBean().initRealtime(name, sql, topic, streamingTableSchema, mysqlTableSchema, "D:\\DataChain\\conf\\csvMapping.json")
     //val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
 
 
@@ -159,7 +159,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val mapping: TMapping = new TMapping()
 
     //3. Define real Task
-    val task = new TaskBean().initStore(name, topic, streamingTableSchema, mysqlStoreTableSchema, "mapping")
+    val task = new TaskBean().initStore(name, topic, streamingTableSchema, mysqlStoreTableSchema, "D:\\DataChain\\conf\\csvMapping.json")
     //val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
 
 
@@ -182,7 +182,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     //    val mapping:TMapping = new TMapping()
 
     //3. Define real Task
-    val task = new TaskBean().initRealtime(name, sqlAny, topic, streamingTableSchema, solrTableSchema, "mapping")
+    val task = new TaskBean().initRealtime(name, sqlAny, topic, streamingTableSchema, solrTableSchema, "D:\\DataChain\\conf\\csvMapping.json")
 
 
     val collectionStep = new CollectionStep().initAgent(agentName,agentHost,agentUsername, agentPassword).setChannel(channel).setSource(source).setSink(sink)
@@ -230,12 +230,14 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   }
 
+
   test("Chain By Json: csv->kafka->store") {
 
     //1.define Collection
     val agent_json_path = json_path + "/" + "agent.json"
     val agent = FileUtil.agentReader(agent_json_path)
     val collectionStep = new CollectionStep().initAgent(agent)
+
 
     //3. Define store Task
     val task_json_path = json_path + "/" + "storeTask.json"
@@ -247,6 +249,24 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     Thread.sleep(100000)
   }
+
+  //use json file
+  test("Chain By JSON: csv->kafka->realTime->mysql") {
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define real Task
+    val task_json_path = json_path + "/" + "realtimeMultiTableTask.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+  }
+
 
 }
 

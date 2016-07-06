@@ -108,7 +108,11 @@ object Kafka2SparkStreaming {
       srcDataFrame.registerTempTable(srcName)
 
      //Execute SQL tasks
-      sqlContext.sql(createDecTable)
+//      sqlContext.sql(createDecTable)
+     val tableDescList = createDecTable.split("#-#")
+      for( tableDesc <- tableDescList){
+        sqlContext.sql(tableDesc)
+      }
       sqlContext.sql(execSql)
 
     })
