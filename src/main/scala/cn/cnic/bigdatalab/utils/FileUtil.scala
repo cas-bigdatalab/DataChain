@@ -33,7 +33,7 @@ object FileUtil {
   }
 
   def taskReader(taskPath:String): TaskBean = {
-    //val taskPath = Thread.currentThread().getContextClassLoader.getResource("task.json").getPath
+    //val taskPath = Thread.currentThread().getContextClassLoader.getResource("realTimeTask.json").getPath
     val taskBean = TaskBean.parseJson(fileReader(taskPath))
     taskBean
   }
@@ -51,7 +51,7 @@ object FileUtil {
     val agent = Agent.parseJson(fileReader(agentPath))*/
 
     //task
-    val taskPath = Thread.currentThread().getContextClassLoader.getResource("task.json").getPath
+    val taskPath = Thread.currentThread().getContextClassLoader.getResource("realTimeTask.json").getPath
     val realtimeTaskBean = TaskBean.parseJson(fileReader(taskPath))
 
     realtimeTaskBean.getName()
