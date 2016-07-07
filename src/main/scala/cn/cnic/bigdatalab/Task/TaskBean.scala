@@ -64,7 +64,7 @@ class TaskBean() {
     this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
       TaskUtils.getKafkaParams(), TaskUtils.getSchemaColumns(srcSchema),
       TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
-      TaskUtils.wrapDelimiter(sql), mapping, TaskUtils.wrapDelimiter(contextType))
+      TaskUtils.wrapDelimiter(sql), mapping, TaskUtils.getSqlType(contextType))
 
     this
 

@@ -3,7 +3,7 @@
     "name":"HbaseTask",
     "taskType":"realtime",
     "topic":"test",
-    "sql":"insert into table user select name, age from test",
+    "sql":"insert into table hbase_user select * from test",
 
     "srcTable":{
 
@@ -22,7 +22,7 @@
       "table1":{
         "driver":"hbase",
         "table":"hbase_user",
-        "columns":{"name":"String","age":"Int"}
+        "columns":{"id":"Int","name":"String","age":"Int"}
       }
     }
   }
