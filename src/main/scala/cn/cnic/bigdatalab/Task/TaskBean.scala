@@ -51,14 +51,14 @@ class TaskBean() {
     //init temporary table description
     var contextType = ""
     val temporaryTableDesc :StringBuilder = new StringBuilder()
-    for(index <- 0 to destSchema.length - 2){
+
+    for(index <- 0 until destSchema.length){
       val schema = destSchema(index)
       temporaryTableDesc.append(TaskUtils.getCreateTableSqlNoWrap(schema)).append(PropertyUtil.getPropertyValue("create_sql_separator"))
-      if(schema.getDriver() == "hive" )
+      if(TaskUtils.getSqlType(schema.getDriver()).equals("hive") )
         contextType = "hive"
     }
-    if (contextType.equals("")) contextType = destSchema(destSchema.length-1).getDriver()
-    temporaryTableDesc.append(TaskUtils.getCreateTableSqlNoWrap(destSchema(destSchema.length-1)))
+    temporaryTableDesc.delete(temporaryTableDesc.length - PropertyUtil.getPropertyValue("create_sql_separator").length, temporaryTableDesc.length)
 
     //init app params
     this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
@@ -99,21 +99,21 @@ class TaskBean() {
 
 
     //init temporary table description
-    var contextType = ""
+    var contextType = "other"
     val temporaryTableDesc :StringBuilder = new StringBuilder()
-    for(index <- 0 to schemaList.length - 2){
+    for(index <- 0 until schemaList.length){
       val schema = schemaList(index)
       temporaryTableDesc.append(TaskUtils.getCreateTableSqlNoWrap(schema)).append(PropertyUtil.getPropertyValue("create_sql_separator"))
-      if(schema.getDriver() == "hive" )
+      if(TaskUtils.getSqlType(schema.getDriver()).equals("hive") )
         contextType = "hive"
     }
-    temporaryTableDesc.append(TaskUtils.getCreateTableSqlNoWrap(schemaList(schemaList.length-1)))
+    temporaryTableDesc.delete(temporaryTableDesc.length - PropertyUtil.getPropertyValue("create_sql_separator").length, temporaryTableDesc.length)
 
     //init app params
     this.appParams = List(
       TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
       TaskUtils.wrapDelimiter(sql),
-      TaskUtils.wrapDelimiter(contextType)
+      TaskUtils.getSqlType(contextType)
     )
 
     this
@@ -233,8 +233,6 @@ object TaskBean{
     //val srcSchema = Schema.parserMap(map.get("srcTable").get.asInstanceOf[Map[String, Any]])
     val srcSchemaList : List[Schema] = Schema.parseMapList(map.get("srcTable").get.asInstanceOf[Map[String, Any]])
 
-    assert(!map.get("mapping").get.asInstanceOf[String].isEmpty)
-    val mapping = map.get("mapping").get.asInstanceOf[String]
 
     //destTable
     assert(!map.get("destTable").get.asInstanceOf[Map[String, Any]].isEmpty)
@@ -252,6 +250,10 @@ object TaskBean{
         //topic for realtime task
         assert(!map.get("topic").get.asInstanceOf[String].isEmpty)
         val topic = map.get("topic").get.asInstanceOf[String]
+
+        //mapping
+        assert(!map.get("mapping").get.asInstanceOf[String].isEmpty)
+        val mapping = map.get("mapping").get.asInstanceOf[String]
 
         taskBean.initRealtime(name,sql,topic,srcSchemaList(0), destSchemaList, mapping)
 
@@ -272,6 +274,10 @@ object TaskBean{
         //topic for realtime task
         assert(!map.get("topic").get.asInstanceOf[String].isEmpty)
         val topic = map.get("topic").get.asInstanceOf[String]
+
+        //mapping
+        assert(!map.get("mapping").get.asInstanceOf[String].isEmpty)
+        val mapping = map.get("mapping").get.asInstanceOf[String]
 
         taskBean.initStore(name, topic, srcSchemaList(0), destSchemaList(0), mapping)
       }

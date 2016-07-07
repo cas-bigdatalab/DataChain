@@ -195,42 +195,64 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   }*/
 
 
-  //use json file
-  test("Chain By JSON: csv->kafka->realTime->mysql") {
-
-    //1.define Collection
-    val agent_json_path = json_path + "/" + "agent.json"
-    val agent = FileUtil.agentReader(agent_json_path)
-    val collectionStep = new CollectionStep().initAgent(agent)
-
-    //2. Define real Task
-    val task_json_path = json_path + "/" + "realtime/realTimeTask.json"
-    val taskBean = FileUtil.taskReader(task_json_path)
-    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
 
 
-    val chain = new Chain()
-    chain.addStep(collectionStep).addStep(taskStep).run()
-    Thread.sleep(100000)
-  }
 
-
+  /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Store~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
   test("Chain By JSON: hive->mysql") {
 
     //1. Define Task
 
-    val task_json_path = json_path + "/" + "offlineTask.json"
+    val task_json_path = json_path + "/" + "offline/" + "offlineTask_hive2mysql.json"
     val taskBean = FileUtil.taskReader(task_json_path)
     val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean))
 
     val chain = new Chain()
     chain.addStep(taskStep).run()
 
-    Thread.sleep(100000)
+  }
+
+  test("Chain By JSON: mysql->mongo") {
+
+    //1. Define Task
+
+    val task_json_path = json_path + "offline/" + "offlineTask_mysql2mongo.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean))
+
+    val chain = new Chain()
+    chain.addStep(taskStep).run()
+
+  }
+
+  test("Chain By JSON: mysql->solr") {
+
+    //1. Define Task
+
+    val task_json_path = json_path + "offline/" + "offlineTask_mysql2solr.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean))
+
+    val chain = new Chain()
+    chain.addStep(taskStep).run()
+
+  }
+
+  test("Chain By JSON: mysql->hbase") {
+
+    //1. Define Task
+
+    val task_json_path = json_path + "offline/" + "offlineTask_mysql2hbase.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean))
+
+    val chain = new Chain()
+    chain.addStep(taskStep).run()
 
   }
 
 
+  /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Store~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
   test("Chain By Json: csv->kafka->store") {
 
     //1.define Collection
@@ -247,7 +269,26 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
 
-    Thread.sleep(100000)
+  }
+
+
+  /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~RealTime~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+  //use json file
+  test("Chain By JSON: csv->kafka->realTime->mysql") {
+
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define real Task
+    val task_json_path = json_path + "/" + "realtime/realTimeTask.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
   }
 
   //use json file
