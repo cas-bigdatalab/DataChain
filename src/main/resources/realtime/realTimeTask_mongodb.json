@@ -1,0 +1,30 @@
+{
+  "Task":{
+    "name":"MongoDBTask",
+    "taskType":"realtime",
+    "topic":"test",
+    "sql":"insert into table user select name, age from test",
+
+    "srcTable":{
+
+      "table1":{
+        "driver":"streaming",
+        "table":"test",
+        "columns":{"id":"Int","name":"String","age":"Int"}
+      }
+
+    },
+
+    "mapping":"/opt/csvMapping.json",
+
+    "destTable":{
+
+      "table1":{
+        "driver":"mongo",
+        "db":"test",
+        "table":"user",
+        "columns":{"name":"String","age":"Int"}
+      }
+    }
+  }
+}

@@ -204,7 +204,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val collectionStep = new CollectionStep().initAgent(agent)
 
     //2. Define real Task
-    val task_json_path = json_path + "/" + "realTimeTask.json"
+    val task_json_path = json_path + "/" + "realtime/realTimeTask.json"
     val taskBean = FileUtil.taskReader(task_json_path)
     val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
 
@@ -258,7 +258,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val collectionStep = new CollectionStep().initAgent(agent)
 
     //2. Define real Task
-    val task_json_path = json_path + "/" + "realtimeMultiTableTask.json"
+    val task_json_path = json_path + "/realtime/" + "realTimeMultiTableTask.json"
     val taskBean = FileUtil.taskReader(task_json_path)
     val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
 
@@ -267,6 +267,73 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     chain.addStep(collectionStep).addStep(taskStep).run()
   }
 
+  //use json file
+  test("Chain By JSON: csv->kafka->realTime->hive") {
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define real Task
+    val task_json_path = json_path + "/realtime/" + "realTimeTask_hive.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+  }
+
+  //use json file
+  test("Chain By JSON: csv->kafka->realTime->solr") {
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define real Task
+    val task_json_path = json_path + "/realtime/" + "realTimeTask_solr.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+  }
+
+//  use json file
+  test("Chain By JSON: csv->kafka->realTime->mongodb") {
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define real Task
+    val task_json_path = json_path + "/realtime/" + "realTimeTask_mongodb.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+  }
+
+  //use json file
+  test("Chain By JSON: csv->kafka->realTime->hbase") {
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define real Task
+    val task_json_path = json_path + "/realtime/" + "realTimeTask_hbase.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+  }
 
 }
 

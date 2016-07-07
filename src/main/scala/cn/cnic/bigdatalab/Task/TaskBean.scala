@@ -273,7 +273,7 @@ object TaskBean{
         assert(!map.get("topic").get.asInstanceOf[String].isEmpty)
         val topic = map.get("topic").get.asInstanceOf[String]
 
-        taskBean.initStore(name, topic, srcSchemaList(0), destSchemaList(0), "mapping")
+        taskBean.initStore(name, topic, srcSchemaList(0), destSchemaList(0), mapping)
       }
     }
 

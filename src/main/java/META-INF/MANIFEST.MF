@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: spark-assembly-1.6.1-hadoop2.6.0.jar scala-library-2.11.8.
- jar
-Main-Class: com.cnic.datachain.dataparser.Test
-

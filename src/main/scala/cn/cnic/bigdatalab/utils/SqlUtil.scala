@@ -27,7 +27,7 @@ object SqlUtil {
       columns.append(key).append(" ").append(value).append(", ")
     }
     columns.delete(columns.length()-2, columns.length()-1)
-    return temp.replace("%columns%", columns.toString).replace("%using%", using).replace("%host%", host).replace("%db%", db).replace("%table%", dbtable).stripMargin
+    return temp.replace("%columns%", columns.toString).replace("%using%", using).replace("%host%", host).replace("%db%", db).replaceAll("%tablename%", dbtable).stripMargin
   }
 
   def hive(schema: Schema): String ={
