@@ -9,6 +9,9 @@ import cn.cnic.bigdatalab.utils.{FileUtil, PropertyUtil}
 import cn.cnic.bigdatalab.transformer.TMapping
 import cn.cnic.bigdatalab.utils.PropertyUtil
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
+import org.apache.hadoop.hive.conf.HiveConf
+import org.apache.hadoop.security.authentication.util.KerberosName
+import org.apache.hadoop.mapred.JobConf
 
 /**
   * Created by xjzhu@cnic.cn on 2016/6/20.
@@ -195,6 +198,8 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   }*/
 
 
+/*  //use json file
+  test("Chain By JSON: csv->kafka->realTime->mysql") {
 
 
 
@@ -368,6 +373,23 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     //2. Define real Task
     val task_json_path = json_path + "/realtime/" + "realTimeTask_hbase.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+  }*/
+
+  //use json file
+  test("Chain By JSON: csv->kafka->realTime->impala") {
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define real Task
+    val task_json_path = json_path + "/realtime/" + "realTimeTask_impala.json"
     val taskBean = FileUtil.taskReader(task_json_path)
     val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
 
