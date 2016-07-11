@@ -49,7 +49,7 @@ class TaskBean() {
     init(name, taskType)
 
     //init temporary table description
-    var contextType = ""
+    var contextType = "other"
     val temporaryTableDesc :StringBuilder = new StringBuilder()
 
     for(index <- 0 until destSchema.length){

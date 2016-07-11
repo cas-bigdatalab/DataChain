@@ -78,6 +78,8 @@ object TaskUtils {
       return wrapDelimiter(SqlUtil.hhase(schema))
     }else if(sqlType.equals("solr")){
       return wrapDelimiter(SqlUtil.solr(schema))
+    }else if(sqlType.equals("memcache")){
+      return wrapDelimiter(SqlUtil.memcache(schema))
     }
     null
   }
@@ -94,6 +96,8 @@ object TaskUtils {
       return SqlUtil.hhase(schema)
     }else if(sqlType.equals("solr")){
       return SqlUtil.solr(schema)
+    }else if(sqlType.equals("memcache")){
+      return SqlUtil.memcache(schema)
     }
     null
   }

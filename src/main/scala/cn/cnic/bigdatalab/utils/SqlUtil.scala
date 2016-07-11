@@ -71,4 +71,15 @@ object SqlUtil {
 
   }
 
+  def memcache(schema: Schema): String = {
+    val temp = PropertyUtil.getPropertyValue("memcache_create_sql")
+    val using = PropertyUtil.getPropertyValue("memcache_driver")
+    val address = PropertyUtil.getPropertyValue("memcache_address")
+    val columns = schema.columnsToString()
+    val memDbtable = schema.getTable()
+
+    return  temp.replaceAll("%tablename%", memDbtable).replace("%using%", using).
+      replace("%address%", address).replace("%columns%", columns)
+  }
+
 }
