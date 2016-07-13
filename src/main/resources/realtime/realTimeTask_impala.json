@@ -3,7 +3,7 @@
     "name":"ImpalaTask",
     "taskType":"realtime",
     "topic":"test",
-    "sql":"insert into table user select name, age from test",
+    "sql":"insert into table hive_user select name, age from test",
 
     "srcTable":{
 
@@ -21,7 +21,7 @@
 
       "table1":{
         "driver":"impala",
-        "table":"user",
+        "table":"hive_user",
         "columns":{"name":"String","age":"Int"}
       }
     }

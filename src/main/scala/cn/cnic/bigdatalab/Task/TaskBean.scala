@@ -34,8 +34,7 @@ class TaskBean() {
 
     //init app params
     this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
-      TaskUtils.getKafkaParams(), TaskUtils.getSchemaColumns(srcSchema),
-      TaskUtils.getSchemaName(srcSchema), TaskUtils.getCreateTableSql(destSchema),
+      TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.getCreateTableSql(destSchema),
       TaskUtils.wrapDelimiter(sql), mapping, TaskUtils.getSqlType(destSchema.getDriver()))
 
     this
@@ -62,8 +61,7 @@ class TaskBean() {
 
     //init app params
     this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
-      TaskUtils.getKafkaParams(), TaskUtils.getSchemaColumns(srcSchema),
-      TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
+      TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
       TaskUtils.wrapDelimiter(sql), mapping, TaskUtils.getSqlType(contextType))
 
     this
@@ -129,8 +127,7 @@ class TaskBean() {
 
     //init app params
     this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
-      TaskUtils.getKafkaParams(), TaskUtils.getSchemaColumns(srcSchema),
-      TaskUtils.getSchemaName(srcSchema), TaskUtils.getCreateTableSql(destSchema),
+      TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.getCreateTableSql(destSchema),
       TaskUtils.wrapDelimiter(sql), mapping, TaskUtils.getSqlType(destSchema.getDriver()))
 
     this

@@ -12,8 +12,6 @@ import org.apache.spark.streaming.kafka.KafkaUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext, Time}
 import org.apache.spark.{SparkConf, SparkContext}
 
-import scala.collection.mutable.ArrayBuffer
-
 
 /**
   * Created by duyuanyuan on 2016/6/12.
@@ -29,16 +27,15 @@ object Kafka2SparkStreaming {
   args: 0 数据流的时间间隔
         1 kafka Topic
         2 kafka param
-        3 schema
-        4 src schema name
-        5 Create Table Sql
-        6 Execute Sql
-        7 transformer
-        8 sql type
+        3 src schema name
+        4 Create Table Sql
+        5 Execute Sql
+        6 transformer
+        7 sql type
 
    */
   def run(appName: String, duration : String, topic : String, kafkaParam : String,
-          schemaSrc : String, srcName : String, createDecTable : String, execSql : String, mapping:String, sqlType: String="") {
+          srcName : String, createDecTable : String, execSql : String, mapping:String, sqlType: String="") {
 
     StreamingLogLevels.setStreamingLogLevels()
 
@@ -64,10 +61,12 @@ object Kafka2SparkStreaming {
         (a(0), a(1))
       }.toMap
 
+    // Create transformer
+    @transient val transfomer = new Transformer(mapping)
+
     // Generate the schema based on the string of schema
     var fields : Array[StructField] = Array[StructField]()
-    val schemas = schemaSrc.replaceAll(" ", "").split(",")
-    for (field <- schemas) {
+    for (field <- transfomer.getSchema()) {
       val Array(fieldName, fieldType) = field.split(":")
       fields = DataTypes.createStructField(fieldName, FieldTypeUtil.stringToDataType(fieldType), true) +: fields
     }
@@ -81,16 +80,13 @@ object Kafka2SparkStreaming {
       StringDecoder
       ](ssc, kafkaParams, topics, StorageLevel.MEMORY_AND_DISK_SER_2)
 
-//    Create transformer
-    @transient val transfomer = new Transformer(mapping)
-
     //Get the messages and execute operations
     val lines = kafkaStream.map(_._2)
     lines.foreachRDD((rdd: RDD[String], time: Time) => {
       val sqlContext = getSqlContext(sqlType, rdd.sparkContext)
 
       //Get Row RDD
-      val srcRDD = rdd.map(line => {
+      val srcRDD = rdd.filter(_!="").map(line => {
         //call transformer
         val row = transfomer.transform(line)
 
@@ -183,17 +179,16 @@ object Kafka2SparkStreaming {
     val duration = args(1)
     val topics = args(2)
     val kafkaParam = args(3)
-    val schemaSrc = args(4)
-    val srcName = args(5)
-    val createDecTable = args(6)
-    val execSql = args(7)
-    val mapping = args(8)
-    val sqlType = args(9)
+    val srcName = args(4)
+    val createDecTable = args(5)
+    val execSql = args(6)
+    val mapping = args(7)
+    val sqlType = args(8)
 
     println("create dec table sql:" + createDecTable)
     println("exec sql:" + execSql)
 
-    run(appName, duration, topics, kafkaParam, schemaSrc, srcName, createDecTable, execSql, mapping, sqlType)
+    run(appName, duration, topics, kafkaParam, srcName, createDecTable, execSql, mapping, sqlType)
   }
 }
 

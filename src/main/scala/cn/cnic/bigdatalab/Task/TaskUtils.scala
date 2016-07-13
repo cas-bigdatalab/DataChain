@@ -1,7 +1,13 @@
 package cn.cnic.bigdatalab.Task
 
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.util.Locale
+
 import cn.cnic.bigdatalab.entity.Schema
 import cn.cnic.bigdatalab.utils.{PropertyUtil, SqlUtil}
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 
 /**
   * Created by Flora on 2016/6/23.
@@ -113,5 +119,6 @@ object test{
     schema.setColumns(Map("id" -> "Int", "name" -> "String", "age" -> "String"))
 //    println(TaskUtils.getSchemaColumns(schema))
     println(TaskUtils.getCreateTableSql(schema))
+
   }
 }

@@ -1,8 +1,11 @@
 package cn.cnic.bigdatalab.utils
 
+import java.text.SimpleDateFormat
+
 import org.apache.spark.sql.types.{DataType, DataTypes}
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import java.sql.Timestamp
 
 /**
   * Created by duyuanyuan on 2016/6/13.
@@ -22,6 +25,7 @@ object FieldTypeUtil {
     case "null" => DataTypes.NullType
     case "short" => DataTypes.ShortType
     case "timestamp" => DataTypes.TimestampType
+    case "datetype" => DataTypes.DateType
 //    case "calendarinterval" => DataTypes.CalendarIntervalType
     case _ => throw new IllegalArgumentException("field could not find the matched DataType.")
   }
@@ -38,7 +42,9 @@ object FieldTypeUtil {
     case "long" => value.toLong
     case "null" => None
     case "short" => value.toShort
-    case "timestamp" => DateTime.parse(value, DateTimeFormat.forPattern("yyyy-MM-dd H:mm:ss"))
+    case "timestamp" => new Timestamp(new SimpleDateFormat(
+      "yyyy-MM-dd HH:mm:ss").parse(value).getTime())
+    case "datetype" => new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(value)
     //    case "calendarinterval" => DataTypes.CalendarIntervalType
     case _ => throw new IllegalArgumentException("field could not parse data type.")
   }
