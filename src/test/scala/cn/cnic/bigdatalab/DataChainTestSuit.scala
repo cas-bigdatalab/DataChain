@@ -9,9 +9,6 @@ import cn.cnic.bigdatalab.utils.{FileUtil, PropertyUtil}
 import cn.cnic.bigdatalab.transformer.TMapping
 import cn.cnic.bigdatalab.utils.PropertyUtil
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
-import org.apache.hadoop.hive.conf.HiveConf
-import org.apache.hadoop.security.authentication.util.KerberosName
-import org.apache.hadoop.mapred.JobConf
 
 /**
   * Created by xjzhu@cnic.cn on 2016/6/20.
@@ -118,7 +115,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   }
 
 
-  /*test("Chain: hive->mysql") {
+  test("Chain: hive->mysql") {
 
     //1. Define Task
     val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
@@ -195,12 +192,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
-  }*/
-
-
-/*  //use json file
-  test("Chain By JSON: csv->kafka->realTime->mysql") {
-
+  }
 
 
   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Store~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -297,7 +289,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   }
 
   //use json file
-  test("Chain By JSON: csv->kafka->realTime->mysql") {
+  test("Chain By JSON: csv->kafka->realTime->mysqlMultiTable") {
     //1.define Collection
     val agent_json_path = json_path + "/" + "agent.json"
     val agent = FileUtil.agentReader(agent_json_path)
@@ -347,6 +339,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     chain.addStep(collectionStep).addStep(taskStep).run()
   }
 
+
 //  use json file
   test("Chain By JSON: csv->kafka->realTime->mongodb") {
     //1.define Collection
@@ -379,40 +372,41 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
-  }*/
+  }
+
 
   //use json file
-//  test("Chain By JSON: csv->kafka->realTime->impala") {
-//    //1.define Collection
-//    val agent_json_path = json_path + "/" + "agent.json"
-//    val agent = FileUtil.agentReader(agent_json_path)
-//    val collectionStep = new CollectionStep().initAgent(agent)
-//
-//    //2. Define real Task
-//    val task_json_path = json_path + "/realtime/" + "realTimeTask_impala.json"
-//    val taskBean = FileUtil.taskReader(task_json_path)
-//    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
-//
-//
-//    val chain = new Chain()
-//    chain.addStep(collectionStep).addStep(taskStep).run()
-//  }
+  test("Chain By JSON: csv->kafka->realTime->impala") {
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
 
-  //use json file
+    //2. Define real Task
+    val task_json_path = json_path + "/realtime/" + "realTimeTask_impala.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+  }
+
+ //use json file
   test("Chain By JSON: csv->kafka->realTime->memcache") {
     //1.define Collection
-//    val agent_json_path = json_path + "/" + "agent.json"
-//    val agent = FileUtil.agentReader(agent_json_path)
-//    val collectionStep = new CollectionStep().initAgent(agent)
+    val agent_json_path = json_path + "/" + "agent.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
 
     //2. Define real Task
     val task_json_path = json_path + "/realtime/" + "realTimeTask_memcache.json"
     val taskBean = FileUtil.taskReader(task_json_path)
-    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean)).run
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
 
 
-//    val chain = new Chain()
-//    chain.addStep(collectionStep).addStep(taskStep).run()
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
   }
 
 }
@@ -420,3 +414,6 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 class DataChainTestSuit extends AbstractDataChainTestSuit{
 
 }
+
+
+
