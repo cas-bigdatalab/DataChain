@@ -1,9 +1,16 @@
 {
   "mappingSpec": {
     "type": "regexMapping",
-    "columns": ["ip:string","user:string","timestamp:string","request:string","status:int","length:int","referer:string","user-agent:string"],
+    "columns": ["ip:string","user:string","timestamp:timestamp","request:string","status:int","length:int","referer:string","user-agent:string"],
     "dimensionsMap":  {
-      "dimensions" : ["ip:string","user:string","timestamp:string","request:string","status:int","length:int","referer:string"]
+      "dimensions" : ["ip:string","user:string","timestamp:timestamp","request:string","status:int","length:int","referer:string"],
+      "convertTimestamp": {
+        "field": "timestamp",
+        "inputFormats": "dd/MM/yyyy:HH:mm:ss Z",
+        "inputTimezone": "UTC",
+        "outputFormat": "yyyy-MM-dd'T'HH:mm:ss Z",
+        "outputTimezone": "UTC"
+      }
     },
     "pattern": "^([0-9.]+)\\s[\\w.-]+\\s([\\w.-]+)\\s(\\[[^\\[\\]]+\\d+])\\s\"((?:[^\"]|\\\")+)\"\\s(\\d{3})\\s(\\d+|-)\\s\"((?:[^\"]|\\\")+)\"\\s\"((?:[^\"]|\\\")+)\"$"
   }

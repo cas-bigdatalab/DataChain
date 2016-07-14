@@ -30,7 +30,7 @@ morphlines: [
       }
       {
         grok {
-          dictionaryFiles: [/opt/apache-flume-1.6.0-bin/conf/grok-dictionaries/grok-patterns]
+          dictionaryFiles: [conf/grok-dictionaries/grok-patterns]
           expressions: {
             message: """%{IPORHOST:log_host} - %{USER:log_user} \[%{HTTPDATE:log_date}\] \"%{DATA:log_http_method} %{DATA:log_url_path} %{DATA:log_http_version}\" %{NONNEGINT:log_http_code} %{DATA:log_bytes_returned}"""
           }
