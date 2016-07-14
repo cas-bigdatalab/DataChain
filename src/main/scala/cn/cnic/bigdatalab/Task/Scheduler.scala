@@ -40,8 +40,8 @@ trait Scheduler{
 
 //    Process(Seq("bash","-c", deployCmd)).!
 
-//    SshUtil.exec(deployCmd, PropertyUtil.getPropertyValue("spark_host"), PropertyUtil.getPropertyValue("spark_host_user"),
-//      PropertyUtil.getPropertyValue("spark_host_password"))
+    SshUtil.exec(deployCmd, PropertyUtil.getPropertyValue("spark_host"), PropertyUtil.getPropertyValue("spark_host_user"),
+      PropertyUtil.getPropertyValue("spark_host_password"))
 
   }
 }
