@@ -1,0 +1,13 @@
+{
+  "mappingSpec": {
+    "type": "csvMapping",
+    "columns": ["filename:String","filepath:String","lastmodified:timestamp", "length:Int"],
+    "delimiter": ",",
+    "dimensionsMap":  {
+      "dimensions" : ["filename:String","filepath:String","lastmodified:timestamp", "length:Int"]
+    }
+  }
+}
+
+
+

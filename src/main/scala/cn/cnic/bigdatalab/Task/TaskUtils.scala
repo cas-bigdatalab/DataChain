@@ -32,7 +32,7 @@ object TaskUtils {
   //topics
   def getTopic(topic: String): String ={
     val params: StringBuffer = new StringBuffer()
-    params.append(topic).append(":").append(3)
+    params.append(topic).append(":").append(1)
     wrapDelimiter(params.toString)
   }
 
