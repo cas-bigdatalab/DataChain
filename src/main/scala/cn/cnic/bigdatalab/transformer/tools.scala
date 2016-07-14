@@ -97,7 +97,7 @@ object tools{
     regexstr
   }
 
-  def valueDataType(typeName: String, srcValue:String, tmap:TMapping):Any =
+  def valueDataType(typeName: String, srcValue:String, tmap:TransformerMapping):Any =
     typeName match {
       case "timestamp" => {
         var timestamp:String = srcValue.trim

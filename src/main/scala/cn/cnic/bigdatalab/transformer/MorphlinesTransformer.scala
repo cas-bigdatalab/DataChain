@@ -12,7 +12,7 @@ import scala.collection.mutable.ArrayBuffer
  * Created by cnic-liliang on 2016/7/1.
  */
 
-class MorphlinesTransformer(tmap : TMapping) extends TransformerBase {
+class MorphlinesTransformer(tmap : TransformerMapping) extends TransformerBase {
   println(tmap.conf)
   val morphlineFile = tmap.conf
   val morphline:MorphlineHandlerImpl = new MorphlineHandlerImpl()
