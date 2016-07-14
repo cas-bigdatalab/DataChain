@@ -1,21 +1,23 @@
 package cn.cnic.bigdatalab.transformer
 
-import org.apache.spark.sql.types.MapType
-
+import scala.collection.mutable.HashMap
 import scala.collection.mutable.ArrayBuffer
 /**
   * Created by Flora on 2016/6/23.
   */
 
-class TMapping(mapconf: String) extends Serializable{
+class TMapping(mapconf: String){
   var mapType:String = "csvString"
   var columns: ArrayBuffer[String] = new ArrayBuffer[String]()
   var dimensions: ArrayBuffer[String] = new ArrayBuffer[String]()
+  var convertTimestamp:HashMap[String, String] = new HashMap[String, String]()
   var pattern:String = ""
   var delimiter:Char = ',' //default is ,
   var conf:String = ""
-  var mapjsonconf:String = mapconf
 
+  var multiline:Boolean = false
+
+  var mapjsonconf:String = mapconf
   //init
   if(mapjsonconf.length > 0) init(mapjsonconf)
 
@@ -53,8 +55,13 @@ class TMapping(mapconf: String) extends Serializable{
     this
   }
 
+  def setMultilines(ismultiline:Boolean):TMapping = {
+    multiline = ismultiline
+    this
+  }
+
   def init(mapjson:String) = {
-    val mapping = Tools.jsonfile2JsonMap(mapjson)
+    val mapping = tools.jsonfile2JsonMap(mapjson)
     val map: Map[String, Any] = mapping.asInstanceOf[Map[String, Any]].get("mappingSpec").get.asInstanceOf[Map[String, Any]]
 
     //type
@@ -71,7 +78,7 @@ class TMapping(mapconf: String) extends Serializable{
     //columns
     if(map.get("columns").isEmpty == false) {
       var value:ArrayBuffer[String] = new ArrayBuffer[String]()
-      val loccolumns =Tools.jsonMap2Columns(mapping)
+      val loccolumns =tools.jsonMap2Columns(mapping)
       for(item <- loccolumns) value += item.toString
       columns = value
     }
@@ -79,9 +86,18 @@ class TMapping(mapconf: String) extends Serializable{
     if(map.get("delimiter").isEmpty == false) delimiter = map.get("delimiter").get.toString.trim.charAt(0)
     //dimensions
     val svalue = new ArrayBuffer[String]()
-    val schemalist = Tools.jsonMap2SchemaList(mapping)
+    val schemalist = tools.jsonMap2SchemaList(mapping)
     for(item <- schemalist) svalue += item.toString
     dimensions = svalue
+    //convertTimestamp
+    val convert = tools.jsonMap2ConvertTimestamp(mapping)
+    if(convert.nonEmpty) {
+      convertTimestamp.put("field", convert.get.asInstanceOf[Map[String, Any]].get("field").get.toString)
+      convertTimestamp.put("inputFormats", convert.get.asInstanceOf[Map[String, Any]].get("inputFormats").get.toString)
+      convertTimestamp.put("inputTimezone", convert.get.asInstanceOf[Map[String, Any]].get("inputTimezone").get.toString)
+      convertTimestamp.put("outputFormat", convert.get.asInstanceOf[Map[String, Any]].get("outputFormat").get.toString)
+      convertTimestamp.put("outputTimezone", convert.get.asInstanceOf[Map[String, Any]].get("outputTimezone").get.toString)
+    }
     //pattern
     if(map.get("pattern").isEmpty == false) pattern = map.get("pattern").get.toString
     //
