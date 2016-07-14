@@ -4,9 +4,7 @@ import cn.cnic.bigdatalab.Task.{OfflineTask, RealTimeTask, StoreTask, TaskBean}
 import cn.cnic.bigdatalab.collection.{AgentChannel, AgentSink, AgentSource}
 import cn.cnic.bigdatalab.datachain._
 import cn.cnic.bigdatalab.entity.Schema
-import cn.cnic.bigdatalab.transformer.{TMapping}
 import cn.cnic.bigdatalab.utils.{FileUtil, PropertyUtil}
-import cn.cnic.bigdatalab.transformer.TMapping
 import cn.cnic.bigdatalab.utils.PropertyUtil
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
@@ -96,13 +94,13 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    streamingTableSchema.setDriver("streaming").setTable(streamingTable).setColumns(streamingColumns)
+    /*streamingTableSchema.setDriver("streaming").setTable(streamingTable).setColumns(streamingColumns)
     mysqlStoreTableSchema.setDriver("mysql").setDb(mysqlStoreDB).setTable(mysqlStoreTable).setColumns(mysqlStoreColumns)
     mysqlTableSchema.setDriver("mysql").setDb(mysqlDB).setTable(mysqlTable).setColumns(mysqlColumns)
     mongodbTableSchema.setDriver("mongodb").setDb(mongoDatabase).setTable(mongoTable).setColumns(mongoColumns)
     hiveTableSchema.setDriver("hive").setTable(hiveTable).setColumns(hiveColumns)
     hiveTest1Schema.setDriver("hive").setTable(hiveTable1).setColumns(hiveColumns)
-    solrTableSchema.setDriver("solr").setTable(solrTable).setColumns(solrColumns)
+    solrTableSchema.setDriver("solr").setTable(solrTable).setColumns(solrColumns)*/
 
   }
 
@@ -115,7 +113,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   }
 
 
-  test("Chain: hive->mysql") {
+  /*test("Chain: hive->mysql") {
 
     //1. Define Task
     val taskBean = new TaskBean().initOffline(name, sql1, hiveTest1Schema, mysqlTableSchema)
@@ -133,7 +131,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val sink = new AgentSink(agentSink, kafkaSinkParameters)
 
     //2. Define Mapping
-    val mapping:TMapping = new TMapping(mappingJson)
+    val mapping:TransformerMapping = new TransformerMapping(mappingJson)
 
     //3. Define real Task
     val task = new TaskBean().initRealtime(name, sql, topic, streamingTableSchema, mysqlTableSchema, "D:\\DataChain\\conf\\csvMapping.json")
@@ -156,7 +154,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val sink = new AgentSink(agentSink, kafkaSinkParameters)
 
     //2. Define Mapping
-    val mapping: TMapping = new TMapping()
+    val mapping: TransformerMapping = new TransformerMapping()
 
     //3. Define real Task
     val task = new TaskBean().initStore(name, topic, streamingTableSchema, mysqlStoreTableSchema, "D:\\DataChain\\conf\\csvMapping.json")
@@ -192,12 +190,12 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
-  }
+  }*/
 
 
-  //Store
+  /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~offline~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
   test("Chain By JSON: hive->mysql") {
-
     //1. Define Task
 
     val task_json_path = json_path + "/" + "offline/" + "offlineTask_hive2mysql.json"
@@ -232,7 +230,6 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(taskStep).run()
-
   }
 
   test("Chain By JSON: mysql->hbase") {
@@ -248,6 +245,8 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   }
 
+
+  /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Store~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
   test("Chain By Json: csv->kafka->store") {
 
     //1.define Collection
@@ -267,6 +266,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   }
 
 
+  /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~RealTime~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
   //use json file
   test("Chain By JSON: csv->kafka->realTime->mysql") {
 
@@ -419,6 +419,24 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
+  }
+
+  /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~数学所~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+  test("Chain finance: csv->kafka->realtime->solr") {
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define store Task
+    val task_json_path = json_path + "/store/" + "finance_news2solr.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setStoreTask(new StoreTask(taskBean))
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+
   }
 
 }

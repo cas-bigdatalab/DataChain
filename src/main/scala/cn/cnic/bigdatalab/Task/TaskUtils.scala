@@ -9,6 +9,8 @@ import cn.cnic.bigdatalab.utils.{PropertyUtil, SqlUtil}
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
+import scala.collection.mutable.ArrayBuffer
+
 /**
   * Created by Flora on 2016/6/23.
   */
@@ -38,13 +40,16 @@ object TaskUtils {
 
   //schema columns
   def getSchemaColumns(schema: Schema): String = {
-    val params: StringBuffer = new StringBuffer()
+   /* val params: StringBuffer = new StringBuffer()
     val columns = schema.getColumns()
     for((key, value) <- columns){
       params.append(key).append(":").append(value).append(",")
     }
     params.deleteCharAt(params.length()-1)
-    wrapDelimiter(params.toString)
+    wrapDelimiter(params.toString)*/
+    val columns = schema.getColumns()
+    val columnsStr = columns.mkString(",")
+    wrapDelimiter(columnsStr)
   }
 
   //spark streaming duration
@@ -116,7 +121,8 @@ object test{
     schema.setDriver("solr")
     schema.setDb("test")
     schema.setTable("user")
-    schema.setColumns(Map("id" -> "Int", "name" -> "String", "age" -> "String"))
+    //schema.setColumns(Map("id" -> "Int", "name" -> "String", "age" -> "String"))
+    schema.setColumns(ArrayBuffer("id:Int","news_id:String", "url:String","page_count:Int", "resource:String","pub_time:String","title:String","text:String"))
 //    println(TaskUtils.getSchemaColumns(schema))
     println(TaskUtils.getCreateTableSql(schema))
 

@@ -4,6 +4,7 @@ import akka.actor._
 import akka.actor.Props
 import akka.util.Timeout
 
+import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import cn.cnic.bigdatalab.entity.Schema
@@ -98,7 +99,8 @@ object SchedulerTest{
     schema.setDriver("mongo")
     schema.setDb("test")
     schema.setTable("user")
-    schema.setColumns(Map("id" -> "Int", "name" -> "String", "age" -> "String"))
+    schema.setColumns(ArrayBuffer("id:Int","name:String", "age:String"))
+    //schema.setColumns(Map("id" -> "Int", "name" -> "String", "age" -> "String"))
 
     val sql = "select * from user"
 
@@ -113,7 +115,7 @@ object SchedulerTest{
     schema1.setDriver("mongo")
     schema1.setDb("test1")
     schema1.setTable("user1")
-    schema1.setColumns(Map("id" -> "Int", "name" -> "String", "age" -> "String"))
+    schema1.setColumns(ArrayBuffer("id:Int","name:String", "age:String"))
 
     val sql1 = "select * from user"
 

@@ -1,6 +1,8 @@
 package cn.cnic.bigdatalab.utils
 
+import java.sql.Timestamp
 import java.text.SimpleDateFormat
+import java.util.Locale
 
 import org.apache.spark.sql.types.{DataType, DataTypes}
 import org.joda.time.DateTime
@@ -47,5 +49,14 @@ object FieldTypeUtil {
     case "datetype" => new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(value)
     //    case "calendarinterval" => DataTypes.CalendarIntervalType
     case _ => throw new IllegalArgumentException("field could not parse data type.")
+  }
+
+  def main(agrs: Array[String]): Unit ={
+
+    val value = "1995-12-31 23:59:59"
+    val sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+    val dt = sdf.parse(value)
+    val ts = new Timestamp(dt.getTime)
+    print(ts)
   }
 }

@@ -1,0 +1,13 @@
+{
+  "mappingSpec": {
+    "type": "csvMapping",
+    "columns": ["id:int","news_id:string","url:string","page_count:int","resource:string","pub_time:timestamp","title:string","text:string"],
+    "delimiter": ",",
+    "dimensionsMap":  {
+      "dimensions" : ["id:int","news_id:string","url:string","page_count:int","resource:string","pub_time:timestamp","title:string"]
+    }
+  }
+}
+
+
+

@@ -7,3 +7,6 @@ hive.metastore.uris
 3.Collection Step
 需要建立/opt/flume.out
 同时监听的目录要存在,真对spoolDir
+
+4.新建solr的collection-->financenews后，需要执行如下语句，用户在建索引的过程中能够查询到数据
+curl -X POST http://localhost:8983/solr/financenews/config -d '{"set-property":{"updateHandler.autoSoftCommit.maxTime":"2000"}}'

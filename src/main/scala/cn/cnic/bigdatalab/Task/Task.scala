@@ -2,6 +2,8 @@ package cn.cnic.bigdatalab.Task
 
 import cn.cnic.bigdatalab.entity.Schema
 
+import scala.collection.mutable.ArrayBuffer
+
 /**
   * Created by cnic on 2016/6/21.
   */
@@ -56,7 +58,7 @@ object TaskTest {
     schema.setDriver("mongo")
     schema.setDb("test")
     schema.setTable("user")
-    schema.setColumns(Map("id" -> "Int", "name" -> "String", "age" -> "String"))
+    schema.setColumns(ArrayBuffer("id:Int","name:String", "age:String"))
 
     val sql = "select * from user"
 
@@ -70,7 +72,7 @@ object TaskTest {
     schema1.setDriver("mongo")
     schema1.setDb("test1")
     schema1.setTable("user1")
-    schema1.setColumns(Map("id" -> "Int", "name" -> "String", "age" -> "String"))
+    schema1.setColumns(ArrayBuffer("id:Int","name:String", "age:String"))
 
     val sql1 = "select * from user"
 
