@@ -4,7 +4,7 @@
 
 import java.util.regex.Pattern
 import scala.collection.mutable.ArrayBuffer
-import cn.cnic.bigdatalab.transformer.{TMapping, Transformer}
+import cn.cnic.bigdatalab.transformer.{TransformerMapping, Transformer}
 
 
 object TransformerTest {
@@ -61,7 +61,7 @@ object TransformerTest {
     println("getSchema: " + regexparser.getSchema())
 
     //Mapping test
-    val map = new TMapping(mapping_conf)
+    val map = new TransformerMapping(mapping_conf)
     regexparser = new Transformer(map)
     println("transform result " + regexparser.transform(msg))
 
@@ -81,7 +81,7 @@ object TransformerTest {
     var dim = new ArrayBuffer[String]()
     var strArray = "id:int,name:string,city:string,number:int".split(",")
     for(item <- strArray) dim += item.toString
-    var tmap = new TMapping()
+    var tmap = new TransformerMapping()
             .setMapType("morphlinesMapping")
             .setConf( "E:\\bigdatalab\\DataChain\\conf\\morphlines.csf.conf")
             .setDimensions(dim)
@@ -103,7 +103,7 @@ object TransformerTest {
     dim = new ArrayBuffer[String]()
      strArray = "msg:String".split(",")
     for(item <- strArray) dim += item.toString
-    tmap = new TMapping()
+    tmap = new TransformerMapping()
       .setMapType("morphlinesMapping")
       .setConf( "E:\\bigdatalab\\DataChain\\conf\\morphlines.multilines.conf")
       .setDimensions(dim)

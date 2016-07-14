@@ -11,7 +11,7 @@ object TransformerCreater {
   var mapping_type = "csvMapping"
   //Input is json mapping file
   def creater(mapping_json: String): TransformerBase = {
-    val tmap = new TMapping(mapping_json)
+    val tmap = new TransformerMapping(mapping_json)
     mapping_type = tmap.mapType
     val parser =
       mapping_type match {
@@ -24,7 +24,7 @@ object TransformerCreater {
     parser
   }
   //Input is Mapping
-  def creater(tmap: TMapping): TransformerBase = {
+  def creater(tmap: TransformerMapping): TransformerBase = {
     mapping_type = tmap.mapType
     val parser =
       mapping_type match {
@@ -42,7 +42,7 @@ class Transformer(transform: TransformerBase) {
   def this(mapping: String) = {
     this(TransformerCreater.creater(mapping))
   }
-  def this(map:TMapping) = {
+  def this(map:TransformerMapping) = {
     this(TransformerCreater.creater(map))
   }
 

@@ -11,7 +11,7 @@ import java.io.{InputStreamReader, ByteArrayInputStream}
 
  import scala.collection.mutable.ArrayBuffer
 
- class CSVTransformer(tmap : TMapping) extends TransformerBase{
+ class CSVTransformer(tmap : TransformerMapping) extends TransformerBase{
   val delimiter:Char = tmap.delimiter
   val schema:ArrayBuffer[String] =tmap.dimensions
 
