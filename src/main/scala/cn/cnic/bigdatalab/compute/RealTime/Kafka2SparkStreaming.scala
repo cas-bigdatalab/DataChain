@@ -18,24 +18,24 @@ import org.apache.spark.{SparkConf, SparkContext}
   */
 object Kafka2SparkStreaming {
 
-  def getSqlContext(sqlType : String, sparkContext : SparkContext): SQLContext = sqlType.toLowerCase() match {
+  /*def getSqlContext(sqlType : String, sparkContext : SparkContext): SQLContext = sqlType.toLowerCase() match {
     case "hive" => HiveSQLContextSingleton.getInstance(sparkContext)
     case _ => SQLContextSingleton.getInstance(sparkContext)
-  }
+  }*/
 
   /*
-  args: 0 数据流的时间间隔
-        1 kafka Topic
-        2 kafka param
-        3 src schema name
-        4 Create Table Sql
-        5 Execute Sql
-        6 transformer
-        7 sql type
+  args: 0 app name
+        1 数据流的时间间隔
+        2 kafka Topic
+        3 kafka param
+        4 src schema name
+        5 Create Table Sql
+        6 Execute Sql
+        7 transformer
 
    */
   def run(appName: String, duration : String, topic : String, kafkaParam : String,
-          srcName : String, createDecTable : String, execSql : String, mapping:String, sqlType: String="") {
+          srcName : String, createDecTable : String, execSql : String, mapping:String) {
 
     StreamingLogLevels.setStreamingLogLevels()
 
@@ -83,7 +83,7 @@ object Kafka2SparkStreaming {
     //Get the messages and execute operations
     val lines = kafkaStream.map(_._2)
     lines.foreachRDD((rdd: RDD[String], time: Time) => {
-      val sqlContext = getSqlContext(sqlType, rdd.sparkContext)
+      val sqlContext = HiveSQLContextSingleton.getInstance(rdd.sparkContext)
 
       //Get Row RDD
       val srcRDD = rdd.filter(_!="").map(line => {
@@ -183,12 +183,11 @@ object Kafka2SparkStreaming {
     val createDecTable = args(5)
     val execSql = args(6)
     val mapping = args(7)
-    val sqlType = args(8)
 
     println("create dec table sql:" + createDecTable)
     println("exec sql:" + execSql)
 
-    run(appName, duration, topics, kafkaParam, srcName, createDecTable, execSql, mapping, sqlType)
+    run(appName, duration, topics, kafkaParam, srcName, createDecTable, execSql, mapping)
   }
 }
 

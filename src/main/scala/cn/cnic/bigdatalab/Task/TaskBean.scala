@@ -35,7 +35,7 @@ class TaskBean() {
     //init app params
     this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
       TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.getCreateTableSql(destSchema),
-      TaskUtils.wrapDelimiter(sql), mapping, TaskUtils.getSqlType(destSchema.getDriver()))
+      TaskUtils.wrapDelimiter(sql), mapping)
 
     this
 
@@ -48,21 +48,18 @@ class TaskBean() {
     init(name, taskType)
 
     //init temporary table description
-    var contextType = "other"
     val temporaryTableDesc :StringBuilder = new StringBuilder()
 
     for(index <- 0 until destSchema.length){
       val schema = destSchema(index)
       temporaryTableDesc.append(TaskUtils.getCreateTableSqlNoWrap(schema)).append(PropertyUtil.getPropertyValue("create_sql_separator"))
-      if(TaskUtils.getSqlType(schema.getDriver()).equals("hive") )
-        contextType = "hive"
     }
     temporaryTableDesc.delete(temporaryTableDesc.length - PropertyUtil.getPropertyValue("create_sql_separator").length, temporaryTableDesc.length)
 
     //init app params
     this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
       TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
-      TaskUtils.wrapDelimiter(sql), mapping, TaskUtils.getSqlType(contextType))
+      TaskUtils.wrapDelimiter(sql), mapping)
 
     this
 
@@ -97,21 +94,17 @@ class TaskBean() {
 
 
     //init temporary table description
-    var contextType = "other"
     val temporaryTableDesc :StringBuilder = new StringBuilder()
     for(index <- 0 until schemaList.length){
       val schema = schemaList(index)
       temporaryTableDesc.append(TaskUtils.getCreateTableSqlNoWrap(schema)).append(PropertyUtil.getPropertyValue("create_sql_separator"))
-      if(TaskUtils.getSqlType(schema.getDriver()).equals("hive") )
-        contextType = "hive"
     }
     temporaryTableDesc.delete(temporaryTableDesc.length - PropertyUtil.getPropertyValue("create_sql_separator").length, temporaryTableDesc.length)
 
     //init app params
     this.appParams = List(
       TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
-      TaskUtils.wrapDelimiter(sql),
-      TaskUtils.getSqlType(contextType)
+      TaskUtils.wrapDelimiter(sql)
     )
 
     this
