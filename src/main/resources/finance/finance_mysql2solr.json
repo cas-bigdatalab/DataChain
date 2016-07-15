@@ -1,0 +1,36 @@
+{
+  "Task":{
+    "name":"mysql2SolrTask",
+    "taskType":"offline",
+    "sql":"insert into table financeResult select n1.id, n1.news_id, n1.url, n1.page_count, n1.resource, n1.pub_time, n1.title, n2.image, n2.order from result_news as n1, result_news_simages as n2 where n1.news_id = n2.id",
+    "topic":"test",
+
+    "srcTable":{
+
+      "table1":{
+        "driver":"mysql",
+        "db":"finance",
+        "table":"result_news",
+        "columns":["id:Int","news_id:String","url:String","page_count:Int","resource:String","pub_time:timestamp","title:String","text:String"]
+      },
+      "table2":{
+        "driver":"mysql",
+        "db":"finance",
+        "table":"result_news_simages",
+        "columns":["id:String","image:String","order:Int"]
+      }
+
+    },
+
+    "mapping":"/opt/newsMapping.json",
+
+    "destTable":{
+
+      "table1":{
+        "driver":"solr",
+        "table":"financeResult",
+        "columns":["id:String","news_id:String","url:String","page_count:Int","resource:String","pub_time:timestamp","title:String","image:String", "order:Int"]
+      }
+    }
+  }
+}

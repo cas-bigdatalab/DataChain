@@ -8,6 +8,8 @@ import cn.cnic.bigdatalab.utils.{FileUtil, PropertyUtil}
 import cn.cnic.bigdatalab.utils.PropertyUtil
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 
+import scala.collection.mutable.ArrayBuffer
+
 /**
   * Created by xjzhu@cnic.cn on 2016/6/20.
   */
@@ -63,26 +65,26 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   //streaming table schema params
   val streamingTable: String = "test"
-  val streamingColumns = Map("id" ->"int", "name" -> "string", "age" -> "int")
+  val streamingColumns = ArrayBuffer("id:int", "name:string", "age:int")
 
   //mysql table schema params
   val mysqlDB: String = "spark"
   val mysqlTable: String = "user"
-  val mysqlColumns = Map("name"->"string", "age"->"int")
+  val mysqlColumns = ArrayBuffer("name:string", "age:int")
 
   //mysql table schema params
   val mysqlStoreDB: String = "spark"
   val mysqlStoreTable: String = "user1"
-  val mysqlStoreColumns = Map("id" -> "int", "name"->"string", "age"->"int")
+  val mysqlStoreColumns = ArrayBuffer("id:int", "name:string", "age:int")
 
   //mongodb table schema params
   val mongoDatabase: String = "spark"
   val mongoTable: String = "student"
-  val mongoColumns = Map("name"->"string", "age"->"int")
+  val mongoColumns = ArrayBuffer("name:string", "age:int")
 
   //hive table schema params
   val hiveTable: String = "test"
-  val hiveColumns = Map("name"->"STRING", "age"->"INT")
+  val hiveColumns = ArrayBuffer("name:STRING", "age:INT")
   val hiveTable1: String = "test1"
 
   //transformer mapping
@@ -90,17 +92,17 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   //solr table schema params
   val solrTable: String = "user"
-  val solrColumns = Map("id" ->"int", "name"->"string", "age" -> "int")
+  val solrColumns = ArrayBuffer("id:int", "name:string", "age:int")
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
-    /*streamingTableSchema.setDriver("streaming").setTable(streamingTable).setColumns(streamingColumns)
+    streamingTableSchema.setDriver("streaming").setTable(streamingTable).setColumns(streamingColumns)
     mysqlStoreTableSchema.setDriver("mysql").setDb(mysqlStoreDB).setTable(mysqlStoreTable).setColumns(mysqlStoreColumns)
     mysqlTableSchema.setDriver("mysql").setDb(mysqlDB).setTable(mysqlTable).setColumns(mysqlColumns)
     mongodbTableSchema.setDriver("mongodb").setDb(mongoDatabase).setTable(mongoTable).setColumns(mongoColumns)
     hiveTableSchema.setDriver("hive").setTable(hiveTable).setColumns(hiveColumns)
     hiveTest1Schema.setDriver("hive").setTable(hiveTable1).setColumns(hiveColumns)
-    solrTableSchema.setDriver("solr").setTable(solrTable).setColumns(solrColumns)*/
+    solrTableSchema.setDriver("solr").setTable(solrTable).setColumns(solrColumns)
 
   }
 
@@ -195,7 +197,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~offline~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-  test("Chain By JSON: hive->mysql") {
+  /*test("Chain By JSON: hive->mysql") {
     //1. Define Task
 
     val task_json_path = json_path + "/" + "offline/" + "offlineTask_hive2mysql.json"
@@ -243,11 +245,11 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val chain = new Chain()
     chain.addStep(taskStep).run()
 
-  }
+  }*/
 
 
   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Store~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-  test("Chain By Json: csv->kafka->store") {
+  /*test("Chain By Json: csv->kafka->store") {
 
     //1.define Collection
     val agent_json_path = json_path + "/" + "agent.json"
@@ -263,11 +265,11 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
 
-  }
+  }*/
 
 
   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~RealTime~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-  //use json file
+  /*//use json file
   test("Chain By JSON: csv->kafka->realTime->mysql") {
 
     //1.define Collection
@@ -337,7 +339,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   }
 
 
-//  use json file
+  //use json file
   test("Chain By JSON: csv->kafka->realTime->mongodb") {
     //1.define Collection
     val agent_json_path = json_path + "/" + "agent.json"
@@ -388,7 +390,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     chain.addStep(collectionStep).addStep(taskStep).run()
   }
 
- //use json file
+  //use json file
   test("Chain By JSON: csv->kafka->realTime->memcache") {
     //1.define Collection
     val agent_json_path = json_path + "/" + "agent.json"
@@ -419,26 +421,34 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
-  }
+  }*/
 
   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~数学所~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-  test("Chain finance: csv->kafka->realtime->solr") {
+  /*test("Chain finance: csv->kafka->realtime->solr") {
     //1.define Collection
     val agent_json_path = json_path + "/" + "agent.json"
     val agent = FileUtil.agentReader(agent_json_path)
     val collectionStep = new CollectionStep().initAgent(agent)
 
     //2. Define store Task
-    val task_json_path = json_path + "/store/" + "finance_news2solr.json"
+    val task_json_path = json_path + "/finance/" + "finance_news2solr.json"
     val taskBean = FileUtil.taskReader(task_json_path)
     val taskStep = new TaskStep().setStoreTask(new StoreTask(taskBean))
-
+    taskStep.run
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
+  }*/
+  test("Chain finance: mysql->solr") {
 
+    //1. Define offline Task
+    val task_json_path = json_path + "/finance/" + "finance_mysql2solr.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean))
+
+    val chain = new Chain()
+    chain.addStep(taskStep).run()
   }
-
 }
 
 class DataChainTestSuit extends AbstractDataChainTestSuit{

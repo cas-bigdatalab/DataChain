@@ -82,13 +82,13 @@ object Offline {
     run(createSrcTable, "hive", createDestTable, "mysql", execSql)
   }*/
 
-  def run(temporaryTableDesc : String, execSql : String, contextType: String) {
+  def run(temporaryTableDesc : String, execSql : String) {
 
     val conf = new SparkConf().setAppName("Offline Compute")
 
     //get sql context
     val sc = new SparkContext(conf)
-    val sqlContext = SelfSQLContext.getInstance(contextType,sc)
+    val sqlContext = HiveSQLContextSingleton.getInstance(sc)
 
     //Execute SQL tasks
     val tableDescList = temporaryTableDesc.split("#-#")
@@ -104,15 +104,11 @@ object Offline {
 
     val temporaryTableDesc = args(0)
     val execSql = args(1)
-    val contextType = args(2)
-
 
     println("TableDest : " + temporaryTableDesc)
     println("Sql statement: " + execSql)
-    println("Context Type : " + contextType)
 
-
-    run(temporaryTableDesc , execSql, contextType)
+    run(temporaryTableDesc , execSql)
   }
 
 
