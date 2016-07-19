@@ -9,7 +9,6 @@ import com.sun.xml.internal.fastinfoset.util.StringArray
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import scala.collection.immutable.HashMap
-import scala.collection.immutable.HashMap.HashTrieMap
 import scala.util.parsing.json._
 import scala.io.Source
 
