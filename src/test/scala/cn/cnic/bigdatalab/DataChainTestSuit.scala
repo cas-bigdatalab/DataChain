@@ -438,7 +438,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
-  }*/
+  }
   test("Chain finance: mysql->solr") {
 
     //1. Define offline Task
@@ -448,7 +448,26 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(taskStep).run()
+  }*/
+
+  /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~演示~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+  test("Chain By JSON: csv->kafka->realTime->mysql") {
+
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent_MAC.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define real Task
+    val task_json_path = json_path + "/" + "realtime/realTime_mysql_MAC.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
   }
+
 }
 
 class DataChainTestSuit extends AbstractDataChainTestSuit{

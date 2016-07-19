@@ -6,7 +6,7 @@ import scala.collection.mutable.ArrayBuffer
   * Created by Flora on 2016/6/23.
   */
 
-class TransformerMapping(mapconf: String){
+class TransformerMapping(mapconf: String) extends Serializable{
   var mapType:String = "csvString"
   var columns: ArrayBuffer[String] = new ArrayBuffer[String]()
   var dimensions: ArrayBuffer[String] = new ArrayBuffer[String]()
