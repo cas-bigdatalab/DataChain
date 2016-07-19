@@ -1,0 +1,28 @@
+{
+  "Task":{
+    "name":"realTimeTask",
+    "taskType":"realtime",
+    "sql":"insert into table user select name, age from test",
+    "topic":"test",
+
+    "srcTable":{
+      "table1":{
+        "driver":"streaming",
+        "table":"test",
+        "columns":["id:Int","name:String","age:Int"]
+      }
+    },
+
+    "mapping":"/Project/userMapping.json",
+
+    "destTable":{
+      "table1":{
+        "driver":"mysql",
+        "db":"spark",
+        "table":"user",
+        "columns":["name:String","age:Int"]
+      }
+
+    }
+  }
+}
