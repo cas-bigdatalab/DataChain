@@ -10,7 +10,7 @@
         "driver":"mysql",
         "db":"spark",
         "table":"mysql_user",
-        "columns":{"id":"Int","name":"String","age":"Int"}
+        "columns":["id:Int","name:String","age:Int"]
       }
 
     },
@@ -28,7 +28,7 @@
         "driver":"mongo",
         "db":"test",
         "table":"mongo_user",
-        "columns":{"id":"Int","name":"String","age":"Int"}
+        "columns":["id:Int","name:String","age:Int"]
       }
 
     }

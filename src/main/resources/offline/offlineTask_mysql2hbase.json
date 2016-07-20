@@ -10,7 +10,7 @@
         "driver":"mysql",
         "db":"spark",
         "table":"mysql_user",
-        "columns":{"id":"Int","name":"String","age":"Int"}
+        "columns":["id:Int","name:String","age:Int"]
       }
 
     },
@@ -27,7 +27,7 @@
       "table1":{
         "driver":"hbase",
         "table":"hbase_user",
-        "columns":{"id":"Int","name":"String","age":"Int"}
+        "columns":["id:Int","name:String","age:Int"]
       }
 
     }

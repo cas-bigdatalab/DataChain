@@ -1,4 +1,4 @@
-package cn.cnic.bigdatalab.Task
+package cn.cnic.bigdatalab.task
 
 import akka.actor._
 import akka.actor.Props

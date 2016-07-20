@@ -82,9 +82,14 @@ object Offline {
     run(createSrcTable, "hive", createDestTable, "mysql", execSql)
   }*/
 
-  def run(temporaryTableDesc : String, execSql : String) {
+  /**
+    * args: 0 app name
+            1 Temporary Table Desc，ex: CREATE TABLE IF NOT EXISTS test(name STRING, age INT)#-#CREATE TABLE IF NOT EXISTS user(name STRING, age INT)
+            2 Execute Sql
+    */
+  def run(appName: String, temporaryTableDesc : String, execSql : String) {
 
-    val conf = new SparkConf().setAppName("Offline Compute")
+    val conf = new SparkConf().setAppName(appName)
 
     //get sql context
     val sc = new SparkContext(conf)
@@ -102,13 +107,14 @@ object Offline {
 
   def main(args: Array[String]): Unit = {
 
-    val temporaryTableDesc = args(0)
-    val execSql = args(1)
+    val appName = args(0)
+    val temporaryTableDesc = args(1)
+    val execSql = args(2)
 
     println("TableDest : " + temporaryTableDesc)
     println("Sql statement: " + execSql)
 
-    run(temporaryTableDesc , execSql)
+    run(appName, temporaryTableDesc, execSql)
   }
 
 

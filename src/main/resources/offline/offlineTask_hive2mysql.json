@@ -1,8 +1,9 @@
 
 {
   "Task":{
-    "name":"multiTableTask",
+    "name":"hive2mysql",
     "taskType":"offline",
+    "interval":"5",
     "sql":"insert into table mysql_user2 select hive_user1.name, hive_user1.age, hive_user2.sex from hive_user1,hive_user2 where hive_user1.name=hive_user2.name",
 
     "srcTable":{
@@ -10,13 +11,13 @@
       "table1":{
         "driver":"hive",
         "table":"test1",
-        "columns":{"name":"String","age":"Int"}
+        "columns":["name:String","age:Int"]
       },
 
       "table2":{
         "driver":"hive",
         "table":"test2",
-        "columns":{"name":"String","sex":"String"}
+        "columns":["name:String","sex:String"]
       }
 
     },
@@ -34,7 +35,7 @@
         "driver":"mysql",
         "db":"spark",
         "table":"mysql_user2",
-        "columns":{"name":"String","age":"Int", "sex":"String"}
+        "columns":["name:String","age:Int", "sex:String"]
       }
 
     }

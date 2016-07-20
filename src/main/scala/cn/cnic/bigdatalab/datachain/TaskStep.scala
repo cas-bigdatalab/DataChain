@@ -1,6 +1,6 @@
 package cn.cnic.bigdatalab.datachain
 
-import cn.cnic.bigdatalab.Task.{StoreTask, OfflineTask, RealTimeTask, BaseTask}
+import cn.cnic.bigdatalab.task.{StoreTask, OfflineTask, RealTimeTask, BaseTask}
 
 /**
   * Created by cnic on 2016/6/21.

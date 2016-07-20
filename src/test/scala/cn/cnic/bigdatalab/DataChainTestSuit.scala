@@ -1,6 +1,6 @@
 package cn.cnic.bigdatalab
 
-import cn.cnic.bigdatalab.Task.{OfflineTask, RealTimeTask, StoreTask, TaskBean}
+import cn.cnic.bigdatalab.task.{OfflineTask, RealTimeTask, StoreTask, TaskBean}
 import cn.cnic.bigdatalab.collection.{AgentChannel, AgentSink, AgentSource}
 import cn.cnic.bigdatalab.datachain._
 import cn.cnic.bigdatalab.entity.Schema
@@ -206,6 +206,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(taskStep).run()
+    Thread.sleep(10000)
 
   }
 

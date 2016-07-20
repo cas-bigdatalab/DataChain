@@ -1,6 +1,6 @@
 package cn.cnic.bigdatalab.utils
 
-import cn.cnic.bigdatalab.Task.TaskBean
+import cn.cnic.bigdatalab.task.TaskBean
 import cn.cnic.bigdatalab.collection.{AgentSink, AgentChannel, AgentSource, Agent}
 
 import scala.io.Source
