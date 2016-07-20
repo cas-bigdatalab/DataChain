@@ -20,14 +20,14 @@ class JsonTransformer(tmap : TransformerMapping) extends TransformerBase{
    }
 
   def transform(msg:String): ArrayBuffer[Any] = {
-    val jsonMsg:HashMap[String, Any] = tools.jsonStr2HashMap(msg)
+    val jsonMsg:HashMap[String, Any] = Tools.jsonStr2HashMap(msg)
 
     val result = new ArrayBuffer[Any]()
     //extract
     for(item <- schema) {
       //val map= Map(item.toString -> jsonMsg.get(item.toString).get.asInstanceOf[String])
       //val value = FieldTypeUtil.parseDataType(item.toString.split(":")(1), jsonMsg.get(item.toString.split(":")(0)).get.asInstanceOf[String])
-      val value = tools.valueDataType(item.toString.split(":")(1), jsonMsg.get(item.toString.split(":")(0)).get.asInstanceOf[String].trim, tmap)
+      val value = Tools.valueDataType(item.toString.split(":")(1), jsonMsg.get(item.toString.split(":")(0)).get.asInstanceOf[String].trim, tmap)
       result += value
      }
     result

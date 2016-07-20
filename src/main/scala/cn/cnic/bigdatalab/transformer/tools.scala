@@ -13,7 +13,7 @@ import scala.collection.immutable.HashMap.HashTrieMap
 import scala.util.parsing.json._
 import scala.io.Source
 
-object tools{
+object Tools{
   def jsonfile2str(jsonfile:String):String = {
     var str = ""
     val file = Source.fromFile(jsonfile)
