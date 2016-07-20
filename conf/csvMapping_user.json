@@ -1,0 +1,13 @@
+{
+  "mappingSpec": {
+    "type": "csvMapping",
+    "columns": ["id:int","name:string","age:int"],
+    "delimiter": ",",
+    "dimensionsMap":  {
+      "dimensions" : ["id:int","name:string","age:int"]
+    }
+  }
+}
+
+
+

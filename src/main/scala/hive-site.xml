@@ -397,7 +397,7 @@
   </property>
   <property>
     <name>javax.jdo.option.ConnectionURL</name>
-    <value>jdbc:mysql://10.0.71.7:3306/hive?=createDatabaseIfNotExist=true</value>
+    <value>jdbc:mysql://10.0.71.1:3306/hive?=createDatabaseIfNotExist=true</value>
     <description>JDBC connect string for a JDBC metastore</description>
   </property>
   <property>

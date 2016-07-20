@@ -12,6 +12,8 @@ import org.apache.spark.streaming.kafka.KafkaUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext, Time}
 import org.apache.spark.{SparkConf, SparkContext}
 
+import scala.collection.mutable.ArrayBuffer
+
 
 /**
   * Created by duyuanyuan on 2016/6/12.
@@ -45,8 +47,7 @@ object Kafka2SparkStreaming {
 //      .set("spark.executor.memory", "10g")
 //      .set("spark.cores.max", "12")
 //      .set("spark.driver.allowMultipleContexts", "true")
-//      .setJars(List("D:\\DataChain\\classes\\artifacts\\datachain_jar\\datachain.jar",
-//        "D:\\DataChain\\lib\\mysql-connector-java-5.1.39-bin.jar"))
+//      .setJars(List("D:\\git\\DataChain\\out\\artifacts\\datachain_jar\\datachain.jar"))
 
     val sc = new SparkContext(conf)
     val ssc = new StreamingContext(sc, Seconds(duration.toInt))
@@ -65,12 +66,12 @@ object Kafka2SparkStreaming {
     @transient val transfomer = new Transformer(mapping)
 
     // Generate the schema based on the string of schema
-    var fields : Array[StructField] = Array[StructField]()
+    var fields : ArrayBuffer[StructField] = new ArrayBuffer[StructField]()
     for (field <- transfomer.getSchema()) {
       val Array(fieldName, fieldType) = field.split(":")
-      fields = DataTypes.createStructField(fieldName, FieldTypeUtil.stringToDataType(fieldType), true) +: fields
+      fields += DataTypes.createStructField(fieldName, FieldTypeUtil.stringToDataType(fieldType), true)
     }
-    val schema = DataTypes.createStructType(fields.reverse)
+    val schema = DataTypes.createStructType(fields.toArray)
 
     //Create Kafka Stream and currently only support kafka with String messages
     val kafkaStream = KafkaUtils.createStream[
@@ -142,7 +143,7 @@ object Kafka2SparkStreaming {
 
     //hive test
 //    val createDecTable = """
-//                           |CREATE TABLE IF NOT EXISTS test(
+//                           |CREATE TABLE IF NOT EXISTS user(
 //                           |name STRING, age INT
 //                           |)""".stripMargin
 
@@ -172,8 +173,7 @@ object Kafka2SparkStreaming {
 //    val kafkaParam = "zookeeper.connect->10.0.71.20:2181,10.0.71.26:2181,10.0.71.27:2181;group.id->test-consumer-group"
 //    val schemaSrc = "id:Int,name :String,age:Int"
 //    val srcName = "test"
-//    val mapping = "D:\\DataChain\\conf\\csvMapping.json"
-//    val sqlType = "mysql"
+//    val mapping = "D:\\git\\DataChain\\conf\\csvMapping_user.json"
 
     val appName = args(0)
     val duration = args(1)

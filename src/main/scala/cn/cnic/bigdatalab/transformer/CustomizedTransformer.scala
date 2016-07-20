@@ -9,7 +9,7 @@ import java.util
  import scala.collection.mutable.ArrayBuffer
  import cn.cnic.bigdatalab.utils.FieldTypeUtil
 
- class CustomizedTransformer(mapping_conf : String) extends TransformerBase with Serializable{
+ class CustomizedTransformer(mapping_conf : String) extends TransformerBase{
    println(mapping_conf)
 
    val jmapping = tools.jsonfile2JsonMap(mapping_conf)

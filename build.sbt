@@ -46,7 +46,7 @@ libraryDependencies ++=Seq(
   "ch.ethz.ganymed" % "ganymed-ssh2" % "build210",
   "org.kitesdk" % "kite-morphlines-core" % kiteVersion,
   "org.kitesdk" % "kite-morphlines-avro" % kiteVersion,
-  "org.kitesdk" % "kite-morphlines-hadoop-core" % kiteVersion,
+  "org.kitesdk" % "kite-morphlines-hadoop-core" % kiteVersion excludeAll(ExclusionRule(organization = "org.eclipse.jetty")),
   "org.kitesdk" % "kite-morphlines-json" % kiteVersion,
   "org.kitesdk" % "kite-morphlines-solr-cell" % kiteVersion,
   "org.kitesdk" % "kite-morphlines-solr-core" % kiteVersion
