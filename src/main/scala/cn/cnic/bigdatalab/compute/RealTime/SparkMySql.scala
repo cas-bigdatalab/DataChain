@@ -1,5 +1,6 @@
-package cn.cnic.bigdatalab.compute.RealTime
+package cn.cnic.bigdatalab.compute.realtime
 
+import cn.cnic.bigdatalab.compute.SQLContextSingleton
 import cn.cnic.bigdatalab.utils.StreamingLogLevels
 import kafka.serializer.StringDecoder
 import org.apache.spark.rdd.RDD

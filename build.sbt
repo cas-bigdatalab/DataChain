@@ -12,18 +12,23 @@ val kiteVersion = "0.16.0"
 
 libraryDependencies ++=Seq(
   "org.apache.spark" %% "spark-core" % sparkVersion exclude("com.typesafe.akka", "akka-actor_2.10")
-    exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10"),
+    exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10") excludeAll(ExclusionRule(organization = "org.eclipse.jetty")),
   "org.apache.spark" %% "spark-sql" % sparkVersion exclude("com.typesafe.akka", "akka-actor_2.10")
-    exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10"),
+    exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10")
+    excludeAll(ExclusionRule(organization = "org.eclipse.jetty")),
   "org.scala-lang" % "scala-library" % scalaVersion.value % "compile" ,
   "org.apache.spark" %% "spark-streaming" %  sparkVersion % "compile" exclude("com.typesafe.akka", "akka-actor_2.10")
-    exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10"),
+    exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10")
+    excludeAll(ExclusionRule(organization = "org.eclipse.jetty")),
   "org.apache.spark" %% "spark-catalyst" %  sparkVersion % "compile" exclude("com.typesafe.akka", "akka-actor_2.10")
-    exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10"),
+    exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10")
+    excludeAll(ExclusionRule(organization = "org.eclipse.jetty")),
   "org.apache.spark" %% "spark-hive" %  sparkVersion % "compile" exclude("com.typesafe.akka", "akka-actor_2.10")
-    exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10"),
+    exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10")
+    excludeAll(ExclusionRule(organization = "org.eclipse.jetty")),
   "org.apache.spark" %% "spark-streaming-kafka" %  sparkVersion % "compile" exclude("com.typesafe.akka", "akka-actor_2.10")
-    exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10"),
+    exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10")
+    excludeAll(ExclusionRule(organization = "org.eclipse.jetty")),
   "org.apache.kafka" % "kafka_2.10" % "0.8.2.2",
   "mysql" % "mysql-connector-java" % "5.1.39",
   "org.apache.zookeeper" % "zookeeper" % "3.4.5" exclude("org.jboss.netty", "netty"),
@@ -52,8 +57,8 @@ libraryDependencies ++=Seq(
   "org.kitesdk" % "kite-morphlines-solr-core" % kiteVersion
 )
 
-libraryDependencies ++=Seq(
-  "org.scala-lang" % "scala-actors" % "2.10.4"
-)
+//libraryDependencies ++=Seq(
+//  "org.scala-lang" % "scala-actors" % "2.10.4"
+//)
 
 fork in Test := true
