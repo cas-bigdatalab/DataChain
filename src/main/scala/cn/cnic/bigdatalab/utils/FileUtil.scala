@@ -2,9 +2,11 @@ package cn.cnic.bigdatalab.utils
 
 import java.io.File
 
-import cn.cnic.bigdatalab.Task.TaskBean
 import cn.cnic.bigdatalab.collection.{Agent, AgentChannel, AgentSink, AgentSource}
 import cn.cnic.bigdatalab.compute.realtime.{InterpreterSingleton, Utils}
+
+import cn.cnic.bigdatalab.task.TaskBean
+import cn.cnic.bigdatalab.collection.{AgentSink, AgentChannel, AgentSource, Agent}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
