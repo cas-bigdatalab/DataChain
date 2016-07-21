@@ -11,7 +11,7 @@ import org.apache.spark.streaming.kafka.KafkaUtils
   */
 object Kafka2SparkStreaming {
 
-  def createStream(ssc: StreamingContext, topic: String, kafkaParam: String): DStream[String] ={
+  def getStream(ssc: StreamingContext, topic: String, kafkaParam: String): DStream[String] ={
     val topics = topic.replaceAll(" ", "").split(",").map { s =>
       val a = s.split(":")
       (a(0), a(1).toInt)

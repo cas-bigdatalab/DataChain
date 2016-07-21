@@ -42,6 +42,14 @@ object FileUtil {
     content
   }
 
+  def fileWriting(path: String, str: String) {
+    import java.io.{File, PrintWriter}
+    val pw = new PrintWriter(new File(path))
+    pw.append(s"str: $str").write("\n")
+    pw.flush
+    pw.close
+  }
+
   def agentReader(agentPath:String): Agent ={
     //val agentPath = Thread.currentThread().getContextClassLoader.getResource("agent.json").getPath
     val agent = Agent.parseJson(fileReader(agentPath))
@@ -74,13 +82,16 @@ object FileUtil {
 
     //read dir
     val files = FileUtil.dirRead("D:\\git\\DataChain\\externalcode")
-    val schemal = "name:string,age:int"
-    val line = "dyy,28"
+    val schemal = "id:int,name:string,age:int"
+    val line = "1,dyy,29"
     val mainClass = "ConnectMySql"
 
     val interpreter = InterpreterSingleton.getInstance()
     files.reverse.foreach(interpreter.compileString(_))
     interpreter.interpret(s"""new $mainClass().process("$schemal", "$line")""")
+
+//    fileWriting("D:/dyy.txt", "aaa")
+//    fileWriting("D:/dyy.txt", "bbb")
 
   }
 

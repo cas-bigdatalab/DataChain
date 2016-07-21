@@ -28,7 +28,7 @@ class ConnectMySql extends DataChainCompute{
         println(rs.getRow())
       }
 
-      var prep = conn.prepareStatement("INSERT INTO user (name, age) VALUES (?, ?) ")
+      var prep = conn.prepareStatement("INSERT INTO test (id, name, age) VALUES (?, ?, ?) ")
 
       var i:Int = 1
       val columns = line.split(",")

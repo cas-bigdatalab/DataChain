@@ -44,7 +44,7 @@ object SQLCompute {
     @transient val transformer = new Transformer(mapping)
     val schema = Utils.getSchema(transformer)
 
-    val lines = Kafka2SparkStreaming.createStream(ssc, topic, kafkaParam)
+    val lines = Kafka2SparkStreaming.getStream(ssc, topic, kafkaParam)
 
     lines.foreachRDD((rdd: RDD[String], time: Time) => {
       val sqlContext = HiveSQLContextSingleton.getInstance(rdd.sparkContext)
