@@ -1,0 +1,17 @@
+{
+  "Task":{
+    "name":"csv2mysql",
+    "taskType":"store",
+    "topic":"test",
+
+    "srcTable":{
+      "table1":"streaming_test"
+    },
+
+    "mapping":"/opt/csvMapping.json",
+
+    "destTable":{
+      "table1":"mysql_user"
+    }
+  }
+}

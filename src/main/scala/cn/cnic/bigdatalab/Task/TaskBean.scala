@@ -118,10 +118,19 @@ class TaskBean() {
 
   def initStore(name: String, topic: String, srcSchema: Schema, destSchema: Schema, mapping:String): TaskBean ={
     this.taskType = "store"
-    val sql = "insert into table " + destSchema.getTable() + " select * from " + srcSchema.getTable()
+    var sql = "insert into table " + destSchema.getName() + " select * from " + srcSchema.getName()
 
     //  init common params
     init(name, taskType)
+
+    ////transfer sql to real statement
+    val hive_db = PropertyUtil.getPropertyValue("hive_db")
+    if(hive_db.contains(srcSchema.getDriver()))
+      sql = sql.replace(srcSchema.getName(), srcSchema.getTable())
+
+    if(hive_db.contains(destSchema.getDriver()))
+      sql = sql.replace(destSchema.getName(), destSchema.getTable())
+
 
     //init app params
     this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),

@@ -451,24 +451,25 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   }*/
 
   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~演示~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-  /*test("Chain By JSON: csv->kafka->realTime->mysql") {
+  test("Chain realtime: csv->kafka->realTime->mysql") {
 
     //1.define Collection
-    val agent_json_path = json_path + "/" + "agent_MAC.json"
+    val agent_json_path = json_path + "/" + "agent/agent_for32.json"
     val agent = FileUtil.agentReader(agent_json_path)
     val collectionStep = new CollectionStep().initAgent(agent)
 
     //2. Define real Task
-    val task_json_path = json_path + "/" + "realtime/realTime_mysql_MAC.json"
+    val task_json_path = json_path + "/" + "realtime/realTimeTask.json"
     val taskBean = FileUtil.taskReader(task_json_path)
     val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+    //taskStep.run
 
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
-  }*/
+  }
 
-  test("Chain By JSON: hive->mysql") {
+  test("Chain offline: hive->mysql") {
     //1. Define Task
 
     val task_json_path = json_path + "/" + "offline/" + "offlineTask_hive2mysql.json"
@@ -479,6 +480,24 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     chain.addStep(taskStep).run()
     Thread.sleep(10000)
 
+  }
+
+  test("Chain store: csv->kafka->realTime->mysql") {
+
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent/agent_for32.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define real Task
+    val task_json_path = json_path + "/store/csv2mysql.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+    taskStep.run
+
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
   }
 
 }
