@@ -1,0 +1,7 @@
+{
+  "tableSpce":{
+    "driver":"memcache",
+    "table":"user",
+    "columns":{"name":"String","age":"Int"}
+  }
+}

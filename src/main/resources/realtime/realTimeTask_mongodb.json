@@ -7,24 +7,13 @@
 
     "srcTable":{
 
-      "table1":{
-        "driver":"streaming",
-        "table":"test",
-        "columns":{"id":"Int","name":"String","age":"Int"}
-      }
-
+      "table1":"streaming_test"
     },
 
     "mapping":"/opt/csvMapping.json",
 
     "destTable":{
-
-      "table1":{
-        "driver":"mongo",
-        "db":"test",
-        "table":"user",
-        "columns":{"name":"String","age":"Int"}
-      }
+      "table1":"mongo_user"
     }
   }
 }

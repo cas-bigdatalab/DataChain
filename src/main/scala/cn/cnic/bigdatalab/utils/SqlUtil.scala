@@ -7,30 +7,29 @@ import cn.cnic.bigdatalab.entity.Schema
   */
 object SqlUtil {
 
+  //CREATE TEMPORARY TABLE %tablename% USING %using% OPTIONS ( url '%url%', dbtable '%table%')
   def mysql(schema: Schema): String ={
     val temp = PropertyUtil.getPropertyValue("mysql_create_sql")
     val using = PropertyUtil.getPropertyValue("mysql_driver")
     val url = PropertyUtil.getPropertyValue("mysql_url") + schema.getDb() + "?user=" +
       PropertyUtil.getPropertyValue("mysql_user") + "&password=" + PropertyUtil.getPropertyValue("mysql_password")
     val dbtable = schema.getTable()
-    return temp.replace("%tablename%", dbtable).replace("%using%", using).replace("%url%", url).replace("%table%", dbtable).stripMargin
+    val schemaName = schema.getName()
+    //return temp.replace("%tablename%", dbtable).replace("%using%", using).replace("%url%", url).replace("%table%", dbtable).stripMargin
+    return temp.replace("%tablename%", schemaName).replace("%using%", using).replace("%url%", url).replace("%table%", dbtable).stripMargin
   }
 
+  //CREATE TEMPORARY TABLE %tablename% ( %columns% ) USING %using% OPTIONS ( host '%host%', database '%db%', collection '%table%')
   def mongo(schema: Schema): String ={
     val temp = PropertyUtil.getPropertyValue("mongo_create_sql")
     val using = PropertyUtil.getPropertyValue("mongo_driver")
     val host = PropertyUtil.getPropertyValue("mongo_host")
     val dbtable = schema.getTable()
     val db = schema.getDb()
-    /*val columns: StringBuffer = new StringBuffer()
-    for((key, value) <- schema.getColumns()){
-      columns.append(key).append(" ").append(value).append(", ")
-    }
-    columns.delete(columns.length()-2, columns.length()-1)*/
+    val schemaName = schema.getName()
     val columnsStr = schema.columnsToString()
 
-
-    return temp.replace("%columns%", columnsStr).replace("%using%", using).replace("%host%", host).replace("%db%", db).replaceAll("%tablename%", dbtable).stripMargin
+    return temp.replace("%tablename%", schemaName).replace("%columns%", columnsStr).replace("%using%", using).replace("%host%", host).replace("%db%", db).replace("%table%", dbtable).stripMargin
   }
 
   def hive(schema: Schema): String ={
@@ -69,27 +68,31 @@ object SqlUtil {
 
   }
 
+  //CREATE TEMPORARY TABLE %tablename% USING %using% OPTIONS ( zkhost  '%zkhost%', collection '%table%', soft_commit_secs '1', gen_uniq_key 'true', fields '%columns%')
   def solr(schema: Schema): String ={
     val temp = PropertyUtil.getPropertyValue("solr_create_sql")
     val using = PropertyUtil.getPropertyValue("solr_driver")
     val zkhost = PropertyUtil.getPropertyValue("solr_zkhost")
     val columns = schema.columnsFieldToString()
     val solrDbtable = schema.getTable()
+    val schemaName = schema.getName()
 
-    return temp.replace("%tablename%", solrDbtable).replace("%using%", using).
-      replace("%zkhost%", zkhost).replace("%columns%", columns)
+    return temp.replace("%tablename%", schemaName).replace("%using%", using).
+      replace("%zkhost%", zkhost).replace("%table%",solrDbtable).replace("%columns%", columns)
 
   }
 
+  //CREATE TEMPORARY TABLE  %tablename% ( %columns% ) USING %using% OPTIONS (address '%address%', key '%table%')
   def memcache(schema: Schema): String = {
     val temp = PropertyUtil.getPropertyValue("memcache_create_sql")
     val using = PropertyUtil.getPropertyValue("memcache_driver")
     val address = PropertyUtil.getPropertyValue("memcache_address")
     val columns = schema.columnsToString()
     val memDbtable = schema.getTable()
+    val schemaName = schema.getName()
 
-    return  temp.replaceAll("%tablename%", memDbtable).replace("%using%", using).
-      replace("%address%", address).replace("%columns%", columns)
+    return  temp.replace("%tablename%", schemaName).replace("%columns%", columns).replace("%using%", using).
+      replace("%address%", address).replace("%table%",memDbtable)
   }
 
 }

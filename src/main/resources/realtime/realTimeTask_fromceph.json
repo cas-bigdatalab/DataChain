@@ -6,24 +6,13 @@
     "sql":"insert into table hive_ceph select filename, filepath, lastmodified, length from ceph",
 
     "srcTable":{
-
-      "table1":{
-        "driver":"streaming",
-        "table":"ceph",
-        "columns":{"filename":"String","filepath":"String","lastmodified":"timestamp", "length":"Int"}
-      }
-
+      "table1":"ceph"
     },
 
     "mapping":"/opt/csvMapping_ceph.json",
 
     "destTable":{
-
-      "table1":{
-        "driver":"hive",
-        "table":"hive_ceph",
-        "columns":{"filename":"String","filepath":"String","lastmodified":"timestamp", "length":"Int"}
-      }
+      "table1":"hive_ceph"
     }
   }
 }

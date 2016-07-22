@@ -1,0 +1,8 @@
+{
+  "tableSpec":{
+    "driver":"mongo",
+    "db":"test",
+    "table":"user",
+    "columns":["id:Int","name:String","age:Int"]
+  }
+}

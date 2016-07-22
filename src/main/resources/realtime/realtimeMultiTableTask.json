@@ -6,13 +6,7 @@
     "sql":"insert into table user1 select test.name, test.age from user,test where user.age=test.age",
 
     "srcTable":{
-
-      "table1":{
-        "driver":"streaming",
-        "table":"test",
-        "columns":{"id":"Int","name":"String","age":"Int"}
-      }
-
+      "table1":"streaming_test"
     },
 
     "mapping":"/opt/csvMapping.json",

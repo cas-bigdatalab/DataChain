@@ -3,40 +3,17 @@
   "Task":{
     "name":"multiTableTask",
     "taskType":"offline",
-    "sql":"insert into table mysql_user2 select hive_user1.name, hive_user1.age, hive_user2.sex from hive_user1,hive_user2 where hive_user1.name=hive_user2.name",
 
     "srcTable":{
-
-      "table1":{
-        "driver":"hive",
-        "table":"test1",
-        "columns":{"name":"String","age":"Int"}
-      },
-
-      "table2":{
-        "driver":"hive",
-        "table":"test2",
-        "columns":{"name":"String","sex":"String"}
-      }
-
-    },
-
-    "mappingSpec": {
-      "type": "morphlinesMapping",
-      "dimensionsMap":  {
-        "dimensions" : ["year:int","make:string","model:string","comment:string","blank:float"]
-      }
+      "table1":"hive_user1",
+      "table2":"hive_user2"
     },
 
     "destTable":{
+      "table1":"mysql_user2"
+    },
 
-      "table1":{
-        "driver":"mysql",
-        "db":"spark",
-        "table":"mysql_user2",
-        "columns":{"name":"String","age":"Int", "sex":"String"}
-      }
+    "sql":"insert into table mysql_user2 select hive_user1.name, hive_user1.age, hive_user2.sex from hive_user1,hive_user2 where hive_user1.name=hive_user2.name"
 
-    }
   }
 }

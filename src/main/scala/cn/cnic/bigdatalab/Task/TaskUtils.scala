@@ -113,6 +113,17 @@ object TaskUtils {
     null
   }
 
+  def transformSql(sql:String, schemaList: List[Schema]): String ={
+
+    var result = sql
+    schemaList.foreach(schema => {
+      val driver= schema.getDriver()
+      val hive_db = PropertyUtil.getPropertyValue("hive_db")
+      if(hive_db.contains(driver))
+        result = result.replace(schema.getName(), schema.getTable())
+    })
+    result
+  }
 }
 
 object test{

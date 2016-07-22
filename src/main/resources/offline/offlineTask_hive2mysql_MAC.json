@@ -1,4 +1,3 @@
-
 {
   "Task":{
     "name":"multiTableTask",
@@ -6,30 +5,12 @@
     "sql":"insert into table mysql_studentAvg select hive_student.id, hive_student.name, avg(hive_score.score) from hive_student,hive_score where hive_student.id=hive_score.student_id group by hive_student.id,hive_student.name",
 
     "srcTable":{
-
-      "table1":{
-        "driver":"hive",
-        "table":"hive_student",
-        "columns":["id:Int","name:String","age:Int"]
+      "table1":"hive_student",
+      "table2":"hive_score"
     },
 
-    "table2":{
-      "driver":"hive",
-      "table":"hive_score",
-      "columns":["id:Int","student_id:Int","subject:String","score:Double"]
+    "destTable":{
+      "table1":"mysql_studentAvg"
     }
-
-  },
-
-  "destTable":{
-
-    "table1":{
-      "driver":"mysql",
-      "db":"spark",
-      "table":"mysql_studentAvg",
-      "columns":["id:Int","name:String", "avg:Double"]
-    }
-
   }
-}
 }

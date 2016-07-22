@@ -7,23 +7,14 @@
 
     "srcTable":{
 
-      "table1":{
-        "driver":"streaming",
-        "table":"test",
-        "columns":{"id":"Int","name":"String","age":"Int"}
-      }
-
+      "table1":"streaming_test"
     },
 
     "mapping":"/opt/csvMapping.json",
 
     "destTable":{
 
-      "table1":{
-        "driver":"solr",
-        "table":"user",
-        "columns":{"id":"Int","name":"String","age":"Int"}
-      }
+      "table1":"solr_user"
     }
   }
 }

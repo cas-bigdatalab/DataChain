@@ -92,23 +92,25 @@ class TaskBean() {
     //  init common params
     init(name, taskType)
 
-
     //init temporary table description
     val temporaryTableDesc :StringBuilder = new StringBuilder()
     for(index <- 0 until schemaList.length){
       val schema = schemaList(index)
-      temporaryTableDesc.append(TaskUtils.getCreateTableSqlNoWrap(schema)).append(PropertyUtil.getPropertyValue("create_sql_separator"))
+      val sqlDesc = TaskUtils.getCreateTableSqlNoWrap(schema)
+      temporaryTableDesc.append(sqlDesc).append(PropertyUtil.getPropertyValue("create_sql_separator"))
     }
     temporaryTableDesc.delete(temporaryTableDesc.length - PropertyUtil.getPropertyValue("create_sql_separator").length, temporaryTableDesc.length)
+
+    //transfer sql to real statement
+    val sqlDest = TaskUtils.transformSql(sql, schemaList: List[Schema])
 
     //init app params
     this.appParams = List(
       TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
-      TaskUtils.wrapDelimiter(sql)
+      TaskUtils.wrapDelimiter(sqlDest)
     )
 
     this
-
   }
 
   def initStore(name: String, topic: String, srcSchema: Schema, destSchema: Schema, mapping:String): TaskBean ={
@@ -221,13 +223,13 @@ object TaskBean{
     //srcTable
     assert(!map.get("srcTable").get.asInstanceOf[Map[String, Any]].isEmpty)
     //val srcSchema = Schema.parserMap(map.get("srcTable").get.asInstanceOf[Map[String, Any]])
-    val srcSchemaList : List[Schema] = Schema.parseMapList(map.get("srcTable").get.asInstanceOf[Map[String, Any]])
+    val srcSchemaList : List[Schema] = Schema.parseMultiSchema(map.get("srcTable").get.asInstanceOf[Map[String, Any]])
 
 
     //destTable
     assert(!map.get("destTable").get.asInstanceOf[Map[String, Any]].isEmpty)
     //val destSchema = Schema.parserMap(map.get("destTable").get.asInstanceOf[Map[String, Any]])
-    val destSchemaList : List[Schema] = Schema.parseMapList(map.get("destTable").get.asInstanceOf[Map[String, Any]])
+    val destSchemaList : List[Schema] = Schema.parseMultiSchema(map.get("destTable").get.asInstanceOf[Map[String, Any]])
 
 
     taskType match {

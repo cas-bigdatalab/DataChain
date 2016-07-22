@@ -6,31 +6,11 @@
     "sql":"insert into table mongo_user select * from mysql_user",
 
     "srcTable":{
-      "table1":{
-        "driver":"mysql",
-        "db":"spark",
-        "table":"mysql_user",
-        "columns":{"id":"Int","name":"String","age":"Int"}
-      }
-
-    },
-
-    "mappingSpec": {
-      "type": "morphlinesMapping",
-      "dimensionsMap":  {
-        "dimensions" : ["year:int","make:string","model:string","comment:string","blank:float"]
-      }
+      "table1":"mysql_user"
     },
 
     "destTable":{
-
-      "table1":{
-        "driver":"mongo",
-        "db":"test",
-        "table":"mongo_user",
-        "columns":{"id":"Int","name":"String","age":"Int"}
-      }
-
+      "table1":"mongo_user"
     }
   }
 }

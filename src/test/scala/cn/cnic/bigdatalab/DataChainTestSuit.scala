@@ -451,7 +451,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   }*/
 
   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~演示~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-  test("Chain By JSON: csv->kafka->realTime->mysql") {
+  /*test("Chain By JSON: csv->kafka->realTime->mysql") {
 
     //1.define Collection
     val agent_json_path = json_path + "/" + "agent_MAC.json"
@@ -466,12 +466,12 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
-  }
+  }*/
 
   test("Chain By JSON: hive->mysql") {
     //1. Define Task
 
-    val task_json_path = json_path + "/" + "offline/" + "offlineTask_hive2mysql_MAC.json"
+    val task_json_path = json_path + "/" + "offline/" + "offlineTask_hive2mysql.json"
     val taskBean = FileUtil.taskReader(task_json_path)
     val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean))
 
