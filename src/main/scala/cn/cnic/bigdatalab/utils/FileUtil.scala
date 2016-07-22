@@ -1,10 +1,9 @@
 package cn.cnic.bigdatalab.utils
 
 import java.io.File
-
-import cn.cnic.bigdatalab.Task.TaskBean
+import cn.cnic.bigdatalab.task.TaskBean
 import cn.cnic.bigdatalab.collection.Agent
-import cn.cnic.bigdatalab.compute.realtime.InterpreterSingleton
+import cn.cnic.bigdatalab.compute.realtime.utils.Utils
 
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
@@ -64,17 +63,39 @@ object FileUtil {
   def main(args: Array[String]): Unit ={
 
     //read dir
-    val files = FileUtil.dirRead("D:\\git\\DataChain\\externalcode")
+//    val files = FileUtil.dirRead("D:\\git\\DataChain\\externalcode")
     val schemal = "id:int,name:string,age:int"
     val line = "1,dyy,29"
     val mainClass = "ConnectMySql"
-
-    val interpreter = InterpreterSingleton.getInstance()
-    files.reverse.foreach(interpreter.compileString(_))
-    interpreter.interpret(s"""new $mainClass().process("$schemal", "$line")""")
+    val dclass = "cnic.bigdata.external.ConnectMySql"
+//
+//    val interpreter = InterpreterSingleton.getInstance()
+//    interpreter.addImports("cnic.bigdata.external.ConnectMySql")
+////    interpreter.interpret("import cnic.bigdata.external.ConnectMySql")
+////    files.reverse.foreach(interpreter.compileString(_))
+//    interpreter.interpret(s"""new $mainClass().process("$schemal", "$line")""")
 
 //    fileWriting("D:/dyy.txt", "aaa")
 //    fileWriting("D:/dyy.txt", "bbb")
+
+//    import scala.reflect.runtime.universe
+//
+//    val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
+//
+//    val module = runtimeMirror.staticModule("cnic.bigdata.external.ConnectMySql")
+//
+//    val obj = runtimeMirror.reflectModule(module)
+//
+//    println(obj.instance)
+
+//    val foo  = Class.forName("cnic.bigdata.external.ConnectMySql").newInstance.asInstanceOf[{ def process(schema: String, line: String): Unit }]
+//
+//    foo.process(schemal, line)
+
+//    val result = Utils.invoker("cn.cnic.bigdatalab.utils.FileUtil$", "fileReader", "D:\\git\\DataChain\\conf\\csvMapping.json")
+//    println(result)
+//      val result = Utils.invoker("cnic.bigdata.external.ConnectMySql", "process", schemal, line)
+    Utils.invokeStaticMethod("cnic.bigdata.external.TestMysql", PropertyUtil.getPropertyValue("sdk_method"), schemal, line)
 
   }
 

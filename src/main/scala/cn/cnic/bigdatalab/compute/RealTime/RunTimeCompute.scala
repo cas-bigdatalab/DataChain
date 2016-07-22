@@ -1,5 +1,6 @@
 package cn.cnic.bigdatalab.compute.realtime
 
+import cn.cnic.bigdatalab.compute.realtime.utils.InterpreterSingleton
 import cn.cnic.bigdatalab.transformer.Transformer
 import cn.cnic.bigdatalab.utils.{FileUtil, StreamingLogLevels}
 import org.apache.spark.rdd.RDD

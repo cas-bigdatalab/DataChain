@@ -1,6 +1,7 @@
 package cn.cnic.bigdatalab.compute.realtime
 
 import cn.cnic.bigdatalab.compute.HiveSQLContextSingleton
+import cn.cnic.bigdatalab.compute.realtime.utils.Utils
 import cn.cnic.bigdatalab.transformer.Transformer
 import cn.cnic.bigdatalab.utils.StreamingLogLevels
 import org.apache.spark.rdd.RDD
