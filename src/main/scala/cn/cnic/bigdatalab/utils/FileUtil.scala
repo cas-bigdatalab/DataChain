@@ -2,15 +2,12 @@ package cn.cnic.bigdatalab.utils
 
 import java.io.File
 
-import cn.cnic.bigdatalab.collection.{Agent, AgentChannel, AgentSink, AgentSource}
-import cn.cnic.bigdatalab.compute.realtime.{InterpreterSingleton, Utils}
-
-import cn.cnic.bigdatalab.task.TaskBean
-import cn.cnic.bigdatalab.collection.{AgentSink, AgentChannel, AgentSource, Agent}
+import cn.cnic.bigdatalab.Task.TaskBean
+import cn.cnic.bigdatalab.collection.Agent
+import cn.cnic.bigdatalab.compute.realtime.InterpreterSingleton
 
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
-import scala.util.parsing.json.JSON
 
 /**
   * Created by xjzhu on 16/7/4.
@@ -65,20 +62,6 @@ object FileUtil {
 
 
   def main(args: Array[String]): Unit ={
-
-    //schema
-    /*val path = Thread.currentThread().getContextClassLoader.getResource("userSchema.json").getPath
-    val schema = schemaReader(path)*/
-
-    //agent
-    /*val agentPath = Thread.currentThread().getContextClassLoader.getResource("agent.json").getPath
-    val agent = Agent.parseJson(fileReader(agentPath))*/
-
-    //task
-//    val taskPath = Thread.currentThread().getContextClassLoader.getResource("realtime/realTimeTask.json").getPath
-//    val realtimeTaskBean = TaskBean.parseJson(fileReader(taskPath))
-//
-//    realtimeTaskBean.getName()
 
     //read dir
     val files = FileUtil.dirRead("D:\\git\\DataChain\\externalcode")

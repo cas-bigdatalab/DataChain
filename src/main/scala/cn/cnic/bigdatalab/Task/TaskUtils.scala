@@ -59,7 +59,7 @@ object TaskUtils {
 
   //table name
   def getSchemaName(schema: Schema): String ={
-    wrapDelimiter(schema.getTable())
+    wrapDelimiter(schema.getName())
   }
 
   //table type

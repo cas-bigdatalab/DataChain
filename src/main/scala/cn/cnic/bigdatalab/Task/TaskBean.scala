@@ -56,10 +56,13 @@ class TaskBean() {
     }
     temporaryTableDesc.delete(temporaryTableDesc.length - PropertyUtil.getPropertyValue("create_sql_separator").length, temporaryTableDesc.length)
 
+    //transfer sql to real statement
+    val sqlDescription = TaskUtils.transformSql(sql, destSchema: List[Schema])
+
     //init app params
     this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
       TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
-      TaskUtils.wrapDelimiter(sql), mapping)
+      TaskUtils.wrapDelimiter(sqlDescription), mapping)
 
     this
 
@@ -102,12 +105,12 @@ class TaskBean() {
     temporaryTableDesc.delete(temporaryTableDesc.length - PropertyUtil.getPropertyValue("create_sql_separator").length, temporaryTableDesc.length)
 
     //transfer sql to real statement
-    val sqlDest = TaskUtils.transformSql(sql, schemaList: List[Schema])
+    val sqlDescription = TaskUtils.transformSql(sql, schemaList: List[Schema])
 
     //init app params
     this.appParams = List(
       TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
-      TaskUtils.wrapDelimiter(sqlDest)
+      TaskUtils.wrapDelimiter(sqlDescription)
     )
 
     this

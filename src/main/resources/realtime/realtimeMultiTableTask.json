@@ -3,7 +3,7 @@
     "name":"multiTableTask",
     "taskType":"realtime",
     "topic":"test",
-    "sql":"insert into table user1 select test.name, test.age from user,test where user.age=test.age",
+    "sql":"insert into table mysql_user1 select streaming_test.name, streaming_test.age from mysql_user,streaming_test where mysql_user.name=streaming_test.name",
 
     "srcTable":{
       "table1":"streaming_test"
@@ -12,19 +12,9 @@
     "mapping":"/opt/csvMapping.json",
 
     "destTable":{
-
-      "table1":{
-        "driver":"mysql",
-        "db":"test",
-        "table":"user",
-        "columns":{"name":"String","age":"Int"}
-      },
-      "table2":{
-        "driver":"mysql",
-        "db":"test",
-        "table":"user1",
-        "columns":{"name":"String","age":"Int"}
-      }
+      "table1":"mysql_user",
+      "table2":"mysql_user1"
     }
+
   }
 }

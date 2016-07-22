@@ -2,7 +2,7 @@
   "Task":{
     "name":"realTimeTask",
     "taskType":"realtime",
-    "sql":"insert into table mysql_user select * from test",
+    "sql":"insert into table mysql_user select * from streaming_test",
     "topic":"test",
 
     "srcTable":{
