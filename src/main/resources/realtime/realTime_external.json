@@ -1,0 +1,16 @@
+{
+  "Task":{
+    "name":"externalTask",
+    "taskType":"realtime",
+    "external":"TestJava.jar",
+    "topic":"test",
+    "entry":{
+      "mainClass":"cnic.bigdata.external.TestMysql",
+      "methodName":"processLine",
+      "language":"java"
+    },
+
+    "mapping":"/opt/csvMapping_user.json"
+
+  }
+}

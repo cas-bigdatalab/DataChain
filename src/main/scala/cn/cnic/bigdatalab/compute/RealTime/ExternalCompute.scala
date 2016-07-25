@@ -24,7 +24,7 @@ object ExternalCompute {
         7 transformer
 
    */
-  def run(appName: String, duration : String, topic : String, kafkaParam : String, mainClass : String, argsLength: String,
+  def run(appName: String, duration : String, topic : String, kafkaParam : String, mainClass : String, methodName: String,
           language: String, mapping:String) {
 
     StreamingLogLevels.setStreamingLogLevels()
@@ -35,7 +35,8 @@ object ExternalCompute {
 //          .set("spark.executor.memory", "10g")
 //          .set("spark.cores.max", "12")
 //          .set("spark.driver.allowMultipleContexts", "true")
-//          .setJars(List("D:\\git\\DataChain\\out\\artifacts\\datachain_jar\\datachain.jar", jarPath))
+//          .setJars(List("D:\\git\\DataChain\\out\\artifacts\\datachain_jar\\datachain.jar",
+//          "D:\\git\\DataChain\\external\\TestJava.jar"))
 
     val sc = new SparkContext(conf)
     val ssc = new StreamingContext(sc, Seconds(duration.toInt))
@@ -43,32 +44,31 @@ object ExternalCompute {
     // Create transformer
     @transient val transformer = new Transformer(mapping)
     val schema = transformer.getSchema().mkString("",",","")
-    val methodName = PropertyUtil.getPropertyValue("sdk_method")
 
     val lines = Kafka2SparkStreaming.getStream(ssc, topic, kafkaParam)
 
     lines.foreachRDD((rdd: RDD[String], time: Time) => {
-      argsLength match {
-        case "1" =>{
-          language match {
+      methodName match {
+        case "processRdd" =>{
+          language.toLowerCase match {
             case "scala" => {
-              val proc = Class.forName(mainClass).newInstance.asInstanceOf[{ def process(rdd: RDD[String]): Unit }]
-              proc.process(rdd)
+              val proc = Class.forName(mainClass).newInstance.asInstanceOf[{ def processRdd(schema: String, rdd: RDD[String]): Unit }]
+              proc.processRdd(schema, rdd)
             }
             case "java" => {
               Utils.invokeStaticMethod(mainClass, methodName, rdd)
             }
           }
         }
-        case "2" =>{
+        case "processLine" =>{
           rdd.filter(_!="").map(line => {
             //call transformer
-            //        val row = transformer.transform(line)
-            //        Row.fromSeq(row.toArray.toSeq)
+            // val row = transformer.transform(line)
+            // Row.fromSeq(row.toArray.toSeq)
             language match {
               case "scala" => {
-                val proc = Class.forName(mainClass).newInstance.asInstanceOf[{ def process(schema: String, line: String): Unit }]
-                proc.process(schema, line)
+                val proc = Class.forName(mainClass).newInstance.asInstanceOf[{ def processLine(schema: String, line: String): Unit }]
+                proc.processLine(schema, line)
               }
               case "java" => {
                 Utils.invokeStaticMethod(mainClass, methodName, schema, line)
@@ -95,7 +95,7 @@ object ExternalCompute {
 //    val mapping = "D:\\git\\DataChain\\conf\\csvMapping_user.json"
 //    val jarPath = "D:\\git\\DataChain\\external\\TestJava.jar"
 //    val mainClass = "cnic.bigdata.external.TestMysql"
-//    val argsLength = "2"
+//    val methodName = "processLine"
 //    val language = "java"
 
     val appName = args(0)
@@ -103,11 +103,11 @@ object ExternalCompute {
     val topics = args(2)
     val kafkaParam = args(3)
     val mainClass = args(4)
-    val argsLength = args(5)
+    val methodName = args(5)
     val language = args(6)
     val mapping = args(7)
 
-    run(appName, duration, topics, kafkaParam, mainClass, argsLength, language, mapping)
+    run(appName, duration, topics, kafkaParam, mainClass, methodName, language, mapping)
   }
 
 }

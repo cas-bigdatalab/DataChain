@@ -1,5 +1,6 @@
-package cn.cnic.bigdatalab.Task
+package cn.cnic.bigdatalab.task
 
+import cn.cnic.bigdatalab.task.factory.{SQLTask, TaskBean, TaskFactory}
 import cn.cnic.bigdatalab.entity.Schema
 
 import scala.collection.mutable.ArrayBuffer
@@ -62,7 +63,7 @@ object TaskTest {
 
     val sql = "select * from user"
 
-    val task: TaskBean = new TaskBean().initRealtime("test_task", sql, topic, schema, schema, "mapping")
+    val task: TaskBean = new SQLTask().initRealtime("test_task", sql, topic, schema, schema, "mapping")
 
     val realTimeTask = new RealTimeTask(task)
     realTimeTask.run()
@@ -76,15 +77,15 @@ object TaskTest {
 
     val sql1 = "select * from user"
 
-    val task1: TaskBean = new TaskBean().initOffline("test_task1", sql, schema, schema)
-    task1.setInterval(5)
+    val task1: TaskBean = new SQLTask().initOffline("test_task1", sql, schema, schema)
+    task1.interval= 5
 
     val offlineTask = new OfflineTask(task1)
     offlineTask.run()
 
     Thread.sleep(20*1000)
 
-    offlineTask.cancel(task1.getTaskType()+"_"+task1.getName())
+    offlineTask.cancel(task1.taskType+"_"+task1.name)
 
   }
 

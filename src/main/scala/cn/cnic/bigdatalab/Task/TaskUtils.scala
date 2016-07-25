@@ -1,4 +1,4 @@
-package cn.cnic.bigdatalab.Task
+package cn.cnic.bigdatalab.task
 
 import java.sql.Timestamp
 import java.text.SimpleDateFormat

@@ -1,4 +1,4 @@
-package cn.cnic.bigdatalab.Task
+package cn.cnic.bigdatalab.task
 
 import akka.actor._
 import akka.actor.Props
@@ -7,6 +7,7 @@ import akka.util.Timeout
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration._
 import akka.actor.ActorSystem
+import cn.cnic.bigdatalab.task.factory.{SQLTask, TaskBean, TaskFactory}
 import cn.cnic.bigdatalab.entity.Schema
 import cn.cnic.bigdatalab.utils.{PropertyUtil, SshUtil}
 
@@ -24,14 +25,17 @@ trait Scheduler{
   def execute(taskInstance: TaskBean): Unit ={
     val command: StringBuffer = new StringBuffer()
     command.append("cd ").append(PropertyUtil.getPropertyValue("spark_home")).append(";")
-    command.append("./bin/spark-submit ").append("--class ").append(taskInstance.getTaskParams.get("class").get)
-      .append(" --master ").append(taskInstance.getSparkParams.get("master").get)
-      .append(" --executor-memory ").append(taskInstance.getSparkParams.get("executor-memory").get)
-      .append(" --total-executor-cores ").append(taskInstance.getSparkParams.get("total-executor-cores").get)
-      .append(" ").append(taskInstance.getTaskParams.get("path").get)
+    command.append("./bin/spark-submit ").append("--class ").append(taskInstance.taskParams.get("class").get)
+      .append(" --master ").append(taskInstance.sparkParams.get("master").get)
+      .append(" --executor-memory ").append(taskInstance.sparkParams.get("executor-memory").get)
+      .append(" --total-executor-cores ").append(taskInstance.sparkParams.get("total-executor-cores").get)
 
+    if(taskInstance.jars != null && !taskInstance.jars.isEmpty){
+      command.append(" --jars ").append(taskInstance.jars.mkString("", ",",""))
+    }
 
-    command.append(taskInstance.getAppParams.mkString(" ", " ",""))
+    command.append(" ").append(taskInstance.taskParams.get("path").get)
+      .append(taskInstance.appParams.mkString(" ", " ",""))
 
     //val deployCmd =  "ssh -t -t xjzhu@" + PropertyUtil.getPropertyValue("spark_host") + " &&  /bin/bash " + command
     val deployCmd =  command.toString
@@ -70,10 +74,10 @@ class OfflineScheduler extends Scheduler{
 
   override def deploy(taskInstance: TaskBean): Unit ={
     import scala.concurrent.ExecutionContext.Implicits.global
-    val act = system.actorOf(Props(new OfflineActor(taskInstance)), taskInstance.getTaskType()+"_"+taskInstance.getName())
+    val act = system.actorOf(Props(new OfflineActor(taskInstance)), taskInstance.taskType+"_"+taskInstance.name)
     implicit val time = Timeout(5 seconds)
 
-    val interval = taskInstance.getInterval()
+    val interval = taskInstance.interval
     //val cancellable = system.scheduler.schedule(0 milliseconds,interval seconds, act, this)
     //val cancellable = system.scheduler.scheduleOnce(0 milliseconds, act, this)
     val cancellable = interval match {
@@ -81,7 +85,7 @@ class OfflineScheduler extends Scheduler{
       case x => system.scheduler.schedule(0 milliseconds,x seconds, act, this)
     }
 
-    tasks += (taskInstance.getTaskType()+"_"+taskInstance.getName() -> cancellable)
+    tasks += (taskInstance.taskType+"_"+taskInstance.name -> cancellable)
   }
 
   override def cancel(name: String): Unit ={
@@ -104,7 +108,7 @@ object SchedulerTest{
 
     val sql = "select * from user"
 
-    val task: TaskBean = new TaskBean().initRealtime("test_task", sql, topic, schema, schema, "mapping")
+    val task: TaskBean = new SQLTask().initRealtime("test_task", sql, topic, schema, schema, "mapping")
 
     scheduler.deploy(task)
 
@@ -119,14 +123,14 @@ object SchedulerTest{
 
     val sql1 = "select * from user"
 
-    val task1: TaskBean = new TaskBean().initOffline("test_task1", sql, schema, schema)
-    task1.setInterval(10)
+    val task1: TaskBean = new SQLTask().initOffline("test_task1", sql, schema, schema)
+    task1.interval=10
 
     offlineScheduler.deploy(task1)
 
     Thread.sleep(20 * 1000)
 
-    offlineScheduler.cancel(task1.getTaskType()+"_"+task1.getName())
+    offlineScheduler.cancel(task1.taskType+"_"+task1.name)
 
   }
 }

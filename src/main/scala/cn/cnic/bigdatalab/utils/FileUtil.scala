@@ -1,7 +1,8 @@
 package cn.cnic.bigdatalab.utils
 
 import java.io.File
-import cn.cnic.bigdatalab.task.TaskBean
+
+import cn.cnic.bigdatalab.task.factory.{Json2Task, TaskBean, TaskFactory}
 import cn.cnic.bigdatalab.collection.Agent
 import cn.cnic.bigdatalab.compute.realtime.utils.Utils
 
@@ -54,7 +55,7 @@ object FileUtil {
 
   def taskReader(taskPath:String): TaskBean = {
     //val taskPath = Thread.currentThread().getContextClassLoader.getResource("realTimeTask.json").getPath
-    val taskBean = TaskBean.parseJson(fileReader(taskPath))
+    val taskBean = Json2Task.parseJson(fileReader(taskPath))
     taskBean
   }
 

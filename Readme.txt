@@ -16,6 +16,6 @@ curl -X POST http://localhost:8983/solr/financenews/config -d '{"set-property":{
   (1)提供SDK，现有如下两种方法，用户通过实现以下方法即可自定义数据的处理逻辑。
 
      process(schema: String, line: String)
-     process(rdd: RDD[String])
+     process(schema: String，rdd: RDD[String])
 
   (2)提供通用数据处理逻辑

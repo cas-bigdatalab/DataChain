@@ -1,6 +1,5 @@
 package cn.cnic.bigdatalab.compute.offline
 
-
 import cn.cnic.bigdatalab.compute.HiveSQLContextSingleton
 import org.apache.spark.{SparkConf, SparkContext};
 
@@ -122,4 +121,3 @@ object Offline {
 
 
 }
-

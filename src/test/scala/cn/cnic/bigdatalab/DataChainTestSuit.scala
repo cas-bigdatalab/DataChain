@@ -1,6 +1,6 @@
 package cn.cnic.bigdatalab
 
-import cn.cnic.bigdatalab.Task.{OfflineTask, RealTimeTask, StoreTask, TaskBean}
+import cn.cnic.bigdatalab.task.{OfflineTask, RealTimeTask, StoreTask}
 import cn.cnic.bigdatalab.collection.{AgentChannel, AgentSink, AgentSource}
 import cn.cnic.bigdatalab.datachain._
 import cn.cnic.bigdatalab.entity.Schema
@@ -206,6 +206,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(taskStep).run()
+    Thread.sleep(10000)
 
   }
 
@@ -450,7 +451,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     chain.addStep(taskStep).run()
   }*/
 
-  /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~演示~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/*  /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~演示~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
   test("Chain realtime: csv->kafka->realTime->mysql") {
 
     //1.define Collection
@@ -480,25 +481,24 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     chain.addStep(taskStep).run()
     Thread.sleep(10000)
 
-  }
+  }*/
 
-  test("Chain store: csv->kafka->realTime->mysql") {
-
+  test("Chain realtime: csv->kafka->spark streaming->external") {
     //1.define Collection
     val agent_json_path = json_path + "/" + "agent/agent_for32.json"
     val agent = FileUtil.agentReader(agent_json_path)
     val collectionStep = new CollectionStep().initAgent(agent)
 
     //2. Define real Task
-    val task_json_path = json_path + "/store/csv2mysql.json"
+    val task_json_path = json_path + "/" + "realtime/" + "realTime_external.json"
     val taskBean = FileUtil.taskReader(task_json_path)
     val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
-    taskStep.run
-
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
+
   }
+
 
 }
 
