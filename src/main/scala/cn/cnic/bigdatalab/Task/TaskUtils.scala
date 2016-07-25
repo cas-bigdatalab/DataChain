@@ -31,6 +31,10 @@ object TaskUtils {
     wrapDelimiter(params.toString)
   }
 
+  def getKafkaBrokerList(): String={
+    wrapDelimiter(PropertyUtil.getPropertyValue("kafka.brokerList"))
+  }
+
   //topics
   def getTopic(topic: String): String ={
     val params: StringBuffer = new StringBuffer()

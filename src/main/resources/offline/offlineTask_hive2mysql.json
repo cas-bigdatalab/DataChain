@@ -3,6 +3,7 @@
   "Task":{
     "name":"multiTableTask",
     "taskType":"offline",
+    "notificationTopic":"test",
 
     "srcTable":{
       "table1":"hive_user1",

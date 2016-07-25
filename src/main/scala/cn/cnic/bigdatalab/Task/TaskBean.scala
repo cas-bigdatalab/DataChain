@@ -88,7 +88,7 @@ class TaskBean() {
 
   }
 
-  def initOfflineMultiSchema(name: String, sql: String, schemaList: List[Schema], interval: Long = -1): TaskBean ={
+  def initOfflineMultiSchema(name: String, sql: String, schemaList: List[Schema], interval: Long = -1, notificationTopic:String = ""): TaskBean ={
     this.taskType = "offline"
     this.interval = interval
 
@@ -108,10 +108,19 @@ class TaskBean() {
     val sqlDescription = TaskUtils.transformSql(sql, schemaList: List[Schema])
 
     //init app params
-    this.appParams = List(
-      TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
-      TaskUtils.wrapDelimiter(sqlDescription)
-    )
+    if (notificationTopic == ""){
+      this.appParams = List(
+        TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
+        TaskUtils.wrapDelimiter(sqlDescription))
+    }else{
+      this.appParams = List(
+        TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
+        TaskUtils.wrapDelimiter(sqlDescription),
+        TaskUtils.getTopic(notificationTopic),
+        TaskUtils.getKafkaBrokerList()
+      )
+    }
+
 
     this
   }
@@ -271,7 +280,9 @@ object TaskBean{
         //interval
         val interval = map.getOrElse("interval", "-1").asInstanceOf[String]
 
-        taskBean.initOfflineMultiSchema(name,sql, srcSchemaList:::destSchemaList, interval.toLong)
+        val notificationTopic = map.getOrElse("notificationTopic", "").asInstanceOf[String]
+
+        taskBean.initOfflineMultiSchema(name,sql, srcSchemaList:::destSchemaList, interval.toLong, notificationTopic)
 
       }
       case "store" =>{
