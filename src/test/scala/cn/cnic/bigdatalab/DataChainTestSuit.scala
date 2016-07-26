@@ -483,7 +483,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   }*/
 
-  test("Chain realtime: csv->kafka->spark streaming->external") {
+  /*test("Chain realtime: csv->kafka->spark streaming->external") {
     //1.define Collection
     val agent_json_path = json_path + "/" + "agent/agent_for32.json"
     val agent = FileUtil.agentReader(agent_json_path)
@@ -497,7 +497,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
 
-  }
+  }*/
 
 
 }

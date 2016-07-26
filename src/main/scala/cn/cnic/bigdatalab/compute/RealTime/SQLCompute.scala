@@ -1,6 +1,7 @@
 package cn.cnic.bigdatalab.compute.realtime
 
 import cn.cnic.bigdatalab.compute.HiveSQLContextSingleton
+import cn.cnic.bigdatalab.compute.offline.KafkaMessagerProducer
 import cn.cnic.bigdatalab.compute.realtime.utils.Utils
 import cn.cnic.bigdatalab.transformer.Transformer
 import cn.cnic.bigdatalab.utils.StreamingLogLevels
@@ -26,7 +27,8 @@ object SQLCompute {
 
    */
   def run(appName: String, duration : String, topic : String, kafkaParam : String,
-          srcName : String, createDecTable : String, execSql : String, mapping:String) {
+          srcName : String, createDecTable : String, execSql : String, mapping:String,
+          notificationTopic : String = "", kafkaBrokerList:String = "") {
 
     StreamingLogLevels.setStreamingLogLevels()
 
@@ -67,6 +69,14 @@ object SQLCompute {
         sqlContext.sql(tableDesc)
       }
       sqlContext.sql(execSql)
+
+      if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))&&rdd.count()>0){
+        println("topics：" + notificationTopic)
+        val topic = notificationTopic.split(":")(0)
+        val partition = notificationTopic.split(":")(1)
+        KafkaMessagerProducer.produce(topic, partition, kafkaBrokerList, "Received")
+
+      }
 
     })
 
@@ -139,10 +149,16 @@ object SQLCompute {
     val createDecTable = args(5)
     val execSql = args(6)
     val mapping = args(7)
+    var notificationTopic = ""
+    var kafkaBrokerList = ""
+    if (args.size == 10){
+      notificationTopic = args(8)
+      kafkaBrokerList = args(9)
+    }
 
     println("create dec table sql:" + createDecTable)
     println("exec sql:" + execSql)
 
-    run(appName, duration, topics, kafkaParam, srcName, createDecTable, execSql, mapping)
+    run(appName, duration, topics, kafkaParam, srcName, createDecTable, execSql, mapping, notificationTopic, kafkaBrokerList)
   }
 }

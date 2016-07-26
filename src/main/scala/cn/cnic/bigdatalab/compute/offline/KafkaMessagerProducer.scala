@@ -11,7 +11,7 @@ import kafka.producer.{KeyedMessage, ProducerConfig}
   */
 object KafkaMessagerProducer {
 
-  def produce(topic : String, partition:String , brokers : String): Unit ={
+  def produce(topic : String, partition:String , brokers : String, status: String = "Finished"): Unit ={
 
 
     val props = new Properties()
@@ -23,7 +23,7 @@ object KafkaMessagerProducer {
 
     val config = new ProducerConfig(props)
     val producer = new Producer[String, String](config)
-    val msg = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis()) + ":Finished!"
+    val msg = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis()) + ":" + status +"!"
     val data = new KeyedMessage[String, String](topic, partition, msg)
     producer.send(data)
 
@@ -31,7 +31,7 @@ object KafkaMessagerProducer {
   }
 
   def main(agrs: Array[String]): Unit ={
-    KafkaMessagerProducer.produce("test","1","10.0.71.32:9092,10.0.71.33:9092,10.0.71.34:9092")
+    KafkaMessagerProducer.produce("notification","1","10.0.71.20:9092,10.0.71.26:9092,10.0.71.27:9092")
   }
 
 }

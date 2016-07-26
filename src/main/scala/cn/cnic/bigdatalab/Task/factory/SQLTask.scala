@@ -10,7 +10,7 @@ import cn.cnic.bigdatalab.utils.PropertyUtil
 
 class SQLTask extends TaskBean{
 
-  def initRealtime(name: String, sql: String, topic: String, srcSchema: Schema, destSchema: Schema, mapping:String): SQLTask ={
+  def initRealtime(name: String, sql: String, topic: String, srcSchema: Schema, destSchema: Schema, mapping:String, notificationTopic:String = ""): SQLTask ={
     this.taskType = "realtime"
 
     //init common params
@@ -19,13 +19,15 @@ class SQLTask extends TaskBean{
     //init app params
     this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
       TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.getCreateTableSql(destSchema),
-      TaskUtils.wrapDelimiter(sql), mapping)
+      TaskUtils.wrapDelimiter(sql), mapping,
+      TaskUtils.getTopic(notificationTopic),
+      TaskUtils.getKafkaBrokerList())
 
     this
 
   }
 
-  def initRealtime(name: String, sql: String, topic: String, srcSchema: Schema, destSchema: List[Schema], mapping:String): SQLTask ={
+  def initRealtimeMultiSchema(name: String, sql: String, topic: String, srcSchema: Schema, destSchema: List[Schema], mapping:String, notificationTopic:String = ""): SQLTask ={
     this.taskType = "realtime"
 
     //init common params
@@ -46,7 +48,9 @@ class SQLTask extends TaskBean{
     //init app params
     this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
       TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
-      TaskUtils.wrapDelimiter(sqlDescription), mapping)
+      TaskUtils.wrapDelimiter(sqlDescription), mapping,
+      TaskUtils.getTopic(notificationTopic),
+      TaskUtils.getKafkaBrokerList())
 
     this
 
@@ -171,7 +175,9 @@ class SQLTask extends TaskBean{
         assert(!map.get("mapping").get.asInstanceOf[String].isEmpty)
         val mapping = map.get("mapping").get.asInstanceOf[String]
 
-        initRealtime(name,sql,topic,srcSchemaList(0), destSchemaList, mapping)
+        val notificationTopic = map.getOrElse("notificationTopic", "").asInstanceOf[String]
+
+        initRealtimeMultiSchema(name,sql,topic,srcSchemaList(0), destSchemaList, mapping, notificationTopic)
 
       }
       case "offline" =>{
@@ -183,7 +189,9 @@ class SQLTask extends TaskBean{
         //interval
         val interval = map.getOrElse("interval", "-1").asInstanceOf[String]
 
-        initOfflineMultiSchema(name,sql, srcSchemaList:::destSchemaList, interval.toLong)
+        val notificationTopic = map.getOrElse("notificationTopic", "").asInstanceOf[String]
+
+        initOfflineMultiSchema(name,sql, srcSchemaList:::destSchemaList, interval.toLong, notificationTopic)
 
       }
       case "store" =>{
