@@ -4,6 +4,7 @@
     "name":"multiTableTask",
     "taskType":"offline",
     "notificationTopic":"test",
+    "expression":"*/5 * * ? * *",
 
     "srcTable":{
       "table1":"hive_user1",

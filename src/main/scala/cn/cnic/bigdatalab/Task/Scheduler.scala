@@ -7,9 +7,12 @@ import akka.util.Timeout
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.duration._
 import akka.actor.ActorSystem
+import akka.japi.Option.Some
+import cn.cnic.bigdatalab.common.Quartz
 import cn.cnic.bigdatalab.task.factory.{SQLTask, TaskBean, TaskFactory}
 import cn.cnic.bigdatalab.entity.Schema
 import cn.cnic.bigdatalab.utils.{PropertyUtil, SshUtil}
+import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension
 
 import scala.sys.process.Process
 
@@ -69,27 +72,46 @@ class OfflineActor(taskInstance: TaskBean) extends Actor{
 }
 
 class OfflineScheduler extends Scheduler{
-  val system = ActorSystem("offline-timer")
-  var tasks = Map[String, Cancellable]()
+
 
   override def deploy(taskInstance: TaskBean): Unit ={
     import scala.concurrent.ExecutionContext.Implicits.global
-    val act = system.actorOf(Props(new OfflineActor(taskInstance)), taskInstance.taskType+"_"+taskInstance.name)
+    val act = Quartz.system.actorOf(Props(new OfflineActor(taskInstance)), taskInstance.taskType+"_"+taskInstance.name)
     implicit val time = Timeout(5 seconds)
 
-    val interval = taskInstance.interval
-    //val cancellable = system.scheduler.schedule(0 milliseconds,interval seconds, act, this)
-    //val cancellable = system.scheduler.scheduleOnce(0 milliseconds, act, this)
-    val cancellable = interval match {
-      case -1 => system.scheduler.scheduleOnce(0 milliseconds, act, this)
-      case x => system.scheduler.schedule(0 milliseconds,x seconds, act, this)
+    val expression = taskInstance.expression
+
+
+    if(expression != ""){
+      val croName = taskInstance.taskType+"_"+taskInstance.name+"_cron"
+      Quartz.qse.createSchedule(croName, Some(croName), expression, None)
+      Quartz.qse.schedule(croName, act, this)
+
+      Quartz.tasks += (taskInstance.taskType+"_"+taskInstance.name -> croName)
+      return
     }
 
-    tasks += (taskInstance.taskType+"_"+taskInstance.name -> cancellable)
+
+
+
+    val interval = taskInstance.interval
+//    val cancellable = system.scheduler.schedule(0 milliseconds,interval seconds, act, this)
+//    val cancellable = system.scheduler.scheduleOnce(0 milliseconds, act, this)
+    val cancellable = interval match {
+      case -1 => Quartz.system.scheduler.scheduleOnce(0 milliseconds, act, this)
+      case x => Quartz.system.scheduler.schedule(0 milliseconds,x seconds, act, this)
+    }
+
+
   }
 
   override def cancel(name: String): Unit ={
-    tasks.get(name).get.cancel()
+    if(Quartz.tasks.get(name).get.asInstanceOf[String].isInstanceOf[String]){
+      Quartz.qse.cancelJob(Quartz.tasks.get(name).get.asInstanceOf[String])
+    }else{
+      Quartz.tasks.get(name).get.asInstanceOf[Cancellable].cancel()
+    }
+
   }
 
 }

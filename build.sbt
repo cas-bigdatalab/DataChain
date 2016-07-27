@@ -60,5 +60,13 @@ libraryDependencies ++=Seq(
 //libraryDependencies ++=Seq(
 //  "org.scala-lang" % "scala-actors" % "2.10.4"
 //)
+libraryDependencies ++=Seq(
+  "org.quartz-scheduler" % "quartz" % "2.2.2",
+  "com.typesafe.akka" % "akka-testkit_2.10" % "2.3.4",
+  "org.specs2" %% "specs2" % "2.3.12",
+  "junit" % "junit" % "4.7",
+  "org.slf4j" % "slf4j-api" % "1.6.1",
+  "org.slf4j" % "slf4j-jcl" % "1.6.1"
+)
 
 fork in Test := true

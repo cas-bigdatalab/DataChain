@@ -76,9 +76,10 @@ class SQLTask extends TaskBean{
 
   }
 
-  def initOfflineMultiSchema(name: String, sql: String, schemaList: List[Schema], interval: Long = -1, notificationTopic:String = ""): SQLTask ={
+  def initOfflineMultiSchema(name: String, sql: String, schemaList: List[Schema], interval: Long = -1, expression: String, notificationTopic:String = ""): SQLTask ={
     this.taskType = "offline"
     this.interval = interval
+    this.expression = expression
 
     //  init common params
     init(name, taskType+"_sql")
@@ -189,9 +190,12 @@ class SQLTask extends TaskBean{
         //interval
         val interval = map.getOrElse("interval", "-1").asInstanceOf[String]
 
+        //expression
+        val expression = map.getOrElse("expression", "").asInstanceOf[String]
+
         val notificationTopic = map.getOrElse("notificationTopic", "").asInstanceOf[String]
 
-        initOfflineMultiSchema(name,sql, srcSchemaList:::destSchemaList, interval.toLong, notificationTopic)
+        initOfflineMultiSchema(name,sql, srcSchemaList:::destSchemaList, interval.toLong, expression, notificationTopic)
 
       }
       case "store" =>{
