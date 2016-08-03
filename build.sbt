@@ -45,6 +45,10 @@ libraryDependencies ++=Seq(
   "com.typesafe.akka" % "akka-remote_2.10" % "2.3.4",
   "com.typesafe.akka" % "akka-actor_2.10" % "2.3.4",
   "com.typesafe.akka" % "akka-slf4j_2.10" % "2.3.4",
+  "com.typesafe.akka" % "akka-stream-experimental_2.10" % "2.0.4",
+  "com.typesafe.akka" % "akka-http-core-experimental_2.10" % "2.0.4",
+  "com.typesafe.akka" % "akka-http-experimental_2.10" % "2.0.4",
+  "com.typesafe.akka" % "akka-http-spray-json-experimental_2.10" % "2.0.4",
   "org.scalatest" %% "scalatest" % "2.2.1" % "test",
   "org.apache.flume" % "flume-ng-core" % "1.6.0",
   "org.apache.flume" % "flume-ng-sdk" % "1.6.0",
@@ -65,8 +69,9 @@ libraryDependencies ++=Seq(
   "com.typesafe.akka" % "akka-testkit_2.10" % "2.3.4",
   "org.specs2" %% "specs2" % "2.3.12",
   "junit" % "junit" % "4.7",
-  "org.slf4j" % "slf4j-api" % "1.6.1",
-  "org.slf4j" % "slf4j-jcl" % "1.6.1"
+  "org.slf4j" % "slf4j-api" % "1.6.1"
 )
+
+
 
 fork in Test := true
