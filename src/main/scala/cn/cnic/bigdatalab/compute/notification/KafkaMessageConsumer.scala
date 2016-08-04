@@ -48,14 +48,7 @@ class KafkaMessageConsumer(val zookeeper: String,
     executor = Executors.newFixedThreadPool(numThreads);
     var threadNumber = 0;
     for (stream <- streams) {
-      //executor.submit(new ConsumerRunnable(stream, threadNumber, delay))
       executor.execute(new ConsumerRunnable(stream, threadNumber, delay))
-      /*val it = stream.iterator()
-
-      while (it.hasNext()) {
-        val msg = new String(it.next().message());
-        System.out.println(System.currentTimeMillis() + ",Thread " + threadNumber + ": " + msg);
-      }*/
       threadNumber += 1
     }
   }
@@ -74,6 +67,23 @@ class KafkaMessageConsumer(val zookeeper: String,
         System.out.println(System.currentTimeMillis() + ": " + msg);
       }
     }
+  }
+
+  def getOneMessage(): String = {
+    val topicCountMap = Map(topic -> 1)
+    val consumerMap = consumer.createMessageStreams(topicCountMap);
+    val streams = consumerMap.get(topic).get;
+    var msg : String = ""
+    for (stream <- streams) {
+
+      val it = stream.iterator()
+
+      while (it.hasNext()) {
+        msg = new String(it.next().message());
+        this.shutdown()
+      }
+    }
+    msg
   }
 }
 
@@ -101,16 +111,15 @@ object KafkaMessageConsumer {
     val delay = 0
     val threadNum = 3
 
-    KafkaMessagerProducer.produce(topic,"1",brokerList,"Failed")
-    KafkaMessagerProducer.produce(topic,"1",brokerList,"Successfull")
-    KafkaMessagerProducer.produce(topic,"1",brokerList,"Failed")
+
+    //KafkaMessagerProducer.produce(topic,"1",brokerList,"Successfull")
     KafkaMessagerProducer.produce(topic,"1",brokerList,"Failed")
     val example = new KafkaMessageConsumer(zookeeper, groupId, topic, delay)
     //example.runWithThreadPool(threadNum)
-    example.run()
-    Thread.sleep(10000)
-    example.shutdown()
 
+    val msg = example.getOneMessage()
+    System.out.println(System.currentTimeMillis() + ": " + msg);
+    assert(!msg.contains("Failed"))
   }
 
 }
