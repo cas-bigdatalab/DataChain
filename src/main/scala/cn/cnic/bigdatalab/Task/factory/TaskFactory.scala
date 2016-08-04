@@ -26,6 +26,5 @@ object Json2Task{
       task = TaskFactory("external")
     }
     task.parseMap(map)
-
   }
 }

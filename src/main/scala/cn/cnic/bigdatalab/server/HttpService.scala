@@ -6,8 +6,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.model.HttpResponse
 import akka.http.scaladsl.server.Directives
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.PathMatchers.Segment
+
 
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
@@ -42,6 +41,7 @@ trait Service extends DefaultJsonProtocol with Directives with SprayJsonSupport{
           }
         }
       }
+
     }
   }
 

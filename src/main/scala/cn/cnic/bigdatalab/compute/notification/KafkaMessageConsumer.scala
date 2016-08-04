@@ -39,23 +39,40 @@ class KafkaMessageConsumer(val zookeeper: String,
     config
   }
 
-  def run(numThreads: Int) = {
+  def runWithThreadPool(numThreads: Int) = {
     val topicCountMap = Map(topic -> numThreads)
     val consumerMap = consumer.createMessageStreams(topicCountMap);
     val streams = consumerMap.get(topic).get;
 
     //TODO: implement by thread
-    //executor = Executors.newFixedThreadPool(numThreads);
+    executor = Executors.newFixedThreadPool(numThreads);
     var threadNumber = 0;
     for (stream <- streams) {
       //executor.submit(new ConsumerRunnable(stream, threadNumber, delay))
-      val it = stream.iterator()
+      executor.execute(new ConsumerRunnable(stream, threadNumber, delay))
+      /*val it = stream.iterator()
 
       while (it.hasNext()) {
         val msg = new String(it.next().message());
         System.out.println(System.currentTimeMillis() + ",Thread " + threadNumber + ": " + msg);
-      }
+      }*/
       threadNumber += 1
+    }
+  }
+
+  def run() = {
+    val topicCountMap = Map(topic -> 1)
+    val consumerMap = consumer.createMessageStreams(topicCountMap);
+    val streams = consumerMap.get(topic).get;
+
+    for (stream <- streams) {
+
+      val it = stream.iterator()
+
+      while (it.hasNext()) {
+        val msg = new String(it.next().message());
+        System.out.println(System.currentTimeMillis() + ": " + msg);
+      }
     }
   }
 }
@@ -80,13 +97,19 @@ object KafkaMessageConsumer {
     val zookeeper = PropertyUtil.getPropertyValue("zookeeper.connect")
     val brokerList = PropertyUtil.getPropertyValue("kafka.brokerList")
     val groupId = "group1"
-    val topic = "xjzhuKafka"
+    val topic = "test"
     val delay = 0
-    val threadNum = 1
+    val threadNum = 3
 
     KafkaMessagerProducer.produce(topic,"1",brokerList,"Failed")
+    KafkaMessagerProducer.produce(topic,"1",brokerList,"Successfull")
+    KafkaMessagerProducer.produce(topic,"1",brokerList,"Failed")
+    KafkaMessagerProducer.produce(topic,"1",brokerList,"Failed")
     val example = new KafkaMessageConsumer(zookeeper, groupId, topic, delay)
-    example.run(threadNum)
+    //example.runWithThreadPool(threadNum)
+    example.run()
+    Thread.sleep(10000)
+    example.shutdown()
 
   }
 

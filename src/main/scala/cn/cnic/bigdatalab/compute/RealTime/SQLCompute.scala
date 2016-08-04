@@ -1,7 +1,7 @@
 package cn.cnic.bigdatalab.compute.realtime
 
 import cn.cnic.bigdatalab.compute.HiveSQLContextSingleton
-import cn.cnic.bigdatalab.compute.offline.KafkaMessagerProducer
+import cn.cnic.bigdatalab.compute.notification.KafkaMessagerProducer
 import cn.cnic.bigdatalab.compute.realtime.utils.Utils
 import cn.cnic.bigdatalab.transformer.Transformer
 import cn.cnic.bigdatalab.utils.StreamingLogLevels

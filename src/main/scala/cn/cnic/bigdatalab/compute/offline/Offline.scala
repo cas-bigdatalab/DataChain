@@ -1,6 +1,7 @@
 package cn.cnic.bigdatalab.compute.offline
 
 import cn.cnic.bigdatalab.compute.HiveSQLContextSingleton
+import cn.cnic.bigdatalab.compute.notification.KafkaMessagerProducer
 import org.apache.spark.{SparkConf, SparkContext};
 
 /**
@@ -75,7 +76,8 @@ object Offline {
 
 
 
-  def run(temporaryTableDesc : String, execSql : String, notificationTopic : String = "", kafkaBrokerList:String = "") {
+  def run(temporaryTableDesc : String, execSql : String,
+          notificationTopic : String = "", kafkaBrokerList:String = "") {
 
     val conf = new SparkConf().setAppName("Offline Compute")
 

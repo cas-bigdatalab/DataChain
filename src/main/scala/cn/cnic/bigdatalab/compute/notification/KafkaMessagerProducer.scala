@@ -24,8 +24,8 @@ object KafkaMessagerProducer {
     val config = new ProducerConfig(props)
     val producer = new Producer[String, String](config)
     val msg = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis()) + ":" + status +"!"
-    //val data = new KeyedMessage[String, String](topic, msg) is ok!
-    val data = new KeyedMessage[String, String](topic, partition, msg)
+    val data = new KeyedMessage[String, String](topic, msg)
+    //val data = new KeyedMessage[String, String](topic, partition, msg)
     producer.send(data)
 
     producer.close
