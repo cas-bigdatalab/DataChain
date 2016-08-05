@@ -1,5 +1,6 @@
 package cn.cnic.bigdatalab
 
+import cn.cnic.bigdatalab.compute.notification.KafkaMessageConsumer
 import cn.cnic.bigdatalab.task.{OfflineTask, RealTimeTask, StoreTask}
 import cn.cnic.bigdatalab.collection.{AgentChannel, AgentSink, AgentSource}
 import cn.cnic.bigdatalab.datachain._
@@ -93,6 +94,13 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   //solr table schema params
   val solrTable: String = "user"
   val solrColumns = ArrayBuffer("id:int", "name:string", "age:int")
+
+  //kafka consumer
+  val zookeeper = PropertyUtil.getPropertyValue("zookeeper.connect")
+  val brokerList = PropertyUtil.getPropertyValue("kafka.brokerList")
+  val groupId = "group1"
+  val delay = 0
+  val timeout = 60000
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
@@ -451,8 +459,8 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     chain.addStep(taskStep).run()
   }*/
 
-/*  /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~演示~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-  test("Chain realtime: csv->kafka->realTime->mysql") {
+  /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~演示~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+  /*test("Chain realtime: csv->kafka->realTime->mysql") {
 
     //1.define Collection
     val agent_json_path = json_path + "/" + "agent/agent_for32.json"
@@ -465,10 +473,9 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
     //taskStep.run
 
-
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
-  }
+  }*/
 
   test("Chain offline: hive->mysql") {
     //1. Define Task
@@ -479,9 +486,15 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
     val chain = new Chain()
     chain.addStep(taskStep).run()
-    Thread.sleep(10000)
 
-  }*/
+    Thread.sleep(timeout)
+
+    val example = new KafkaMessageConsumer(zookeeper, groupId, taskBean.notificationTopic, delay)
+    val msg = example.getOneMessage()
+    System.out.println(System.currentTimeMillis() + ": " + msg);
+    assert(!msg.contains("Failed"))
+
+  }
 
   /*test("Chain realtime: csv->kafka->spark streaming->external") {
     //1.define Collection
@@ -498,8 +511,6 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     chain.addStep(collectionStep).addStep(taskStep).run()
 
   }*/
-
-
 }
 
 class DataChainTestSuit extends AbstractDataChainTestSuit{

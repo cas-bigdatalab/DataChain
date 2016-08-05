@@ -12,6 +12,7 @@ trait TaskBean{
   var taskType: String = _
   var priority: Int = _
   var interval: Long = _
+  var notificationTopic: String = _
   var expression: String = _
   var appParams: List[String] = _
   var taskParams: Map[String, String] = _

@@ -33,6 +33,8 @@ class SQLTask extends TaskBean{
     //init common params
     init(name, taskType+"_sql")
 
+    this.notificationTopic = notificationTopic
+
     //init temporary table description
     val temporaryTableDesc :StringBuilder = new StringBuilder()
 
@@ -56,21 +58,37 @@ class SQLTask extends TaskBean{
 
   }
 
-  def initOffline(name: String, sql: String, srcSchema: Schema, destSchema: Schema, interval: Long = -1): SQLTask ={
+  def initOffline(name: String, sql: String, srcSchema: Schema, destSchema: Schema, interval: Long = -1, expression: String = "", notificationTopic:String = ""): SQLTask ={
     this.taskType = "offline"
     this.interval = interval
+    this.expression = expression
+    this.notificationTopic = notificationTopic
 
     //  init common params
     init(name, taskType+"_sql")
 
+    //init temporary table description
+    val srcSqlDesc = TaskUtils.getCreateTableSqlNoWrap(srcSchema)
+    val destSqlDesc = TaskUtils.getCreateTableSqlNoWrap(destSchema)
+    val temporaryTableDesc = srcSqlDesc + PropertyUtil.getPropertyValue("create_sql_separator") + destSqlDesc
+
+    //transfer sql to real statement
+    val schemaList =List[Schema](srcSchema,destSchema)
+    val sqlDescription = TaskUtils.transformSql(sql, schemaList: List[Schema])
+
     //init app params
-    this.appParams = List(
-      TaskUtils.getCreateTableSql(srcSchema),
-      TaskUtils.getSchemaDriver(srcSchema),
-      TaskUtils.getCreateTableSql(destSchema),
-      TaskUtils.getSchemaDriver(destSchema),
-      TaskUtils.wrapDelimiter(sql)
-    )
+    if (notificationTopic == ""){
+      this.appParams = List(
+        TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
+        TaskUtils.wrapDelimiter(sqlDescription))
+    }else{
+      this.appParams = List(
+        TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
+        TaskUtils.wrapDelimiter(sqlDescription),
+        TaskUtils.getTopic(notificationTopic),
+        TaskUtils.getKafkaBrokerList()
+      )
+    }
 
     this
 
@@ -80,6 +98,7 @@ class SQLTask extends TaskBean{
     this.taskType = "offline"
     this.interval = interval
     this.expression = expression
+    this.notificationTopic = notificationTopic
 
     //  init common params
     init(name, taskType+"_sql")
