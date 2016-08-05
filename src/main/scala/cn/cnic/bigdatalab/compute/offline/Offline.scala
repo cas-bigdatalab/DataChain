@@ -75,23 +75,37 @@ object Offline {
   }*/
 
 
+  val failStatus: String = "Failed"
+  val succStatus: String = "Successful"
 
   def run(temporaryTableDesc : String, execSql : String,
           notificationTopic : String = "", kafkaBrokerList:String = "") {
 
     val conf = new SparkConf().setAppName("Offline Compute")
 
-    //get sql context
-    val sc = new SparkContext(conf)
-    val sqlContext = HiveSQLContextSingleton.getInstance(sc)
+    try{
+      //get sql context
+      val sc = new SparkContext(conf)
+      val sqlContext = HiveSQLContextSingleton.getInstance(sc)
 
-    //Execute SQL tasks
-    val tableDescList = temporaryTableDesc.split("#-#")
-    for( tableDesc <- tableDescList){
-      sqlContext.sql(tableDesc)
+      //Execute SQL tasks
+      val tableDescList = temporaryTableDesc.split("#-#")
+      for( tableDesc <- tableDescList){
+        sqlContext.sql(tableDesc)
+      }
+
+      sqlContext.sql(execSql)
+
+    }catch {
+      case runtime: RuntimeException => {
+        if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))){
+          val topic = notificationTopic.split(":")(0)
+          //val partition = notificationTopic.split(":")(1)
+          KafkaMessagerProducer.produce(topic, kafkaBrokerList,failStatus)
+        }
+      }
+
     }
-
-    sqlContext.sql(execSql)
 
     if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))){
       val topic = notificationTopic.split(":")(0)
