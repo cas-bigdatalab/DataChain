@@ -25,7 +25,9 @@ class RealTimeTask(taskInstance: TaskBean) extends BaseTask() {
 
   }
 
-  override def cancel(name: String): Unit = ???
+  override def cancel(name: String): Unit = {
+    scheduler.cancel(name)
+  }
 }
 
 class OfflineTask(taskInstance: TaskBean) extends BaseTask() {

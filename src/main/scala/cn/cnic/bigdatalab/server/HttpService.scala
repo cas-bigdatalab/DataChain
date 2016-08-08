@@ -4,10 +4,9 @@ import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
 import akka.http.scaladsl.model.HttpResponse
 import akka.http.scaladsl.server.Directives
-
-
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import spray.json.DefaultJsonProtocol
@@ -26,10 +25,11 @@ trait Service extends DefaultJsonProtocol with Directives with SprayJsonSupport{
 
   val routes = {
     logRequestResult("datachain-http-service") {
-      pathPrefix("task") {
+      pathPrefix("task" / "v1" / "create") {
         (get & path(Segment)) { id =>
           complete {
             /*add your own code*/
+            println(id)
             HttpResponse(entity = "Get 200 OK!")
           }
         } ~
@@ -40,8 +40,15 @@ trait Service extends DefaultJsonProtocol with Directives with SprayJsonSupport{
             HttpResponse(entity = "Post 200 OK!")
           }
         }
-      }
-
+      } ~
+        pathPrefix("task" / "v1" / "delete") {
+          (delete & path(Segment)){ name =>
+            complete {
+              API.deleteTask(name)
+              HttpResponse(entity = " Delete 200 OK!")
+            }
+          }
+        }
     }
   }
 
@@ -56,5 +63,5 @@ object HttpService extends App with Service{
   val logger = Logging(system, getClass)
 
   //Http().bindAndHandle(routes, config.getString("http.interface"), config.getInt("http.port"))
-  Http().bindAndHandle(routes, "192.168.13.118", 9000)
+  Http().bindAndHandle(routes, "192.168.13.172", 9000)
 }

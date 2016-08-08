@@ -23,7 +23,11 @@ import scala.sys.process.Process
 trait Scheduler{
   def deploy(taskInstance: TaskBean)
 
-  def cancel(name: String)
+  def cancel(name: String): Unit = {
+    val killCmd = "ps -ef | grep "+ Quartz.tasks.getOrElse(name, "") + "| grep -v grep | awk '{print $2}' | xargs kill "
+    SshUtil.exec(killCmd, PropertyUtil.getPropertyValue("spark_host"), PropertyUtil.getPropertyValue("spark_host_user"),
+      PropertyUtil.getPropertyValue("spark_host_password"))
+  }
 
   def execute(taskInstance: TaskBean): Unit ={
     val command: StringBuffer = new StringBuffer()
@@ -58,9 +62,12 @@ class RealTimeScheduler extends Scheduler{
 
   override def deploy(taskInstance: TaskBean): Unit ={
     this.execute(taskInstance)
+    Quartz.tasks += (taskInstance.taskType+"_"+taskInstance.name -> taskInstance.name)
   }
 
-  override def cancel(name: String): Unit = ???
+  override def cancel(name: String): Unit = {
+    this.cancel(name)
+  }
 }
 
 class OfflineActor(taskInstance: TaskBean) extends Actor{

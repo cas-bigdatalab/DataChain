@@ -26,4 +26,8 @@ object API {
     chain.addStep(collectionStep).addStep(taskStep).run()
   }
 
+  def deleteTask(name: String): Unit = {
+
+  }
+
 }
