@@ -52,11 +52,10 @@ object ExternalCompute {
         case "processRdd" =>{
           language.toLowerCase match {
             case "scala" => {
-              val proc = Class.forName(mainClass).newInstance.asInstanceOf[{ def processRdd(schema: String, rdd: RDD[String]): Unit }]
-              proc.processRdd(schema, rdd)
+              Utils.invoker(mainClass+"$", methodName, schema, rdd)
             }
             case "java" => {
-              Utils.invokeStaticMethod(mainClass, methodName, rdd)
+              Utils.invokeStaticMethod(mainClass, methodName, schema, rdd)
             }
           }
         }
@@ -67,8 +66,7 @@ object ExternalCompute {
             // Row.fromSeq(row.toArray.toSeq)
             language match {
               case "scala" => {
-                val proc = Class.forName(mainClass).newInstance.asInstanceOf[{ def processLine(schema: String, line: String): Unit }]
-                proc.processLine(schema, line)
+                Utils.invoker(mainClass+"$", methodName, schema, line)
               }
               case "java" => {
                 Utils.invokeStaticMethod(mainClass, methodName, schema, line)

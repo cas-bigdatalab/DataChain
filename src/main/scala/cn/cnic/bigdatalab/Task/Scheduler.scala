@@ -101,6 +101,7 @@ class OfflineScheduler extends Scheduler{
       case -1 => Quartz.system.scheduler.scheduleOnce(0 milliseconds, act, this)
       case x => Quartz.system.scheduler.schedule(0 milliseconds,x seconds, act, this)
     }
+    Quartz.tasks += (taskInstance.taskType+"_"+taskInstance.name -> cancellable)
 
 
   }

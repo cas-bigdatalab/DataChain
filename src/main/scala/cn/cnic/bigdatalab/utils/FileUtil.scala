@@ -4,7 +4,7 @@ import java.io.File
 
 import cn.cnic.bigdatalab.task.factory.{Json2Task, TaskBean, TaskFactory}
 import cn.cnic.bigdatalab.collection.Agent
-import cn.cnic.bigdatalab.compute.realtime.utils.Utils
+import cn.cnic.bigdatalab.compute.realtime.utils.{InterpreterSingleton, Utils}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
@@ -67,10 +67,13 @@ object FileUtil {
 //    val files = FileUtil.dirRead("D:\\git\\DataChain\\externalcode")
     val schemal = "id:int,name:string,age:int"
     val line = "1,dyy,29"
-    val mainClass = "ConnectMySql"
-    val dclass = "cnic.bigdata.external.ConnectMySql"
+    val mainClass = "TestMysql"
+    val dclass = "cnic.bigdata.external.TestMysql"
 //
-//    val interpreter = InterpreterSingleton.getInstance()
+    val interpreter = InterpreterSingleton.getInstance()
+    interpreter.interpret(":cp D:\\git\\DataChain\\lib\\TestJava.jar")
+    interpreter.interpret(s"""new $mainClass().processLine("$schemal", "$line")""")
+
 //    interpreter.addImports("cnic.bigdata.external.ConnectMySql")
 ////    interpreter.interpret("import cnic.bigdata.external.ConnectMySql")
 ////    files.reverse.foreach(interpreter.compileString(_))
@@ -95,8 +98,9 @@ object FileUtil {
 
 //    val result = Utils.invoker("cn.cnic.bigdatalab.utils.FileUtil$", "fileReader", "D:\\git\\DataChain\\conf\\csvMapping.json")
 //    println(result)
-//      val result = Utils.invoker("cnic.bigdata.external.ConnectMySql", "process", schemal, line)
-    Utils.invokeStaticMethod("cnic.bigdata.external.TestMysql", PropertyUtil.getPropertyValue("sdk_method"), schemal, line)
+//    Utils.invoker("cnic.bigdata.external.ConnectMySql$", "processLine", schemal, line)
+//    Utils.invoker("cnic.bigdata.external.TestMysql", "processLine", schemal, line)
+//    Utils.invokeStaticMethod("cnic.bigdata.external.TestMysql", PropertyUtil.getPropertyValue("sdk_method"), schemal, line)
 
   }
 
