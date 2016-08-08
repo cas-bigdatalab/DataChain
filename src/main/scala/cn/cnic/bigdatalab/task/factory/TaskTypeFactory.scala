@@ -3,7 +3,7 @@ package cn.cnic.bigdatalab.task.factory
 import scala.util.parsing.json.JSON
 
 
-object TaskFactory{
+object TaskTypeFactory{
   def apply(kind: String) = kind match {
     case "sql" => new SQLTask
     case "external" => new ExternalTask
@@ -21,9 +21,9 @@ object Json2Task{
     var task : TaskBean = null
 
     if(!map.get("sql").getOrElse("").asInstanceOf[String].isEmpty){
-      task = TaskFactory("sql")
+      task = TaskTypeFactory("sql")
     }else if(!map.get("external").getOrElse("").asInstanceOf[String].isEmpty){
-      task = TaskFactory("external")
+      task = TaskTypeFactory("external")
     }
     task.parseMap(map)
   }

@@ -2,6 +2,6 @@
   "tableSpec":{
     "driver":"streaming",
     "table":"ceph",
-    "columns":{"filename":"String","filepath":"String","lastmodified":"timestamp", "length":"Int"}
+    "columns":["filename:String","filepath:String","lastmodified:timestamp", "length:Int"]
   }
 }

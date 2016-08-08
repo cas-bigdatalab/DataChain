@@ -9,7 +9,7 @@ import scala.concurrent.duration._
 import akka.actor.ActorSystem
 import akka.japi.Option.Some
 import cn.cnic.bigdatalab.common.Quartz
-import cn.cnic.bigdatalab.task.factory.{SQLTask, TaskBean, TaskFactory}
+import cn.cnic.bigdatalab.task.factory.{SQLTask, TaskBean, TaskTypeFactory}
 import cn.cnic.bigdatalab.entity.Schema
 import cn.cnic.bigdatalab.utils.{PropertyUtil, SshUtil}
 import com.typesafe.akka.extension.quartz.QuartzSchedulerExtension
@@ -23,11 +23,7 @@ import scala.sys.process.Process
 trait Scheduler{
   def deploy(taskInstance: TaskBean)
 
-  def cancel(name: String): Unit = {
-    val killCmd = "ps -ef | grep "+ Quartz.tasks.getOrElse(name, "") + "| grep -v grep | awk '{print $2}' | xargs kill "
-    SshUtil.exec(killCmd, PropertyUtil.getPropertyValue("spark_host"), PropertyUtil.getPropertyValue("spark_host_user"),
-      PropertyUtil.getPropertyValue("spark_host_password"))
-  }
+  def cancel(name: String)
 
   def execute(taskInstance: TaskBean): Unit ={
     val command: StringBuffer = new StringBuffer()
@@ -62,11 +58,15 @@ class RealTimeScheduler extends Scheduler{
 
   override def deploy(taskInstance: TaskBean): Unit ={
     this.execute(taskInstance)
-    Quartz.tasks += (taskInstance.taskType+"_"+taskInstance.name -> taskInstance.name)
+    val name = taskInstance.taskType+"_"+taskInstance.name
+    Quartz.tasks += (name -> name)
   }
 
   override def cancel(name: String): Unit = {
-    this.cancel(name)
+    val killCmd = "ps -ef | grep "+ Quartz.tasks.getOrElse(name, "") + "| grep -v grep | awk '{print $2}' | xargs kill "
+    SshUtil.exec(killCmd, PropertyUtil.getPropertyValue("spark_host"), PropertyUtil.getPropertyValue("spark_host_user"),
+      PropertyUtil.getPropertyValue("spark_host_password"))
+    Quartz.tasks.remove(name)
   }
 }
 
@@ -120,6 +120,17 @@ class OfflineScheduler extends Scheduler{
       Quartz.tasks.get(name).get.asInstanceOf[Cancellable].cancel()
     }
 
+    Quartz.tasks.remove(name)
+
+  }
+
+}
+
+object SchedulerFactory{
+  def apply(kind: String) = kind match {
+    case "offline" => new OfflineScheduler
+    case "realtime" => new RealTimeScheduler
+    case _ => throw new IllegalArgumentException("Type error")
   }
 
 }

@@ -1,6 +1,6 @@
 package cn.cnic.bigdatalab.task
 
-import cn.cnic.bigdatalab.task.factory.{SQLTask, TaskBean, TaskFactory}
+import cn.cnic.bigdatalab.task.factory.{ExternalTask, SQLTask, TaskBean, TaskTypeFactory}
 import cn.cnic.bigdatalab.entity.Schema
 
 import scala.collection.mutable.ArrayBuffer
@@ -89,6 +89,16 @@ object TaskTest {
 
     offlineTask.cancel(task1.taskType+"_"+task1.name)
 
+  }
+
+}
+
+
+object TaskFactory{
+  def apply(kind: String, taskBean: TaskBean) = kind match {
+    case "offline" => new OfflineTask(taskBean)
+    case "realtime" => new RealTimeTask(taskBean)
+    case "store" => new StoreTask(taskBean)
   }
 
 }

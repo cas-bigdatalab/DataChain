@@ -2,7 +2,7 @@ package cn.cnic.bigdatalab.utils
 
 import java.io.File
 
-import cn.cnic.bigdatalab.task.factory.{Json2Task, TaskBean, TaskFactory}
+import cn.cnic.bigdatalab.task.factory.{Json2Task, TaskBean, TaskTypeFactory}
 import cn.cnic.bigdatalab.collection.Agent
 import cn.cnic.bigdatalab.compute.realtime.utils.{InterpreterSingleton, Utils}
 
