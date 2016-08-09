@@ -114,12 +114,15 @@ class OfflineScheduler extends Scheduler{
   }
 
   override def cancel(name: String): Unit ={
-    if(Quartz.tasks.get(name).get.asInstanceOf[String].isInstanceOf[String]){
+    if(Quartz.tasks.get(name).isEmpty){
+      return
+    }
+    if(Quartz.tasks.get(name).get.isInstanceOf[String]){
       Quartz.qse.cancelJob(Quartz.tasks.get(name).get.asInstanceOf[String])
-    }else{
+    }
+    if(Quartz.tasks.get(name).get.isInstanceOf[Cancellable]){
       Quartz.tasks.get(name).get.asInstanceOf[Cancellable].cancel()
     }
-
     Quartz.tasks.remove(name)
 
   }

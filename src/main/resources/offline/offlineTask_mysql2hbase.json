@@ -3,6 +3,8 @@
   "Task":{
     "name":"offlineTask_mysql2hbase",
     "taskType":"offline",
+    "notificationTopic":"test",
+    "interval":"10",
 
     "srcTable":{
       "table1":"mysql_user"

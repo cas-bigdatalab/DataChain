@@ -35,11 +35,14 @@ object HTTPService2 extends DefaultJsonProtocol with Directives with SprayJsonSu
 
     case HttpRequest(POST, Uri.Path("/task/v2/create"), headers, entity, protocol) =>{
       val data = toJson(entity)
-      if(data.get("agentId").isEmpty || data.get("taskId").isEmpty){
-        HttpResponse(entity = "Param Error!")
-      }else{
+      if(!data.get("agentId").isEmpty && !data.get("taskId").isEmpty){
         API.runRealTimeTask(data.get("agentId").get.asInstanceOf[String], data.get("taskId").get.asInstanceOf[String])
-        HttpResponse(entity = "Create OK!")
+        HttpResponse(entity = "Create RealTimeTask OK!")
+      }else if(!data.get("taskId").isEmpty){
+        API.runOfflineTask(data.get("taskId").get.asInstanceOf[String])
+        HttpResponse(entity = "Create Offline OK!")
+      }else{
+        HttpResponse(entity = "Param Error!")
       }
     }
 
