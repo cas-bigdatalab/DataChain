@@ -12,7 +12,7 @@ object API {
 
   val json_path = PropertyUtil.getPropertyValue("json_path")
 
-  def runRealTimeTask(agentId:String, taskId: String): Unit ={
+  def runRealTimeTask(agentId:String, taskId: String): String ={
     //1.define Collection
     val agent_json_path = json_path + "/" + agentId
     val agent = FileUtil.agentReader(agent_json_path)
@@ -21,29 +21,72 @@ object API {
     //2. Define real Task
     val task_json_path = json_path + "/" + "realtime/" + taskId
     val taskBean = FileUtil.taskReader(task_json_path)
+
+    if(Quartz.tasks.contains(taskBean.taskType + "_" + taskBean.name)){
+      return "Task exists!"
+    }
+
     val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
 
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
+
+    "Create OK!"
+
   }
 
-  def runOfflineTask(taskId: String): Unit ={
+  def runOfflineTask(taskId: String): String ={
 
     //1. Define real Task
     val task_json_path = json_path + "/" + "offline/" + taskId
     val taskBean = FileUtil.taskReader(task_json_path)
+
+    if(Quartz.tasks.contains(taskBean.taskType + "_" + taskBean.name)){
+      return "Task exists!"
+    }
+
     val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean))
 
     val chain = new Chain()
     chain.addStep(taskStep).run()
+    println(Quartz.tasks)
+    "Create OK!"
   }
 
-  def deleteTask(name: String): Unit = {
-    if(!name.isEmpty && name.contains("_")){
+  def deleteTask(name: String): String = {
+    println(Quartz.tasks)
+    if(!Quartz.tasks.contains(name)){
+      "Task not exist"
+    } else{
       val taskType = name.split("_")(0)
       val scheduler = SchedulerFactory(taskType)
-      println(Quartz.tasks)
       scheduler.cancel(name)
+      "Delete OK!"
+    }
+  }
+
+  def stopTask(name: String): String = {
+    println(Quartz.tasks)
+    if(!Quartz.tasks.contains(name)){
+      "Task not exist"
+    } else{
+      val taskType = name.split("_")(0)
+      val scheduler = SchedulerFactory(taskType)
+      scheduler.cancel(name, "STOP")
+      "STOP OK!"
+    }
+
+  }
+
+  def startTask(name: String): String = {
+    println(Quartz.tasks)
+    if(!Quartz.tasks.contains(name)){
+      "Task not exist"
+    } else{
+      val taskType = name.split("_")(0)
+      val scheduler = SchedulerFactory(taskType)
+      scheduler.start(name)
+      "START OK!"
     }
 
   }

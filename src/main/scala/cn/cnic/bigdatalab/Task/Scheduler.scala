@@ -23,9 +23,9 @@ import scala.sys.process.Process
 trait Scheduler{
   def deploy(taskInstance: TaskBean)
 
-  def cancel(name: String)
+  def cancel(name: String, opType: String="DELETE")
 
-  def stop(name: String)
+  def start(name: String)
 
   def execute(taskInstance: TaskBean): Unit ={
     val command: StringBuffer = new StringBuffer()
@@ -61,20 +61,22 @@ class RealTimeScheduler extends Scheduler{
   override def deploy(taskInstance: TaskBean): Unit ={
     this.execute(taskInstance)
     val name = taskInstance.taskType+"_"+taskInstance.name
-    Quartz.tasks += (name -> name)
+    Quartz.tasks += (name -> taskInstance)
   }
 
-  override def cancel(name: String): Unit = {
-    val killCmd = "ps -ef | grep "+ Quartz.tasks.getOrElse(name, "") + "| grep -v grep | awk '{print $2}' | xargs kill "
+  override def cancel(name: String, opType: String="DELETE"): Unit = {
+    val killCmd = "ps -ef | grep "+ name + "| grep -v grep | awk '{print $2}' | xargs kill "
     SshUtil.exec(killCmd, PropertyUtil.getPropertyValue("spark_host"), PropertyUtil.getPropertyValue("spark_host_user"),
       PropertyUtil.getPropertyValue("spark_host_password"))
-    Quartz.tasks.remove(name)
+    if(opType.equals("DELETE")){
+      Quartz.tasks.remove(name)
+    }
+
   }
 
-  override def stop(name: String): Unit = {
-    val killCmd = "ps -ef | grep "+ Quartz.tasks.getOrElse(name, "") + "| grep -v grep | awk '{print $2}' | xargs kill "
-    SshUtil.exec(killCmd, PropertyUtil.getPropertyValue("spark_host"), PropertyUtil.getPropertyValue("spark_host_user"),
-      PropertyUtil.getPropertyValue("spark_host_password"))
+  override def start(name: String): Unit = {
+//    cancel(name)
+    deploy(Quartz.tasks.get(name).get.asInstanceOf[TaskBean])
   }
 }
 
@@ -99,10 +101,15 @@ class OfflineScheduler extends Scheduler{
 
     if(expression != ""){
       val name = taskInstance.taskType+"_"+taskInstance.name
-      Quartz.qse.createSchedule(name, Some(name), expression, None)
+      try{
+        Quartz.qse.createSchedule(name, Some(name), expression, None)
+      }catch {
+        case _ => println("Schedule has created")
+      }
+
       Quartz.qse.schedule(name, act, this)
 
-      Quartz.tasks += (name -> taskInstance)
+      Quartz.tasks += (name -> List(taskInstance, act))
       return
     }
 
@@ -119,30 +126,19 @@ class OfflineScheduler extends Scheduler{
 
   }
 
-  override def cancel(name: String): Unit ={
-    if(Quartz.tasks.get(name).isEmpty){
-      return
+  override def cancel(name: String, opType: String="DELETE"): Unit ={
+    Quartz.qse.cancelJob(name)
+    val temp = Quartz.tasks.get(name).get.asInstanceOf[List[Any]]
+    Quartz.system.stop(temp(1).asInstanceOf[ActorRef])
+    if(opType.equals("DELETE")){
+      Quartz.tasks.remove(name)
     }
-    if(Quartz.tasks.get(name).get.isInstanceOf[String]){
-      Quartz.qse.cancelJob(Quartz.tasks.get(name).get.asInstanceOf[String])
-    }
-    if(Quartz.tasks.get(name).get.isInstanceOf[Cancellable]){
-      Quartz.tasks.get(name).get.asInstanceOf[Cancellable].cancel()
-    }
-    Quartz.tasks.remove(name)
 
   }
 
-  override def stop(name: String): Unit = {
-    if(Quartz.tasks.get(name).isEmpty){
-      return
-    }
-    if(Quartz.tasks.get(name).get.isInstanceOf[String]){
-      Quartz.qse.cancelJob(Quartz.tasks.get(name).get.asInstanceOf[String])
-    }
-    if(Quartz.tasks.get(name).get.isInstanceOf[Cancellable]){
-      Quartz.tasks.get(name).get.asInstanceOf[Cancellable].cancel()
-    }
+  override def start(name: String): Unit = {
+//    cancel(name)
+    deploy(Quartz.tasks.get(name).get.asInstanceOf[List[Any]](0).asInstanceOf[TaskBean])
   }
 }
 

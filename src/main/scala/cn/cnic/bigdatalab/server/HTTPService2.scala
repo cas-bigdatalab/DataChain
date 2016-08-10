@@ -36,11 +36,11 @@ object HTTPService2 extends DefaultJsonProtocol with Directives with SprayJsonSu
     case HttpRequest(POST, Uri.Path("/task/v2/create"), headers, entity, protocol) =>{
       val data = toJson(entity)
       if(!data.get("agentId").isEmpty && !data.get("taskId").isEmpty){
-        API.runRealTimeTask(data.get("agentId").get.asInstanceOf[String], data.get("taskId").get.asInstanceOf[String])
-        HttpResponse(entity = "Create RealTimeTask OK!")
+        val result = API.runRealTimeTask(data.get("agentId").get.asInstanceOf[String], data.get("taskId").get.asInstanceOf[String])
+        HttpResponse(entity = result)
       }else if(!data.get("taskId").isEmpty){
-        API.runOfflineTask(data.get("taskId").get.asInstanceOf[String])
-        HttpResponse(entity = "Create Offline OK!")
+        val result = API.runOfflineTask(data.get("taskId").get.asInstanceOf[String])
+        HttpResponse(entity = result)
       }else{
         HttpResponse(entity = "Param Error!")
       }
@@ -51,10 +51,31 @@ object HTTPService2 extends DefaultJsonProtocol with Directives with SprayJsonSu
       if(data.get("name").isEmpty){
         HttpResponse(entity = "Param Error!")
       }else{
-        API.deleteTask(data.get("name").get.asInstanceOf[String])
-        HttpResponse(entity = "DELETE OK!")
+        val result = API.deleteTask(data.get("name").get.asInstanceOf[String])
+        HttpResponse(entity = result)
       }
     }
+
+    case HttpRequest(PUT, Uri.Path("/task/v2/stop"), headers, entity, protocol) =>{
+      val data = toJson(entity)
+      if(data.get("name").isEmpty){
+        HttpResponse(entity = "Param Error!")
+      }else{
+        val result = API.stopTask(data.get("name").get.asInstanceOf[String])
+        HttpResponse(entity = result)
+      }
+    }
+
+    case HttpRequest(PUT, Uri.Path("/task/v2/start"), headers, entity, protocol) =>{
+      val data = toJson(entity)
+      if(data.get("name").isEmpty){
+        HttpResponse(entity = "Param Error!")
+      }else{
+        val result = API.startTask(data.get("name").get.asInstanceOf[String])
+        HttpResponse(entity = result)
+      }
+    }
+
     case _: HttpRequest =>
       HttpResponse(404, entity = "Unknown resource!")
   }
