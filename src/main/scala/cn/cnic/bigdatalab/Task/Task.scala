@@ -80,7 +80,6 @@ object TaskTest {
     val sql1 = "select * from user"
 
     val task1: TaskBean = new SQLTask().initOffline("test_task1", sql, schema, schema)
-    task1.interval= 5
 
     val offlineTask = new OfflineTask(task1)
     offlineTask.run()
