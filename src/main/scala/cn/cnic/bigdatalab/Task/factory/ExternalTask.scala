@@ -8,7 +8,7 @@ import cn.cnic.bigdatalab.utils.PropertyUtil
   * Created by duyuanyuan on 2016/7/25.
   */
 class ExternalTask extends TaskBean{
-  def initRealtime(name: String, external: String, topic: String, entry: Entry, mapping:String): TaskBean ={
+  def initRealtime(name: String, external: String, topic: String, entry: Entry, mapping:String, notificationTopic:String = ""): TaskBean ={
     this.taskType = "realtime"
 
     //init common params
@@ -17,9 +17,17 @@ class ExternalTask extends TaskBean{
     this.jars = List(external)
 
     //init app params
-    this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
-      TaskUtils.getKafkaParams(), TaskUtils.wrapDelimiter(entry.mainClass), TaskUtils.wrapDelimiter(entry.menthodName),
-      TaskUtils.wrapDelimiter(entry.language), mapping)
+    if(notificationTopic.equals("")){
+      this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
+        TaskUtils.getKafkaParams(), TaskUtils.wrapDelimiter(entry.mainClass), TaskUtils.wrapDelimiter(entry.menthodName),
+        TaskUtils.wrapDelimiter(entry.language), mapping)
+    }else{
+      this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
+        TaskUtils.getKafkaParams(), TaskUtils.wrapDelimiter(entry.mainClass), TaskUtils.wrapDelimiter(entry.menthodName),
+        TaskUtils.wrapDelimiter(entry.language), mapping,
+        TaskUtils.getTopic(notificationTopic),
+        TaskUtils.getKafkaBrokerList())
+    }
 
     this
 
@@ -56,7 +64,9 @@ class ExternalTask extends TaskBean{
         assert(!map.get("mapping").get.asInstanceOf[String].isEmpty)
         val mapping = map.get("mapping").get.asInstanceOf[String]
 
-        initRealtime(name, external, topic, entry, mapping)
+        val notificationTopic = map.getOrElse("notificationTopic", "").asInstanceOf[String]
+
+        initRealtime(name, external, topic, entry, mapping, notificationTopic)
 
       }
       /*case "offline" =>{

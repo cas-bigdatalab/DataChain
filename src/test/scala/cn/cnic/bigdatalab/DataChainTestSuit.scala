@@ -460,10 +460,10 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   }*/
 
   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~演示~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-  /*test("Chain realtime: csv->kafka->realTime->mysql") {
+/*  test("Chain realtime: csv->kafka->realTime->mysql") {
 
     //1.define Collection
-    val agent_json_path = json_path + "/" + "agent/agent_for32.json"
+    val agent_json_path = json_path + "/" + "agent/agent.json"
     val agent = FileUtil.agentReader(agent_json_path)
     val collectionStep = new CollectionStep().initAgent(agent)
 
@@ -477,7 +477,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     chain.addStep(collectionStep).addStep(taskStep).run()
   }*/
 
-  test("Chain offline: hive->mysql") {
+  /*test("Chain offline: hive->mysql") {
     //1. Define Task
 
     val task_json_path = json_path + "/" + "offline/" + "offlineTask_hive2mysql.json"
@@ -494,9 +494,9 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     System.out.println(System.currentTimeMillis() + ": " + msg);
     assert(!msg.contains("Failed"))
 
-  }
+  }*/
 
-  /*test("Chain realtime: csv->kafka->spark streaming->external") {
+  test("Chain realtime: csv->kafka->spark streaming->external") {
     //1.define Collection
     val agent_json_path = json_path + "/" + "agent/agent_for32.json"
     val agent = FileUtil.agentReader(agent_json_path)
@@ -510,7 +510,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
 
-  }*/
+  }
 }
 
 class DataChainTestSuit extends AbstractDataChainTestSuit{

@@ -17,12 +17,17 @@ class SQLTask extends TaskBean{
     init(name, taskType+"_sql")
 
     //init app params
-    this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
-      TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.getCreateTableSql(destSchema),
-      TaskUtils.wrapDelimiter(sql), mapping,
-      TaskUtils.getTopic(notificationTopic),
-      TaskUtils.getKafkaBrokerList())
-
+    if(notificationTopic.equals("")){
+      this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
+        TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.getCreateTableSql(destSchema),
+        TaskUtils.wrapDelimiter(sql), mapping)
+    }else{
+      this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
+        TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.getCreateTableSql(destSchema),
+        TaskUtils.wrapDelimiter(sql), mapping,
+        TaskUtils.getTopic(notificationTopic),
+        TaskUtils.getKafkaBrokerList())
+    }
     this
 
   }
@@ -48,11 +53,17 @@ class SQLTask extends TaskBean{
     val sqlDescription = TaskUtils.transformSql(sql, destSchema: List[Schema])
 
     //init app params
-    this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
-      TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
-      TaskUtils.wrapDelimiter(sqlDescription), mapping,
-      TaskUtils.getTopic(notificationTopic),
-      TaskUtils.getKafkaBrokerList())
+    if(notificationTopic.equals("")){
+      this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
+        TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
+        TaskUtils.wrapDelimiter(sqlDescription), mapping)
+    }else{
+      this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
+        TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
+        TaskUtils.wrapDelimiter(sqlDescription), mapping,
+        TaskUtils.getTopic(notificationTopic),
+        TaskUtils.getKafkaBrokerList())
+    }
 
     this
 

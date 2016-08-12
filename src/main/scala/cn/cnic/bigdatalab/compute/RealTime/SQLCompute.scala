@@ -15,6 +15,9 @@ import org.apache.spark.{SparkConf, SparkContext}
   */
 object SQLCompute {
 
+  val failStatus: String = "Failed"
+  val receiveStatus: String = "Received"
+
   /*
   args: 0 app name
         1 数据流的时间间隔
@@ -28,7 +31,7 @@ object SQLCompute {
    */
   def run(appName: String, duration : String, topic : String, kafkaParam : String,
           srcName : String, createDecTable : String, execSql : String, mapping:String,
-          notificationTopic : String = "", kafkaBrokerList:String = "") {
+          notificationTopic : String = "", kafkaBrokerList:String = ""){
 
     StreamingLogLevels.setStreamingLogLevels()
 
@@ -50,31 +53,43 @@ object SQLCompute {
     val lines = Kafka2SparkStreaming.getStream(ssc, topic, kafkaParam)
 
     lines.foreachRDD((rdd: RDD[String], time: Time) => {
-      val sqlContext = HiveSQLContextSingleton.getInstance(rdd.sparkContext)
+      try{
+        val sqlContext = HiveSQLContextSingleton.getInstance(rdd.sparkContext)
 
-      //Get Row RDD
-      val srcRDD = rdd.filter(_!="").map(line => {
-        //call transformer
-        val row = transformer.transform(line)
-        Row.fromSeq(row.toArray.toSeq)
-      })
+        //Get Row RDD
+        val srcRDD = rdd.filter(_!="").map(line => {
+          //call transformer
+          val row = transformer.transform(line)
+          Row.fromSeq(row.toArray.toSeq)
+        })
 
-      // Apply the schema to the RDD.
-      val srcDataFrame = sqlContext.createDataFrame(srcRDD, schema)
-      srcDataFrame.registerTempTable(srcName)
+        // Apply the schema to the RDD.
+        val srcDataFrame = sqlContext.createDataFrame(srcRDD, schema)
+        srcDataFrame.registerTempTable(srcName)
 
-     //Execute SQL tasks
-     val tableDescList = createDecTable.split("#-#")
-      for( tableDesc <- tableDescList){
-        sqlContext.sql(tableDesc)
+        //Execute SQL tasks
+        val tableDescList = createDecTable.split("#-#")
+        for( tableDesc <- tableDescList){
+          sqlContext.sql(tableDesc)
+        }
+        sqlContext.sql(execSql)
+      }catch {
+        case ex: Exception => {
+          if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))){
+            val topic = notificationTopic.split(":")(0)
+            //val partition = notificationTopic.split(":")(1)
+            KafkaMessagerProducer.produce(topic, kafkaBrokerList,failStatus)
+          }
+          ssc.awaitTerminationOrTimeout(5)
+          sc.stop()
+        }
       }
-      sqlContext.sql(execSql)
 
       if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))&&rdd.count()>0){
         println("topics：" + notificationTopic)
         val topic = notificationTopic.split(":")(0)
         val partition = notificationTopic.split(":")(1)
-        KafkaMessagerProducer.produce(topic, partition, kafkaBrokerList, "Received")
+        KafkaMessagerProducer.produce(topic, partition, kafkaBrokerList, receiveStatus)
 
       }
 
@@ -129,17 +144,20 @@ object SQLCompute {
 //        |  collection     'user1',
 //        |  soft_commit_secs '5'
 //        |)""".stripMargin
-//    val execSql = """
-//                    |INSERT INTO table user
-//                    |SELECT name, age FROM test
-//                  """.stripMargin
-//    val appName = "transformer test"
-//    val duration = "1"
-//    val topics = "test :1"
-//    val kafkaParam = "zookeeper.connect->10.0.71.20:2181,10.0.71.26:2181,10.0.71.27:2181;group.id->test-consumer-group"
-//    val schemaSrc = "id:Int,name :String,age:Int"
-//    val srcName = "test"
-//    val mapping = "D:\\git\\DataChain\\conf\\csvMapping_user.json"
+   /* val execSql = """
+                    |INSERT INTO table user
+                    |SELECT * FROM test
+                  """.stripMargin
+    val appName = "Exception test"
+    val duration = "1"
+    val topics = "test :1"
+    val kafkaParam = "zookeeper.connect->10.0.71.20:2181,10.0.71.26:2181,10.0.71.27:2181;group.id->test-consumer-group"
+    val schemaSrc = "id:Int,name :String,age:Int"
+    val srcName = "test"
+    val mapping = "D:\\git\\DataChain\\conf\\csvMapping_user.json"
+    val notificationTopic = "notification:1"
+    val kafkaBrokerList = "10.0.71.20:9092,10.0.71.26:9092,10.0.71.27:9092"*/
+
 
     val appName = args(0)
     val duration = args(1)

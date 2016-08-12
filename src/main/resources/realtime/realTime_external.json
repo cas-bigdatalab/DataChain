@@ -4,6 +4,7 @@
     "taskType":"realtime",
     "external":"TestJava.jar",
     "topic":"test",
+    "notificationTopic":"notification",
     "entry":{
       "mainClass":"cnic.bigdata.external.TestMysql",
       "methodName":"processLine",

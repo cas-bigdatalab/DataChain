@@ -1,5 +1,6 @@
 package cn.cnic.bigdatalab.compute.realtime
 
+import cn.cnic.bigdatalab.compute.notification.KafkaMessagerProducer
 import cn.cnic.bigdatalab.compute.realtime.utils.Utils
 import cn.cnic.bigdatalab.transformer.Transformer
 import cn.cnic.bigdatalab.utils.{FileUtil, PropertyUtil, StreamingLogLevels}
@@ -12,6 +13,10 @@ import org.restlet.data.Language
   * Created by Flora on 2016/7/22.
   */
 object ExternalCompute {
+
+  val failStatus: String = "Failed"
+  val receiveStatus: String = "Received"
+
   /*
   args: 0 app name
         1 数据流的时间间隔
@@ -25,7 +30,8 @@ object ExternalCompute {
 
    */
   def run(appName: String, duration : String, topic : String, kafkaParam : String, mainClass : String, methodName: String,
-          language: String, mapping:String) {
+          language: String, mapping:String,
+          notificationTopic : String = "", kafkaBrokerList:String = "") {
 
     StreamingLogLevels.setStreamingLogLevels()
 
@@ -48,33 +54,54 @@ object ExternalCompute {
     val lines = Kafka2SparkStreaming.getStream(ssc, topic, kafkaParam)
 
     lines.foreachRDD((rdd: RDD[String], time: Time) => {
-      methodName match {
-        case "processRdd" =>{
-          language.toLowerCase match {
-            case "scala" => {
-              Utils.invoker(mainClass+"$", methodName, schema, rdd)
-            }
-            case "java" => {
-              Utils.invokeStaticMethod(mainClass, methodName, schema, rdd)
-            }
-          }
-        }
-        case "processLine" =>{
-          rdd.filter(_!="").map(line => {
-            //call transformer
-            // val row = transformer.transform(line)
-            // Row.fromSeq(row.toArray.toSeq)
-            language match {
+      try{
+        methodName match {
+          case "processRdd" =>{
+            language.toLowerCase match {
               case "scala" => {
-                Utils.invoker(mainClass+"$", methodName, schema, line)
+                Utils.invoker(mainClass+"$", methodName, schema, rdd)
               }
               case "java" => {
-                Utils.invokeStaticMethod(mainClass, methodName, schema, line)
+                Utils.invokeStaticMethod(mainClass, methodName, schema, rdd)
               }
             }
-          }).count()
+          }
+          case "processLine" =>{
+            rdd.filter(_!="").map(line => {
+              //call transformer
+              // val row = transformer.transform(line)
+              // Row.fromSeq(row.toArray.toSeq)
+              language match {
+                case "scala" => {
+                  Utils.invoker(mainClass+"$", methodName, schema, line)
+                }
+                case "java" => {
+                  Utils.invokeStaticMethod(mainClass, methodName, schema, line)
+                }
+              }
+            }).count()
+          }
+          case _ => throw new IllegalArgumentException("args length  error")
         }
-        case _ => throw new IllegalArgumentException("args length  error")
+      }catch {
+        case ex: Exception => {
+          if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))){
+            val topic = notificationTopic.split(":")(0)
+            //val partition = notificationTopic.split(":")(1)
+            KafkaMessagerProducer.produce(topic, kafkaBrokerList,failStatus)
+          }
+          ssc.awaitTerminationOrTimeout(5)
+          sc.stop()
+        }
+      }
+
+
+      if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))&&rdd.count()>0){
+        println("topics：" + notificationTopic)
+        val topic = notificationTopic.split(":")(0)
+        val partition = notificationTopic.split(":")(1)
+        KafkaMessagerProducer.produce(topic, partition, kafkaBrokerList, receiveStatus)
+
       }
 
     })
@@ -104,8 +131,14 @@ object ExternalCompute {
     val methodName = args(5)
     val language = args(6)
     val mapping = args(7)
+    var notificationTopic = ""
+    var kafkaBrokerList = ""
+    if (args.size == 10){
+      notificationTopic = args(8)
+      kafkaBrokerList = args(9)
+    }
 
-    run(appName, duration, topics, kafkaParam, mainClass, methodName, language, mapping)
+    run(appName, duration, topics, kafkaParam, mainClass, methodName, language, mapping, notificationTopic, kafkaBrokerList)
   }
 
 }
