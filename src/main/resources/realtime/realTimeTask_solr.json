@@ -3,7 +3,7 @@
     "name":"SolrTask",
     "taskType":"realtime",
     "topic":"test",
-    "sql":"insert into table user select * from test",
+    "sql":"insert into table solr_user select * from streaming_test",
 
     "srcTable":{
 

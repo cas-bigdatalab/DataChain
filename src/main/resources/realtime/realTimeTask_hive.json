@@ -3,7 +3,7 @@
     "name":"HiveTask",
     "taskType":"realtime",
     "topic":"test",
-    "sql":"insert into table user select name, age from test",
+    "sql":"insert into table hive_dyy select * from streaming_test",
 
     "srcTable":{
       "table1":"streaming_test"
@@ -12,7 +12,7 @@
     "mapping":"/opt/csvMapping_user.json",
 
     "destTable":{
-      "table1":"hive_user"
+      "table1":"hive_dyy"
     }
   }
 }

@@ -3,7 +3,7 @@
     "name":"ImpalaTask",
     "taskType":"realtime",
     "topic":"test",
-    "sql":"insert into table impala_user select name, age from test",
+    "sql":"insert into table impala_user select name, age from streaming_test",
 
     "srcTable":{
       "table1":"streaming_test"
