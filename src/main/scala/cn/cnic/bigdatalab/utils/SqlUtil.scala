@@ -36,7 +36,11 @@ object SqlUtil {
     val temp = PropertyUtil.getPropertyValue("hive_create_sql")
     val dbtable = schema.getTable()
     val columns =  schema.columnsToString()
-    return temp.replace("%tablename%", dbtable).replace("%columns%", columns).stripMargin
+    var result = temp.replace("%tablename%", dbtable).replace("%columns%", columns).stripMargin
+    if(!schema.getAttachment().isEmpty){
+      result += " " + schema.getAttachment()
+    }
+    result
   }
 
   def hhase(schema: Schema): String ={

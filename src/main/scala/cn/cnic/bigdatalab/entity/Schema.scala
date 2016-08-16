@@ -19,6 +19,7 @@ class Schema {
   var db:String = _
   var table:String = _
   var columns:ArrayBuffer[String] = _
+  var attachment: String = _
 
 
   def getName(): String={
@@ -64,6 +65,16 @@ class Schema {
     this.columns = columns
     this
   }
+
+  def getAttachment(): String = {
+    attachment
+  }
+
+  def setAttachment(attachment: String): Schema = {
+    this.attachment = attachment
+    this
+  }
+
   def columnsToString(): String ={
     /*val columnsBuffer:StringBuffer = new StringBuffer()
 
@@ -156,6 +167,15 @@ object Schema{
     columnsArrayBuffer.appendAll(columnsList)
 
     schema.setDriver(driver).setTable(table).setColumns(columnsArrayBuffer)
+
+    //attachment
+    if(!map.get("attachment").isEmpty){
+      val attachment = map.get("attachment").get.asInstanceOf[String]
+      schema.setAttachment(attachment)
+    }
+
+    schema
+
   }
 
 
