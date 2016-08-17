@@ -1,5 +1,6 @@
 package cn.cnic.bigdatalab.compute
 
+import cn.cnic.bigdatalab.utils.PropertyUtil
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.hive.HiveContext
@@ -36,6 +37,12 @@ object HiveSQLContextSingleton {
   def getInstance(sparkContext: SparkContext): HiveContext = {
     if (instance == null) {
       instance = new HiveContext(sparkContext)
+      instance.sql("set hive.exec.dynamic.partition=true")
+      instance.sql("set hive.exec.dynamic.partition.mode=nonstrict")
+      instance.sql("SET hive.merge.size.per.task=256000000")
+      instance.sql("SET hive.merge.mapfiles=true")
+      instance.sql("SET hive.merge.mapredfiles=true")
+      instance.sql("SET hive.merge.sparkfiles=true")
     }
     instance
   }
