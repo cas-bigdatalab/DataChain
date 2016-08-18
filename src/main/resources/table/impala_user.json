@@ -1,7 +1,0 @@
-{
-  "tableSpec":{
-    "driver":"impala",
-    "table":"impala_user",
-    "columns":["name:String","age:Int"]
-  }
-}

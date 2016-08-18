@@ -1,7 +1,0 @@
-{
-  "tableSpec":{
-    "driver":"solr",
-    "table":"user",
-    "columns":["id:Int","name:String","age:Int"]
-  }
-}

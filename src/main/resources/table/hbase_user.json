@@ -1,7 +1,0 @@
-{
-  "tableSpec":{
-    "driver":"hbase",
-    "table":"hbase_user",
-    "columns":["id:Int","name:String","age:Int"]
-  }
-}

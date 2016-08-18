@@ -1,0 +1,16 @@
+{
+  "Task":{
+    "name":"multiTableTask",
+    "taskType":"offline",
+    "sql":"insert into table mysql_studentAvg select hive_student.id, hive_student.name, avg(hive_score.score) from hive_student,hive_score where hive_student.id=hive_score.student_id group by hive_student.id,hive_student.name",
+
+    "srcTable":{
+      "table1":"hive_student",
+      "table2":"hive_score"
+    },
+
+    "destTable":{
+      "table1":"mysql_studentAvg"
+    }
+  }
+}

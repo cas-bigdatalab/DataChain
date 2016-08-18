@@ -1,0 +1,19 @@
+
+{
+  "Task":{
+    "name":"offlineTask_mysql2hbase",
+    "taskType":"offline",
+    "notificationTopic":"test",
+    "expression":"*/10 * * ? * *",
+
+    "srcTable":{
+      "table1":"mysql_user"
+    },
+
+    "destTable":{
+      "table1":"hbase_user"
+    },
+
+    "sql":"insert into table hbase_user select * from mysql_user"
+  }
+}

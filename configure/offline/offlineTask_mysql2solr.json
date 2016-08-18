@@ -1,0 +1,18 @@
+
+{
+  "Task":{
+    "name":"offlineTask_mysql2mongo",
+    "taskType":"offline",
+    "sql":"insert into table solr_user select id, name, age from mysql_user",
+
+    "srcTable":{
+      "table1":"mysql_user"
+    },
+
+    "destTable":{
+
+      "table1":"solr_user"
+
+    }
+  }
+}

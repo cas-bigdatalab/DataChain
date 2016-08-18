@@ -1,7 +1,0 @@
-{
-  "tableSpec":{
-    "driver":"streaming",
-    "table":"test",
-    "columns":["id:Int","name:String","age:Int"]
-  }
-}

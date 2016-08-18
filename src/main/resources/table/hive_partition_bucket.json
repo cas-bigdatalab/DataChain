@@ -1,8 +1,0 @@
-{
-  "tableSpec":{
-    "driver":"hive",
-    "table":"partition_bucket",
-    "columns":["id:Int","name:String"],
-    "attachment": "partitioned by(age int) clustered by (id) sorted by(name) into 4 buckets"
-  }
-}

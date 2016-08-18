@@ -1,7 +1,0 @@
-{
-  "tableSpec":{
-    "driver":"hive",
-    "table":"score",
-    "columns":["id:Int","student_id:Int","subject:String","score:Double"]
-  }
-}

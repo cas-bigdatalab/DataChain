@@ -1,8 +1,0 @@
-{
-  "tableSpec":{
-    "driver":"mysql",
-    "db":"spark",
-    "table":"user",
-    "columns":["id:Int","name:String","age:Int"]
-  }
-}

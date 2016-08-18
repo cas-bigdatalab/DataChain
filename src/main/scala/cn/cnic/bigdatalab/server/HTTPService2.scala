@@ -5,6 +5,7 @@ import akka.stream.ActorMaterializer
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Directives
+import cn.cnic.bigdatalab.utils.PropertyUtil
 import spray.json.DefaultJsonProtocol
 import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model._
@@ -82,7 +83,10 @@ object HTTPService2 extends DefaultJsonProtocol with Directives with SprayJsonSu
   }
 
   def run = {
-    Http().bindAndHandleSync(route, "10.0.71.1", 19000)
+    val ip = PropertyUtil.getPropertyValue("server_ip")
+    val port = PropertyUtil.getIntPropertyValue("server_port")
+    Http().bindAndHandleSync(route, ip, port)
+    println("Server:" + ip + ":" + port + " Started!!!")
   }
 
 }

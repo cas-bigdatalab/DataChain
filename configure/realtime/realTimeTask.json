@@ -1,0 +1,19 @@
+{
+  "Task":{
+    "name":"realTimeTask",
+    "taskType":"realtime",
+    "sql":"insert into table mysql_user select * from streaming_test",
+    "topic":"test",
+    "notificationTopic":"notification",
+
+    "srcTable":{
+      "table1":"streaming_test"
+    },
+
+    "mapping":"/opt/csvMapping_user.json",
+
+    "destTable":{
+      "table1":"mysql_user"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "Task":{
+    "name":"SolrTask",
+    "taskType":"realtime",
+    "topic":"test",
+    "sql":"insert into table solr_user select * from streaming_test",
+
+    "srcTable":{
+
+      "table1":"streaming_test"
+    },
+
+    "mapping":"/opt/csvMapping.json",
+
+    "destTable":{
+
+      "table1":"solr_user"
+    }
+  }
+}

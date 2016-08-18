@@ -1,0 +1,7 @@
+{
+  "tableSpec":{
+    "driver":"hive",
+    "table":"hive_ceph",
+    "columns":["filename:String","filepath:String","lastmodified:timestamp", "length:Int"]
+  }
+}

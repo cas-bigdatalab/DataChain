@@ -1,0 +1,29 @@
+{
+  "Task":{
+    "name":"SolrTask",
+    "taskType":"realtime",
+    "sql":"insert into table financenews select * from test",
+    "topic":"test",
+
+    "srcTable":{
+
+      "table1":{
+        "driver":"streaming",
+        "table":"test",
+        "columns":["id:String","news_id:String","url:String","page_count:Int","resource:String","pub_time:timestamp","title:String","text:String"]
+      }
+
+    },
+
+    "mapping":"/opt/newsMapping.json",
+
+    "destTable":{
+
+      "table1":{
+        "driver":"solr",
+        "table":"financenews",
+        "columns":["id:String","news_id:String","url:String","page_count:Int","resource:String","pub_time:timestamp","title:String"]
+      }
+    }
+  }
+}

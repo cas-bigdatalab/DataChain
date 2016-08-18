@@ -1,0 +1,16 @@
+
+{
+  "Task":{
+    "name":"offlineTask_mysql2mongo",
+    "taskType":"offline",
+    "sql":"insert into table mongo_user select * from mysql_user",
+
+    "srcTable":{
+      "table1":"mysql_user"
+    },
+
+    "destTable":{
+      "table1":"mongo_user"
+    }
+  }
+}
