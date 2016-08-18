@@ -8,14 +8,15 @@ import akka.http.scaladsl.server.Directives
 import spray.json.DefaultJsonProtocol
 import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model._
+import com.typesafe.config.ConfigFactory
+
 import scala.util.parsing.json.JSON
 
 /**
   * Created by Flora on 2016/8/8.
   */
 object HTTPService2 extends DefaultJsonProtocol with Directives with SprayJsonSupport{
-
-  implicit val system = ActorSystem()
+  implicit val system = ActorSystem("HTTPService2", ConfigFactory.load())
   implicit val materializer = ActorMaterializer()
 
   def toJson(entity: RequestEntity): Map[String, Any] = {
@@ -81,7 +82,7 @@ object HTTPService2 extends DefaultJsonProtocol with Directives with SprayJsonSu
   }
 
   def run = {
-    Http().bindAndHandleSync(route, "192.168.13.172", 9000)
+    Http().bindAndHandleSync(route, "10.0.71.1", 19000)
   }
 
 }

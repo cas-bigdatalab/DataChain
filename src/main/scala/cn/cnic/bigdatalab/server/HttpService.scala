@@ -55,7 +55,7 @@ trait Service extends DefaultJsonProtocol with Directives with SprayJsonSupport{
 }
 
 object HttpService extends App with Service{
-  implicit val system = ActorSystem()
+  implicit val system = ActorSystem("HttpService", ConfigFactory.load())
   implicit val executor = system.dispatcher
   implicit val materializer = ActorMaterializer()
 

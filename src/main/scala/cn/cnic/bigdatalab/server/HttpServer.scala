@@ -4,9 +4,10 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.HttpMethods._
-import akka.http.scaladsl.model.{HttpResponse, HttpRequest}
+import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
+import com.typesafe.config.ConfigFactory
 
 import scalaz.concurrent.Future
 
@@ -14,8 +15,7 @@ import scalaz.concurrent.Future
   * Created by xjzhu@cnic.cn on 2016/8/1.
   */
 object HttpServer extends App{
-
-  implicit val system = ActorSystem()
+  implicit val system = ActorSystem("HttpServer", ConfigFactory.load())
   implicit val materializer = ActorMaterializer()
 
   val serverSource = Http().bind(interface = "localhost", port = 9000)
