@@ -144,11 +144,6 @@ object test{
 //
 //    println(SqlUtil.hive(schema))
 
-    val a = "sssspreMP"
-    val preMP = "dddd"
-
-    print(a.replace("preMP", preMP))
-
 
   }
 }
