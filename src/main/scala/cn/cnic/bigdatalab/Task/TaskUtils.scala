@@ -132,14 +132,23 @@ object TaskUtils {
 
 object test{
   def main(args: Array[String]): Unit ={
-    val schema = new Schema()
-    schema.setDriver("solr")
-    schema.setDb("test")
-    schema.setTable("user")
-    //schema.setColumns(Map("id" -> "Int", "name" -> "String", "age" -> "String"))
-    schema.setColumns(ArrayBuffer("id:Int","news_id:String", "url:String","page_count:Int", "resource:String","pub_time:String","title:String","text:String"))
-//    println(TaskUtils.getSchemaColumns(schema))
-    println(TaskUtils.getCreateTableSql(schema))
+//    val schema = new Schema()
+//    schema.setDriver("solr")
+//    schema.setDb("test")
+//    schema.setTable("user")
+//    schema.setColumns(ArrayBuffer("id:Int", "name:String", "age:String"))
+//    schema.setAttachment(Map("partitions"->"age int"))
+////    schema.setColumns(ArrayBuffer("id:Int","news_id:String", "url:String","page_count:Int", "resource:String","pub_time:String","title:String","text:String"))
+//////    println(TaskUtils.getSchemaColumns(schema))
+////    println(TaskUtils.getCreateTableSql(schema))
+//
+//    println(SqlUtil.hive(schema))
+
+    val a = "sssspreMP"
+    val preMP = "dddd"
+
+    print(a.replace("preMP", preMP))
+
 
   }
 }

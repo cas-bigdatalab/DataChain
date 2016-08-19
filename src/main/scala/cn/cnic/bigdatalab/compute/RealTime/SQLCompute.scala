@@ -1,5 +1,8 @@
 package cn.cnic.bigdatalab.compute.realtime
 
+import java.util.Date
+
+import akka.io.Udp.SO.Broadcast
 import cn.cnic.bigdatalab.compute.HiveSQLContextSingleton
 import cn.cnic.bigdatalab.compute.notification.KafkaMessagerProducer
 import cn.cnic.bigdatalab.compute.realtime.utils.Utils
@@ -7,6 +10,7 @@ import cn.cnic.bigdatalab.transformer.Transformer
 import cn.cnic.bigdatalab.utils.StreamingLogLevels
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
+import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.streaming.{Seconds, StreamingContext, Time}
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -17,6 +21,7 @@ object SQLCompute {
 
   val failStatus: String = "Failed"
   val receiveStatus: String = "Received"
+  var preMP: Int = _
 
   /*
   args: 0 app name
@@ -31,7 +36,8 @@ object SQLCompute {
    */
   def run(appName: String, duration : String, topic : String, kafkaParam : String,
           srcName : String, createDecTable : String, execSql : String, mapping:String,
-          notificationTopic : String = "", kafkaBrokerList:String = ""){
+          notificationTopic : String = "", kafkaBrokerList:String = "",
+          sqlType: String="", attachSql: String=""){
 
     StreamingLogLevels.setStreamingLogLevels()
 
@@ -49,6 +55,9 @@ object SQLCompute {
     // Create transformer
     @transient val transformer = new Transformer(mapping)
     val schema = Utils.getSchema(transformer)
+    if(sqlType.equals("hive")){
+      preMP = new Date().getHours
+    }
 
     val lines = Kafka2SparkStreaming.getStream(ssc, topic, kafkaParam)
 
@@ -72,7 +81,12 @@ object SQLCompute {
         for( tableDesc <- tableDescList){
           sqlContext.sql(tableDesc)
         }
-        sqlContext.sql(execSql)
+        if(sqlType.equals("hive")){
+          execHiveSql(sqlContext, execSql, attachSql)
+        }else{
+          sqlContext.sql(execSql)
+        }
+
       }catch {
         case ex: Exception => {
           if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))){
@@ -85,7 +99,7 @@ object SQLCompute {
         }
       }
 
-      if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))&&rdd.count()>0){
+      if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))&& !rdd.isEmpty() && rdd.count()>0){
         println("topics：" + notificationTopic)
         val topic = notificationTopic.split(":")(0)
         val partition = notificationTopic.split(":")(1)
@@ -98,6 +112,19 @@ object SQLCompute {
     //启动
     ssc.start()
     ssc.awaitTermination()
+
+  }
+
+  def execHiveSql(sqlContext: HiveContext, execSql: String, attachSql: String): Unit ={
+    val mp = new Date().getHours
+    sqlContext.sql(execSql.replace("$mp", mp.toString))
+    if(preMP != mp){
+      val attachSqlList = attachSql.split("#-#")
+      for(as <- attachSqlList){
+        sqlContext.sql(as.replace("preMP", preMP.toString))
+      }
+      preMP = mp
+    }
 
   }
 
@@ -144,11 +171,11 @@ object SQLCompute {
 //        |  collection     'user1',
 //        |  soft_commit_secs '5'
 //        |)""".stripMargin
-   /* val execSql = """
-                    |INSERT INTO table user
-                    |SELECT * FROM test
-                  """.stripMargin
-    val appName = "Exception test"
+//    val execSql = """
+//                    |INSERT INTO table user
+//                    |SELECT * FROM test
+//                  """.stripMargin
+    /*val appName = "Exception test"
     val duration = "1"
     val topics = "test :1"
     val kafkaParam = "zookeeper.connect->10.0.71.20:2181,10.0.71.26:2181,10.0.71.27:2181;group.id->test-consumer-group"
@@ -156,8 +183,15 @@ object SQLCompute {
     val srcName = "test"
     val mapping = "D:\\git\\DataChain\\conf\\csvMapping_user.json"
     val notificationTopic = "notification:1"
-    val kafkaBrokerList = "10.0.71.20:9092,10.0.71.26:9092,10.0.71.27:9092"*/
-
+    val kafkaBrokerList = "10.0.71.20:9092,10.0.71.26:9092,10.0.71.27:9092"
+    val sqlType = "hive"
+    val attachSql =
+      """INSERT INTO TABLE test_partition_bucket PARTITION (mp=24, age)
+        |SELECT id, name, age FROM test_partition_bucket WHERE mp=preMP
+        |#-#
+        |TRUNCATE TABLE test_partition_bucket PARTITION (mp=preMP)""".stripMargin
+    val createDecTable = "CREATE TABLE IF NOT EXISTS test_partition_bucket( id Int, name String ) partitioned by( mp int, age int)"
+    val execSql = "insert into table test_partition_bucket partition(mp=25, age) select * from test"*/
 
     val appName = args(0)
     val duration = args(1)
@@ -169,14 +203,21 @@ object SQLCompute {
     val mapping = args(7)
     var notificationTopic = ""
     var kafkaBrokerList = ""
+    var sqlType = ""
+    var attachSql = ""
     if (args.size == 10){
       notificationTopic = args(8)
       kafkaBrokerList = args(9)
     }
+    if(args.size == 12){
+      sqlType = args(10)
+      attachSql = args(11)
+    }
+
 
     println("create dec table sql:" + createDecTable)
     println("exec sql:" + execSql)
 
-    run(appName, duration, topics, kafkaParam, srcName, createDecTable, execSql, mapping, notificationTopic, kafkaBrokerList)
+    run(appName, duration, topics, kafkaParam, srcName, createDecTable, execSql, mapping, notificationTopic, kafkaBrokerList, sqlType, attachSql)
   }
 }

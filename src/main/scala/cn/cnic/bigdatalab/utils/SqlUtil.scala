@@ -7,6 +7,8 @@ import cn.cnic.bigdatalab.entity.Schema
   */
 object SqlUtil {
 
+  val INSERTKEYWORD = List("insert", "into", "table", "overwrite" ,"directory", "local")
+
   //CREATE TEMPORARY TABLE %tablename% USING %using% OPTIONS ( url '%url%', dbtable '%table%')
   def mysql(schema: Schema): String ={
     val temp = PropertyUtil.getPropertyValue("mysql_create_sql")
@@ -38,7 +40,9 @@ object SqlUtil {
     val columns =  schema.columnsToString()
     var result = temp.replace("%tablename%", dbtable).replace("%columns%", columns).stripMargin
     if(!schema.getAttachment().isEmpty){
-      result += " " + schema.getAttachment()
+      for((key, value) <- schema.getAttachment()){
+        result = result.replace(s"%$key%", value)
+      }
     }
     result
   }
@@ -97,6 +101,47 @@ object SqlUtil {
 
     return  temp.replace("%tablename%", schemaName).replace("%columns%", columns).replace("%using%", using).
       replace("%address%", address).replace("%table%",memDbtable)
+  }
+
+  def getInsertSchema(sql: String, schemaList: List[Schema]): Schema = {
+    val insertStart = sql.toLowerCase().indexOf("insert")
+    val words = sql.substring(insertStart, sql.length).split(" ").filterNot(_.equals("")).filterNot({word =>
+      INSERTKEYWORD.contains(word.toLowerCase)
+    })
+    if(words.isEmpty){
+      throw new IllegalArgumentException("sql not include insert.")
+    }
+    val insertTable = words(0)
+    var insertSchema: Schema = null
+    for(schema <- schemaList){
+      if(insertTable.equals(schema.getTable()) || insertTable.equals(schema.getName())){
+        insertSchema = schema
+      }
+    }
+    if(insertSchema == null){
+      throw new IllegalArgumentException("Table has no driver.")
+    }
+
+    insertSchema
+
+  }
+
+  def parseSql(sql: String, schema: Schema):(String, String)={
+    val index = sql.indexOf("(")
+    val partitionSql = sql.substring(0, index+1) + "mp=$mp, " + sql.substring(index+1)
+    val hive_merge = PropertyUtil.getPropertyValue("hive_merge")
+    val hive_truncate = PropertyUtil.getPropertyValue("hive_truncate")
+    var attachSql: StringBuffer = new StringBuffer()
+    if(!schema.getAttachment().isEmpty && !schema.getAttachment().get("partitions").isEmpty){
+      attachSql.append(hive_merge.replaceAll("%tablename%", schema.getTable()).replace("%columns%", schema.columnsFieldToString())
+        .replaceAll("%partition_columns%", schema.partitonFieldToString)).append(PropertyUtil.getPropertyValue("create_sql_separator"))
+        .append(hive_truncate.replace("%tablename%", schema.getTable()))
+    }else{
+      attachSql.append(hive_merge.replaceAll("%tablename%", schema.getTable()).replace("%columns%", schema.columnsToString()))
+        .append(PropertyUtil.getPropertyValue("create_sql_separator"))
+        .append(hive_truncate.replace("%tablename%", schema.getTable()))
+    }
+    (partitionSql, attachSql.toString)
   }
 
 }

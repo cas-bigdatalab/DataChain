@@ -19,7 +19,7 @@ class Schema {
   var db:String = _
   var table:String = _
   var columns:ArrayBuffer[String] = _
-  var attachment: String = _
+  var attachment: Map[String, String] = _
 
 
   def getName(): String={
@@ -66,11 +66,11 @@ class Schema {
     this
   }
 
-  def getAttachment(): String = {
+  def getAttachment(): Map[String, String] = {
     attachment
   }
 
-  def setAttachment(attachment: String): Schema = {
+  def setAttachment(attachment: Map[String, String]): Schema = {
     this.attachment = attachment
     this
   }
@@ -116,6 +116,21 @@ class Schema {
     }
     columnsBuffer.toString
 
+  }
+
+  def partitonFieldToString(): String = {
+    val partitionBuffer:StringBuffer = new StringBuffer()
+    partitionBuffer.append("")
+    if(!attachment.isEmpty && !attachment.get("partitions").isEmpty){
+      val partitions = attachment.get("partitions").get.split(",")
+      for(i <- 0 until partitions.length){
+        partitionBuffer.append(partitions(i).stripMargin.split(" ").filterNot(_.equals(""))(0))
+        if(i < partitions.length - 1){
+          partitionBuffer.append(", ")
+        }
+      }
+    }
+    partitionBuffer.toString
   }
 
 }
@@ -170,7 +185,7 @@ object Schema{
 
     //attachment
     if(!map.get("attachment").isEmpty){
-      val attachment = map.get("attachment").get.asInstanceOf[String]
+      val attachment = map.get("attachment").get.asInstanceOf[Map[String, String]]
       schema.setAttachment(attachment)
     }
 

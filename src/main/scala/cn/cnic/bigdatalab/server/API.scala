@@ -14,7 +14,7 @@ object API {
 
   def runRealTimeTask(agentId:String, taskId: String): String ={
     //1.define Collection
-    val agent_json_path = json_path + "/" + agentId
+    val agent_json_path = json_path + "/" + "agent/"  + agentId
     val agent = FileUtil.agentReader(agent_json_path)
     val collectionStep = new CollectionStep().initAgent(agent)
 

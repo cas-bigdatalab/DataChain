@@ -2,7 +2,7 @@ package cn.cnic.bigdatalab.task.factory
 
 import cn.cnic.bigdatalab.entity.Schema
 import cn.cnic.bigdatalab.task.TaskUtils
-import cn.cnic.bigdatalab.utils.PropertyUtil
+import cn.cnic.bigdatalab.utils.{PropertyUtil, SqlUtil}
 
 /**
   * Created by duyuanyuan on 2016/7/25.
@@ -52,17 +52,39 @@ class SQLTask extends TaskBean{
     //transfer sql to real statement
     val sqlDescription = TaskUtils.transformSql(sql, destSchema: List[Schema])
 
+    val insertSchema = SqlUtil.getInsertSchema(sqlDescription, destSchema)
     //init app params
     if(notificationTopic.equals("")){
-      this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
-        TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
-        TaskUtils.wrapDelimiter(sqlDescription), mapping)
+      if(insertSchema.getDriver().equals("hive")){
+        val (execSql, attachSql) = SqlUtil.parseSql(sqlDescription, insertSchema)
+        this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
+          TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
+          TaskUtils.wrapDelimiter(execSql), mapping,
+          TaskUtils.wrapDelimiter(""),
+          TaskUtils.wrapDelimiter(""),
+          "hive", TaskUtils.wrapDelimiter(attachSql))
+      }else {
+        this.appParams = List(this.taskType + "_" + name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
+          TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
+          TaskUtils.wrapDelimiter(sqlDescription), mapping)
+      }
     }else{
-      this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
-        TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
-        TaskUtils.wrapDelimiter(sqlDescription), mapping,
-        TaskUtils.getTopic(notificationTopic),
-        TaskUtils.getKafkaBrokerList())
+      if(insertSchema.getDriver().equals("hive")){
+        val (execSql, attachSql) = SqlUtil.parseSql(sqlDescription, insertSchema)
+        this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
+          TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
+          TaskUtils.wrapDelimiter(execSql), mapping,
+          TaskUtils.getTopic(notificationTopic),
+          TaskUtils.getKafkaBrokerList(),
+          "hive", TaskUtils.wrapDelimiter(attachSql))
+      }else{
+        this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
+          TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
+          TaskUtils.wrapDelimiter(sqlDescription), mapping,
+          TaskUtils.getTopic(notificationTopic),
+          TaskUtils.getKafkaBrokerList())
+      }
+
     }
 
     this
