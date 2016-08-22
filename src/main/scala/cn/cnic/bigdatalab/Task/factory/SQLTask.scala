@@ -60,8 +60,8 @@ class SQLTask extends TaskBean{
         this.appParams = List(this.taskType+"_"+name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),
           TaskUtils.getKafkaParams(), TaskUtils.getSchemaName(srcSchema), TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
           TaskUtils.wrapDelimiter(execSql), mapping,
-          TaskUtils.wrapDelimiter(""),
-          TaskUtils.wrapDelimiter(""),
+          TaskUtils.wrapDelimiter("\"\""),
+          TaskUtils.wrapDelimiter("\"\""),
           "hive", TaskUtils.wrapDelimiter(attachSql))
       }else {
         this.appParams = List(this.taskType + "_" + name, TaskUtils.getDuration(), TaskUtils.getTopic(topic),

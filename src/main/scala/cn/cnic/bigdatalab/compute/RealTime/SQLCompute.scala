@@ -99,7 +99,7 @@ object SQLCompute {
         }
       }
 
-      if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))&& !rdd.isEmpty() && rdd.count()>0){
+      if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))){
         println("topics：" + notificationTopic)
         val topic = notificationTopic.split(":")(0)
         val partition = notificationTopic.split(":")(1)
@@ -116,8 +116,8 @@ object SQLCompute {
   }
 
   def execHiveSql(sqlContext: HiveContext, execSql: String, attachSql: String): Unit ={
-    val mp = new Date().getHours
-    sqlContext.sql(execSql.replace("$mp", mp.toString))
+    val mp: Int = new Date().getHours
+    sqlContext.sql(execSql.replace("%mp%", mp.toString))
     if(preMP != mp){
       val attachSqlList = attachSql.split("#-#")
       for(as <- attachSqlList){
@@ -131,23 +131,23 @@ object SQLCompute {
   def main(args: Array[String]): Unit = {
 
     //mysql test
-//    val createDecTable = """
-//                           |CREATE TEMPORARY TABLE user
-//                           |USING org.apache.spark.sql.jdbc
-//                           |OPTIONS (
-//                           |  url    'jdbc:mysql://10.0.50.216:3306/spark?user=root&password=root',
-//                           |  dbtable     'user'
-//                           |)""".stripMargin
+    /*val createDecTable = """
+                           |CREATE TEMPORARY TABLE mysql_test
+                           |USING org.apache.spark.sql.jdbc
+                           |OPTIONS (
+                           |  url    'jdbc:mysql://10.0.71.1:3306/spark?user=root&password=root',
+                           |  dbtable     'test'
+                           |)""".stripMargin*/
 // mongodb test
-//    val createDecTable = """
-//                           |CREATE TEMPORARY TABLE test(
-//                           | name String, age Int
-//                           |)USING com.stratio.datasource.mongodb
-//                           |OPTIONS (
-//                           |  host '*:27017',
-//                           |  database 'test',
-//                           |  collection 'age'
-//                           |)""".stripMargin
+/*    val createDecTable = """
+                           |CREATE TEMPORARY TABLE test(
+                           | name String, age Int
+                           |)USING com.stratio.datasource.mongodb
+                           |OPTIONS (
+                           |  host '*:27017',
+                           |  database 'test',
+                           |  collection 'age'
+                           |)""".stripMargin*/
 
     //hive test
 //    val createDecTable = """
@@ -172,26 +172,26 @@ object SQLCompute {
 //        |  soft_commit_secs '5'
 //        |)""".stripMargin
 //    val execSql = """
-//                    |INSERT INTO table user
-//                    |SELECT * FROM test
+//                    |INSERT INTO table mysql_test
+//                    |SELECT * FROM streaming_test
 //                  """.stripMargin
-    /*val appName = "Exception test"
-    val duration = "1"
-    val topics = "test :1"
-    val kafkaParam = "zookeeper.connect->10.0.71.20:2181,10.0.71.26:2181,10.0.71.27:2181;group.id->test-consumer-group"
-    val schemaSrc = "id:Int,name :String,age:Int"
-    val srcName = "test"
-    val mapping = "D:\\git\\DataChain\\conf\\csvMapping_user.json"
-    val notificationTopic = "notification:1"
-    val kafkaBrokerList = "10.0.71.20:9092,10.0.71.26:9092,10.0.71.27:9092"
-    val sqlType = "hive"
-    val attachSql =
-      """INSERT INTO TABLE test_partition_bucket PARTITION (mp=24, age)
-        |SELECT id, name, age FROM test_partition_bucket WHERE mp=preMP
-        |#-#
-        |TRUNCATE TABLE test_partition_bucket PARTITION (mp=preMP)""".stripMargin
-    val createDecTable = "CREATE TABLE IF NOT EXISTS test_partition_bucket( id Int, name String ) partitioned by( mp int, age int)"
-    val execSql = "insert into table test_partition_bucket partition(mp=25, age) select * from test"*/
+//    val appName = "mysql test"
+//    val duration = "1"
+//    val topics = "test :1"
+//    val kafkaParam = "zookeeper.connect->10.0.71.20:2181,10.0.71.26:2181,10.0.71.27:2181;group.id->test-consumer-group"
+//    val schemaSrc = "id:Int,name :String,age:Int"
+//    val srcName = "streaming_test"
+//    val mapping = "/opt/csvMapping_user.json"
+//    val notificationTopic = "notification:1"
+//    val kafkaBrokerList = "10.0.71.20:9092,10.0.71.26:9092,10.0.71.27:9092"
+//    val sqlType = "hive"
+//    val attachSql =
+//      """INSERT INTO TABLE test_partition_bucket PARTITION (mp=24, age)
+//        |SELECT id, name, age FROM test_partition_bucket WHERE mp=preMP
+//        |#-#
+//        |TRUNCATE TABLE test_partition_bucket PARTITION (mp=preMP)""".stripMargin
+//    val createDecTable = "CREATE TABLE IF NOT EXISTS test_partition_bucket( id Int, name String ) partitioned by( mp int, age int)"
+//    val execSql = "insert into table test_partition_bucket partition(mp=$mp, age) select * from streaming_test"
 
     val appName = args(0)
     val duration = args(1)
@@ -210,13 +210,11 @@ object SQLCompute {
       kafkaBrokerList = args(9)
     }
     if(args.size == 12){
+      notificationTopic = args(8)
+      kafkaBrokerList = args(9)
       sqlType = args(10)
       attachSql = args(11)
     }
-
-
-    println("create dec table sql:" + createDecTable)
-    println("exec sql:" + execSql)
 
     run(appName, duration, topics, kafkaParam, srcName, createDecTable, execSql, mapping, notificationTopic, kafkaBrokerList, sqlType, attachSql)
   }

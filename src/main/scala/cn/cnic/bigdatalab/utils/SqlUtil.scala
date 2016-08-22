@@ -128,7 +128,7 @@ object SqlUtil {
 
   def parseSql(sql: String, schema: Schema):(String, String)={
     val index = sql.indexOf("(")
-    val partitionSql = sql.substring(0, index+1) + "mp=$mp, " + sql.substring(index+1)
+    val partitionSql = sql.substring(0, index+1) + "mp=%mp%, " + sql.substring(index+1)
     val hive_merge = PropertyUtil.getPropertyValue("hive_merge")
     val hive_truncate = PropertyUtil.getPropertyValue("hive_truncate")
     var attachSql: StringBuffer = new StringBuffer()
