@@ -2,6 +2,6 @@
   "tableSpec":{
     "driver":"streaming",
     "table":"test",
-    "columns":["log_date:string","log_time:string","log_priority:string","log_class:string","log_linenumber:Int","log_method:string", "log_message:string"]
+    "columns":["id:int","name:string","age:int"]
   }
 }
