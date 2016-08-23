@@ -10,9 +10,9 @@ import cn.cnic.bigdatalab.transformer.{TransformerMapping, Transformer}
 object TransformerTest {
   def main(agrs: Array[String]): Unit = {
     println("beginning testing dataparser")
-    val home_dir = "E:\\bigdatalab\\DataChain"
+    val home_dir = "E:\\Project\\DataChain"
 
-    var mapping_conf = home_dir + "\\conf\\" + "csvMapping.json"
+    /*var mapping_conf = home_dir + "\\conf\\" + "csvMapping.json"
     //csv msg
     println("----------------csvMapping Test-------------------")
     var msg = "1996,Jeep,Grand Cherokee,\"MUST SELL! air, moon roof, loaded\", 4799.00"
@@ -121,7 +121,16 @@ object TransformerTest {
     mapping_conf = home_dir + "\\conf\\" + "combinedApacheLogMapping.json"
     regexparser = new Transformer(mapping_conf)
     println("msg: " + msg)
-    println("parse result: " + regexparser.transform((msg)))
+    println("parse result: " + regexparser.transform((msg)))*/
+    //var mapping_conf = home_dir + "\\conf\\" + "weblogMapping.json"
+    var mapping_conf = home_dir + "\\conf\\" + "weblogTest.json"
+    println("----------------weblogMapping Test-------------------")
+    //var msg = "2016.08.19 11:18:23 INFO  com.cnic.datachain.controller.IndexController 28 doAction - 499d8a2f05b1462b8ee5caf728904520"
+    var msg = "2016.08.22 14:07:16 INFO  com.cnic.datachain.controller.IndexController 28 doAction - 5335eecb4df24ddb9d4db061dad1a62e"
+    var regexparser = new Transformer(mapping_conf)
+    var out = regexparser.transform(msg)
+    println("msg: " + msg)
+    println("parse result: " + out)
 
   }
 }
