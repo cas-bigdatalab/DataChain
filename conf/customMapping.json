@@ -1,8 +1,0 @@
-{
-  "mappingSpec": {
-    "type": "customMapping",
-    "dimensionsMap":  {
-      "dimensions" : ["year:string","make:string","model:string","comment:string"]
-    }
-  }
-}

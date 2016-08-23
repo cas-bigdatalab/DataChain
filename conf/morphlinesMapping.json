@@ -1,9 +1,0 @@
-{
-  "mappingSpec": {
-    "type": "morphlinesMapping",
-    "conf": "E:\\bigdatalab\\DataChain\\conf\\morphlines.conf.mysql.json.conf",
-    "dimensionsMap":  {
-      "dimensions" : ["year:int","make:string","model:string","blank:float"]
-    }
-  }
-}

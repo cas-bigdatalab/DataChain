@@ -123,7 +123,7 @@ object TransformerTest {
     println("msg: " + msg)
     println("parse result: " + regexparser.transform((msg)))*/
     //var mapping_conf = home_dir + "\\conf\\" + "weblogMapping.json"
-    var mapping_conf = home_dir + "\\conf\\" + "weblogTest.json"
+    var mapping_conf = home_dir + "\\configure\\transformer\\" + "weblogMapping.json"
     println("----------------weblogMapping Test-------------------")
     //var msg = "2016.08.19 11:18:23 INFO  com.cnic.datachain.controller.IndexController 28 doAction - 499d8a2f05b1462b8ee5caf728904520"
     var msg = "2016.08.22 14:07:16 INFO  com.cnic.datachain.controller.IndexController 28 doAction - 5335eecb4df24ddb9d4db061dad1a62e"

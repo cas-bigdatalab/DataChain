@@ -1,8 +1,0 @@
-{
-  "mappingSpec": {
-    "type": "jsonMapping",
-    "dimensionsMap":  {
-      "dimensions" : ["year:int","make:string","model:string","comment:string","blank:float"]
-    }
-  }
-}

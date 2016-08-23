@@ -1,9 +1,0 @@
-{
-  "mappingSpec": {
-    "type": "morphlinesMapping",
-    "conf": "E:\\bigdatalab\\DataChain\\conf\\morphlines.csf.conf",
-    "dimensionsMap":  {
-      "dimensions" : ["id:int","name:string","city:string","number:int"]
-    }
-  }
-}
