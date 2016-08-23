@@ -1,3 +1,7 @@
+import sun.security.tools.PathList
+
+name := "my-project"
+
 name := "DataChain"
 
 version := "1.0"
@@ -59,6 +63,8 @@ libraryDependencies ++=Seq(
   "org.kitesdk" % "kite-morphlines-json" % kiteVersion,
   "org.kitesdk" % "kite-morphlines-solr-cell" % kiteVersion,
   "org.kitesdk" % "kite-morphlines-solr-core" % kiteVersion
+).map(
+  _.excludeAll(ExclusionRule(organization="javax.servlet"))
 )
 
 //libraryDependencies ++=Seq(
@@ -71,7 +77,6 @@ libraryDependencies ++=Seq(
   "junit" % "junit" % "4.7",
   "org.slf4j" % "slf4j-api" % "1.6.1"
 )
-
 
 
 fork in Test := true
