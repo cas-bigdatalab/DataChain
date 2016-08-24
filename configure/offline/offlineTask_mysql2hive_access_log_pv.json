@@ -1,0 +1,20 @@
+
+{
+  "Task":{
+    "name":"AccessLogPV",
+    "taskType":"offline",
+    "notificationTopic":"notification",
+    "expression":"* * */1 ? * *",
+
+    "srcTable":{
+      "table1":"mysql_apache_access_log"
+    },
+
+    "destTable":{
+      "table1":"hive_apache_access_log_pv"
+    },
+
+    "sql":"insert overwrite table hive_apache_access_log_pv select request, count(request) as count from mysql_apache_access_log group by request"
+
+  }
+}

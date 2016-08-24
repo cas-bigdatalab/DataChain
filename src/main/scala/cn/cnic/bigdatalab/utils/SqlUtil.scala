@@ -39,14 +39,21 @@ object SqlUtil {
     val dbtable = schema.getTable()
     val columns =  schema.columnsToString()
     var result = temp.replace("%tablename%", dbtable).replace("%columns%", columns).stripMargin
-    if(!schema.getAttachment().isEmpty){
+    if(schema.getAttachment()!= null && !schema.getAttachment().isEmpty){
       for((key, value) <- schema.getAttachment()){
         result = result.replace(s"%$key%", value)
       }
+    }else{
+      result = result.replace(", %partitions%", "")
     }
     result
   }
-
+  def hive_offline(schema: Schema): String ={
+    val temp = PropertyUtil.getPropertyValue("hive_create_sql_offline")
+    val dbtable = schema.getTable()
+    val columns =  schema.columnsToString()
+    temp.replace("%tablename%", dbtable).replace("%columns%", columns).stripMargin
+  }
   def hhase(schema: Schema): String ={
     val temp = PropertyUtil.getPropertyValue("hbase_create_sql")
     val using = PropertyUtil.getPropertyValue("hbase_driver")
@@ -132,7 +139,7 @@ object SqlUtil {
     val hive_merge = PropertyUtil.getPropertyValue("hive_merge")
     val hive_truncate = PropertyUtil.getPropertyValue("hive_truncate")
     var attachSql: StringBuffer = new StringBuffer()
-    if(!schema.getAttachment().isEmpty && !schema.getAttachment().get("partitions").isEmpty){
+    if(schema.getAttachment()!= null && !schema.getAttachment().isEmpty && !schema.getAttachment().get("partitions").isEmpty){
       attachSql.append(hive_merge.replaceAll("%tablename%", schema.getTable()).replace("%columns%", schema.columnsFieldToString())
         .replaceAll("%partition_columns%", schema.partitonFieldToString)).append(PropertyUtil.getPropertyValue("create_sql_separator"))
         .append(hive_truncate.replace("%tablename%", schema.getTable()))

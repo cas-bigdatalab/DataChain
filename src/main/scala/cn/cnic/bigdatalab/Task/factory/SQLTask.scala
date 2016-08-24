@@ -101,8 +101,8 @@ class SQLTask extends TaskBean{
     init(name, taskType+"_sql")
 
     //init temporary table description
-    val srcSqlDesc = TaskUtils.getCreateTableSqlNoWrap(srcSchema)
-    val destSqlDesc = TaskUtils.getCreateTableSqlNoWrap(destSchema)
+    val srcSqlDesc = TaskUtils.getCreateTableSqlNoWrap(srcSchema, taskType)
+    val destSqlDesc = TaskUtils.getCreateTableSqlNoWrap(destSchema, taskType)
     val temporaryTableDesc = srcSqlDesc + PropertyUtil.getPropertyValue("create_sql_separator") + destSqlDesc
 
     //transfer sql to real statement
@@ -140,7 +140,7 @@ class SQLTask extends TaskBean{
     val temporaryTableDesc :StringBuilder = new StringBuilder()
     for(index <- 0 until schemaList.length){
       val schema = schemaList(index)
-      val sqlDesc = TaskUtils.getCreateTableSqlNoWrap(schema)
+      val sqlDesc = TaskUtils.getCreateTableSqlNoWrap(schema, taskType)
       temporaryTableDesc.append(sqlDesc).append(PropertyUtil.getPropertyValue("create_sql_separator"))
     }
     temporaryTableDesc.delete(temporaryTableDesc.length - PropertyUtil.getPropertyValue("create_sql_separator").length, temporaryTableDesc.length)
