@@ -66,11 +66,25 @@ object SQLCompute {
         val sqlContext = HiveSQLContextSingleton.getInstance(rdd.sparkContext)
 
         //Get Row RDD
+        /*val srcRDD = rdd.filter(_!="").map(line => {
+          //call transformer
+          println("line:" + line + "!!!")
+          val row = transformer.transform(line)
+          println("transformer result: " + row)
+          if (row.toArray.size == 0){
+            println("transformer failed!!!")
+            Row.empty
+          }else{
+            Row.fromSeq(row.toArray.toSeq)
+          }
+        })*/
         val srcRDD = rdd.filter(_!="").map(line => {
           //call transformer
+          println("line:" + line + "!!!")
           val row = transformer.transform(line)
-          Row.fromSeq(row.toArray.toSeq)
-        })
+          println("transformer result: " + row)
+          row.toArray.toSeq
+        }).filter(_.nonEmpty).map(row => Row.fromSeq(row))
 
         // Apply the schema to the RDD.
         val srcDataFrame = sqlContext.createDataFrame(srcRDD, schema)
