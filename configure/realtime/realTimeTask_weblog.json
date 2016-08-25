@@ -2,11 +2,11 @@
   "Task":{
     "name":"realTimeWebLogTask",
     "taskType":"realtime",
-    "sql":"insert into table mysql_useraction select * from streaming_useraction",
-    "topic":"useraction",
+    "sql":"insert into table mysql_useraction select * from streaming_logbigdata",
+    "topic":"logbigdata",
 
     "srcTable":{
-      "table1":"streaming_useraction"
+      "table1":"streaming_logbigdata"
     },
 
     "mapping":"/opt/DataChainServer/configure/transformer/weblogMapping.json",

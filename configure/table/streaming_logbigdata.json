@@ -1,0 +1,7 @@
+{
+  "tableSpec":{
+    "driver":"streaming",
+    "table":"logbigdata",
+    "columns":["log_date:String","log_time:String","log_priority:String","log_class:String","log_linenumber:Int","log_method:String", "log_message:String"]
+  }
+}
