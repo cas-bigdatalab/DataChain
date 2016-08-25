@@ -151,10 +151,12 @@ class SQLTask extends TaskBean{
     //init app params
     if (notificationTopic == ""){
       this.appParams = List(
+        this.taskType+"_"+name,
         TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
         TaskUtils.wrapDelimiter(sqlDescription))
     }else{
       this.appParams = List(
+        this.taskType+"_"+name,
         TaskUtils.wrapDelimiter(temporaryTableDesc.toString()),
         TaskUtils.wrapDelimiter(sqlDescription),
         TaskUtils.getTopic(notificationTopic),

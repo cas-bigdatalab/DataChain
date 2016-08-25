@@ -78,10 +78,10 @@ object Offline {
   val failStatus: String = "Failed"
   val succStatus: String = "Successful"
 
-  def run(temporaryTableDesc : String, execSql : String,
+  def run(appName: String, temporaryTableDesc : String, execSql : String,
           notificationTopic : String = "", kafkaBrokerList:String = "") {
 
-    val conf = new SparkConf().setAppName("Offline Compute")
+    val conf = new SparkConf().setAppName(appName)
 
     try{
       //get sql context
@@ -118,14 +118,15 @@ object Offline {
 
   def main(args: Array[String]): Unit = {
 
-    val temporaryTableDesc = args(0)
-    val execSql = args(1)
+    val appname = args(0)
+    val temporaryTableDesc = args(1)
+    val execSql = args(2)
 
     var notificationTopic = ""
     var kafkaBrokerList = ""
-    if (args.size == 4){
-      notificationTopic = args(2)
-      kafkaBrokerList = args(3)
+    if (args.size == 5){
+      notificationTopic = args(3)
+      kafkaBrokerList = args(4)
     }
     println("TableDest : " + temporaryTableDesc)
     println("Sql statement: " + execSql)
