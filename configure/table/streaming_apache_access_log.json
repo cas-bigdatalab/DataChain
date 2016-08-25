@@ -1,0 +1,7 @@
+{
+  "tableSpec":{
+    "driver":"streaming",
+    "table":"access_log",
+    "columns":["ip:string","user:string","timestamp:string","request:string","status:int","length:int"]
+  }
+}

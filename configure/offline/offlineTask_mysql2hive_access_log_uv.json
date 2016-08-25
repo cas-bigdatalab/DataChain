@@ -1,0 +1,20 @@
+
+{
+  "Task":{
+    "name":"AccessLogUV",
+    "taskType":"offline",
+    "notificationTopic":"notification",
+    "expression":"* * * ? * *",
+
+    "srcTable":{
+      "table1":"mysql_apache_access_log"
+    },
+
+    "destTable":{
+      "table1":"hive_apache_access_log_uv"
+    },
+
+    "sql":"insert overwrite table hive_apache_access_log_uv select ip, first(user), request, count(request) as count from mysql_apache_access_log group by ip, request"
+
+  }
+}

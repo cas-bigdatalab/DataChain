@@ -110,7 +110,7 @@ object Offline {
     if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))){
       val topic = notificationTopic.split(":")(0)
       val partition = notificationTopic.split(":")(1)
-      KafkaMessagerProducer.produce(topic, partition, kafkaBrokerList)
+      KafkaMessagerProducer.produce(topic, partition, kafkaBrokerList, succStatus)
 
     }
 

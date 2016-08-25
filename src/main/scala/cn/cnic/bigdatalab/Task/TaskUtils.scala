@@ -99,22 +99,26 @@ object TaskUtils {
     null
   }
 
-  def getCreateTableSqlNoWrap(schema: Schema): String ={
+  def getCreateTableSqlNoWrap( schema: Schema, taskType: String = "realtime"): String ={
     val sqlType = schema.getDriver()
     if(sqlType.equals("mysql")){
       return SqlUtil.mysql(schema)
     }else if(sqlType.equals("mongo")){
       return SqlUtil.mongo(schema)
     }else if(sqlType.equals("hive") || sqlType.equals("impala")){
-      return SqlUtil.hive(schema)
+      taskType match {
+        case "offline" => SqlUtil.hive_offline(schema)
+        case _ => SqlUtil.hive(schema)
+      }
     }else if(sqlType.equals("hbase")){
       return SqlUtil.hhase(schema)
     }else if(sqlType.equals("solr")){
       return SqlUtil.solr(schema)
     }else if(sqlType.equals("memcache")){
       return SqlUtil.memcache(schema)
+    }else{
+      null
     }
-    null
   }
 
   def transformSql(sql:String, schemaList: List[Schema]): String ={

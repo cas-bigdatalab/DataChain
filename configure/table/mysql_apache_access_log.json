@@ -1,0 +1,8 @@
+{
+  "tableSpec":{
+    "driver":"mysql",
+    "db":"spark",
+    "table":"apache_access_log",
+    "columns":["ip:string","user:string","timestamp:string","request:string","status:int","length:int"]
+  }
+}

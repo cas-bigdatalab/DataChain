@@ -1,0 +1,7 @@
+{
+  "tableSpec":{
+    "driver":"hive",
+    "table":"apache_access_log_pv",
+    "columns":["request:String","count:Int"]
+  }
+}

@@ -39,8 +39,21 @@ object FieldTypeUtil {
     case "double" => value.toDouble
     case "date" => DateTime.parse(value, DateTimeFormat.forPattern("yyyy-MM-dd H:mm:ss"))
     case "float" => value.toFloat
-    case "integer" => value.toInt
-    case "int" => value.toInt
+    case "integer" =>{
+      try{
+        value.toInt
+      }catch {
+        case _: Exception => 0
+      }
+    }
+    case "int" => {
+      try{
+        value.toInt
+      }catch {
+        case _: Exception => 0
+      }
+
+    }
     case "long" => value.toLong
     case "null" => None
     case "short" => value.toShort

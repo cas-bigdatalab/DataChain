@@ -1,0 +1,19 @@
+{
+  "Task":{
+    "name":"ApacheAccessLog",
+    "taskType":"realtime",
+    "sql":"insert into table mysql_apache_access_log select * from streaming_apache_access_log",
+    "topic":"access_log1",
+    "notificationTopic":"notification",
+
+    "srcTable":{
+      "table1":"streaming_apache_access_log"
+    },
+
+    "mapping":"/opt/configure/transformer/commonApacheLogMapping.json",
+
+    "destTable":{
+      "table1":"mysql_apache_access_log"
+    }
+  }
+}
