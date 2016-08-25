@@ -1,5 +1,6 @@
 package cn.cnic.bigdatalab.task
 
+import akka.actor.Actor.Receive
 import akka.actor._
 import akka.actor.Props
 import akka.util.Timeout
@@ -21,6 +22,9 @@ import scala.sys.process.Process
   */
 
 trait Scheduler{
+
+  val execActor = Quartz.system.actorOf(Props[ExecActor])
+
   def deploy(taskInstance: TaskBean)
 
   def cancel(name: String, opType: String="DELETE")
@@ -29,8 +33,8 @@ trait Scheduler{
 
   def execute(taskInstance: TaskBean): Unit ={
     val command: StringBuffer = new StringBuffer()
-    command.append("cd ").append(PropertyUtil.getPropertyValue("spark_home")).append(";")
-    command.append("./bin/spark-submit ").append("--class ").append(taskInstance.taskParams.get("class").get)
+//    command.append("cd ").append(PropertyUtil.getPropertyValue("spark_home")).append(";")
+    command.append(PropertyUtil.getPropertyValue("spark_home") + "bin/spark-submit ").append("--class ").append(taskInstance.taskParams.get("class").get)
       .append(" --master ").append(taskInstance.sparkParams.get("master").get)
       .append(" --executor-memory ").append(taskInstance.sparkParams.get("executor-memory").get)
       .append(" --total-executor-cores ").append(taskInstance.sparkParams.get("total-executor-cores").get)
@@ -45,14 +49,27 @@ trait Scheduler{
     //val deployCmd =  "ssh -t -t xjzhu@" + PropertyUtil.getPropertyValue("spark_host") + " &&  /bin/bash " + command
     val deployCmd =  command.toString
 
+//    val deployCmd = "sshpass -p " + PropertyUtil.getPropertyValue("spark_host_password") +
+//      " ssh  -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no  -o ConnectTimeout=3 " +
+//      PropertyUtil.getPropertyValue("spark_host_user") + "@" + PropertyUtil.getPropertyValue("spark_host") + " " + command.toString
+
     println(deployCmd)
 
+    execActor ! deployCmd
 
-//    Process(Seq("bash","-c", deployCmd)).!
+//    SshUtil.exec(deployCmd, PropertyUtil.getPropertyValue("spark_host"), PropertyUtil.getPropertyValue("spark_host_user"),
+//      PropertyUtil.getPropertyValue("spark_host_password"))
 
-    SshUtil.exec(deployCmd, PropertyUtil.getPropertyValue("spark_host"), PropertyUtil.getPropertyValue("spark_host_user"),
-      PropertyUtil.getPropertyValue("spark_host_password"))
+  }
+}
 
+class ExecActor extends Actor{
+  override def receive: Receive = {
+    case cmd : String => {
+      Process(Seq("bash","-c", cmd + " >/dev/null  2>&1  &")).!!
+//      println("Actor="+cmd)
+    }
+    case _ => println("ExecActor receive error!")
   }
 }
 

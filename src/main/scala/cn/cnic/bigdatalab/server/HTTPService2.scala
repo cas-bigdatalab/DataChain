@@ -11,6 +11,7 @@ import akka.http.scaladsl.model.HttpMethods._
 import akka.http.scaladsl.model._
 import com.typesafe.config.ConfigFactory
 
+import scala.concurrent.Future
 import scala.util.parsing.json.JSON
 
 /**
@@ -30,62 +31,62 @@ object HTTPService2 extends DefaultJsonProtocol with Directives with SprayJsonSu
     }
   }
 
-  def route(req: HttpRequest): HttpResponse = req match {
+  def route(req: HttpRequest): Future[HttpResponse] = req match {
     case HttpRequest(GET, Uri.Path("/"), headers, entity, protocol) => {
-      HttpResponse(entity = "Get OK!")
+      Future.successful(HttpResponse(entity = "Get OK!"))
     }
 
     case HttpRequest(POST, Uri.Path("/task/v2/create"), headers, entity, protocol) =>{
       val data = toJson(entity)
       if(!data.get("agentId").isEmpty && !data.get("taskId").isEmpty){
         val result = API.runRealTimeTask(data.get("agentId").get.asInstanceOf[String], data.get("taskId").get.asInstanceOf[String])
-        HttpResponse(entity = result)
+        Future.successful(HttpResponse(entity = result))
       }else if(!data.get("taskId").isEmpty){
         val result = API.runOfflineTask(data.get("taskId").get.asInstanceOf[String])
-        HttpResponse(entity = result)
+        Future.successful(HttpResponse(entity = result))
       }else{
-        HttpResponse(entity = "Param Error!")
+        Future.successful(HttpResponse(entity = "Param Error!"))
       }
     }
 
     case HttpRequest(DELETE, Uri.Path("/task/v2/delete"), headers, entity, protocol) =>{
       val data = toJson(entity)
       if(data.get("name").isEmpty){
-        HttpResponse(entity = "Param Error!")
+        Future.successful(HttpResponse(entity = "Param Error!"))
       }else{
         val result = API.deleteTask(data.get("name").get.asInstanceOf[String])
-        HttpResponse(entity = result)
+        Future.successful(HttpResponse(entity = result))
       }
     }
 
     case HttpRequest(PUT, Uri.Path("/task/v2/stop"), headers, entity, protocol) =>{
       val data = toJson(entity)
       if(data.get("name").isEmpty){
-        HttpResponse(entity = "Param Error!")
+        Future.successful(HttpResponse(entity = "Param Error!"))
       }else{
         val result = API.stopTask(data.get("name").get.asInstanceOf[String])
-        HttpResponse(entity = result)
+        Future.successful(HttpResponse(entity = result))
       }
     }
 
     case HttpRequest(PUT, Uri.Path("/task/v2/start"), headers, entity, protocol) =>{
       val data = toJson(entity)
       if(data.get("name").isEmpty){
-        HttpResponse(entity = "Param Error!")
+        Future.successful(HttpResponse(entity = "Param Error!"))
       }else{
         val result = API.startTask(data.get("name").get.asInstanceOf[String])
-        HttpResponse(entity = result)
+        Future.successful(HttpResponse(entity = result))
       }
     }
 
     case _: HttpRequest =>
-      HttpResponse(404, entity = "Unknown resource!")
+      Future.successful(HttpResponse(404, entity = "Unknown resource!"))
   }
 
   def run = {
     val ip = PropertyUtil.getPropertyValue("server_ip")
     val port = PropertyUtil.getIntPropertyValue("server_port")
-    Http().bindAndHandleSync(route, ip, port)
+    Http().bindAndHandleAsync(route, ip, port)
     println("Server:" + ip + ":" + port + " Started!!!")
   }
 
