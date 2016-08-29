@@ -1,0 +1,51 @@
+{"Agent":
+{
+  "agentHost" :"10.0.71.27",
+  "agentUsername" : "root",
+  "agentPassword" : "cnic.cn",
+  "agentName" : "SpoolDirTailFileAgent",
+
+  "agentChannel" : {
+    "name" : "channel1",
+    "parameters" : {
+      "type" : "memory",
+      "capacity" : "100000",
+      "transactionCapacity" : "100000",
+      "keep-alive" : "30"
+    }
+  },
+
+  "agentSource" : {
+    "name" : "src1",
+    "parameters" : {
+      "channels" : "channel1",
+      "type" : "com.github.ningg.flume.source.SpoolDirectoryTailFileSource",
+      "spoolDir": "/opt/apache-tomcat-7.0.70/logs",
+      "fileSuffix": ".COMPLETED",
+      "deletePolicy": "never",
+      "ignorePattern": "^$",
+      "targetPattern": "localhost_access_log.*(\\\\d){4}-(\\\\d){2}-(\\\\d){2}.*",
+      "targetFilename": "yyyy-MM-dd",
+      "trackerDir": ".flumespooltail",
+      "consumeOrder": "oldest",
+      "batchSize": "1",
+      "inputCharset": "UTF-8",
+      "decodeErrorPolicy": "REPLACE",
+      "deserializer": "LINE"
+    }
+  },
+
+  "agentSink" : {
+    "name" : "sink1",
+    "parameters":{
+      "channel" : "channel1",
+      "type" : "org.apache.flume.sink.kafka.KafkaSink",
+      "brokerList" : "10.0.71.20:9092,10.0.71.26:9092,10.0.71.27:9092",
+      "topic" : "access_log",
+      "batchSize": "1",
+      "requiredAcks": "1"
+    }
+  }
+
+}
+}
