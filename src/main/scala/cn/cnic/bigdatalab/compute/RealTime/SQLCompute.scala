@@ -1,5 +1,6 @@
 package cn.cnic.bigdatalab.compute.realtime
 
+import java.text.{SimpleDateFormat, DateFormat}
 import java.util.Date
 
 import akka.io.Udp.SO.Broadcast
@@ -13,15 +14,19 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.streaming.{Seconds, StreamingContext, Time}
 import org.apache.spark.{SparkConf, SparkContext}
+import org.slf4j.{LoggerFactory, Logger}
 
 /**
   * Created by duyuanyuan on 2016/6/12.
   */
-object SQLCompute {
+object SQLCompute{
 
   val failStatus: String = "Failed"
   val receiveStatus: String = "Received"
   var preMP: Int = _
+  val logger:Logger = LoggerFactory.getLogger("SQLCompute")
+  val df:DateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
 
   /*
   args: 0 app name
@@ -61,7 +66,9 @@ object SQLCompute {
 
     val lines = Kafka2SparkStreaming.getStream(ssc, topic, kafkaParam)
 
+    var eventIndex = 0
     lines.foreachRDD((rdd: RDD[String], time: Time) => {
+      logger.info(eventIndex +"-CreateTime: " + df.format(new Date()))
       try{
         val sqlContext = HiveSQLContextSingleton.getInstance(rdd.sparkContext)
 
@@ -112,15 +119,14 @@ object SQLCompute {
           sc.stop()
         }
       }
-
       if(!(notificationTopic.equals("") || kafkaBrokerList.equals(""))){
         println("topics：" + notificationTopic)
         val topic = notificationTopic.split(":")(0)
         val partition = notificationTopic.split(":")(1)
         KafkaMessagerProducer.produce(topic, partition, kafkaBrokerList, receiveStatus)
-
       }
-
+      logger.info(eventIndex +"-CreateTime: " + df.format(new Date()))
+      eventIndex = eventIndex + 1
     })
 
     //启动

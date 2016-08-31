@@ -35,7 +35,7 @@
     <appender name="out-file" class="org.apache.log4j.RollingFileAppender">
         <param name="Threshold" value="INFO" />
         <!-- <param name="file" value="${app.logfile}"/> -->
-        <param name="file" value="E://app.log" />
+        <param name="file" value="/opt/datachain.log" />
         <param name="MaxFileSize" value="50MB" />
         <param name="MaxBackupIndex" value="50" />
         <layout class="org.apache.log4j.PatternLayout">
