@@ -1,0 +1,8 @@
+{
+  "tableSpec":{
+    "driver":"streaming",
+    "table":"uservisits",
+    "columns":["id:Int","sourceIP:String","destURL:String","visitDate:timestamp","adRevenue:float","userAgent:String",
+      "countryCode:String", "languageCode:String", "searchWord:String","duration:Int", "createTime:timestamp"]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "Task":{
+    "name":"HiveUservisits",
+    "taskType":"realtime",
+    "topic":"uservisits",
+    "sql":"insert into table hive_uservisits select * from streaming_uservisits",
+
+    "srcTable":{
+      "table1":"streaming_uservisits"
+    },
+
+    "mapping":"/data/datachainserver/configure/transformer/csvMapping_uservisits.json",
+
+    "destTable":{
+      "table1":"hive_uservisits"
+    }
+  }
+}

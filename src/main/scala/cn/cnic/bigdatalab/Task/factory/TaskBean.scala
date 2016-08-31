@@ -39,6 +39,9 @@ trait TaskBean{
 
   protected def createSparkParams(): Map[String, String] = {
     Map("master" -> PropertyUtil.getPropertyValue("master"), "executor-memory" -> PropertyUtil.getPropertyValue("executor-memory"),
-      "total-executor-cores" -> PropertyUtil.getPropertyValue("total-executor-cores"))
+      "total-executor-cores" -> PropertyUtil.getPropertyValue("total-executor-cores"),
+      "driver-cores" -> PropertyUtil.getPropertyValue("driver-cores"),
+      "driver-memory" -> PropertyUtil.getPropertyValue("driver-memory"),
+      "num-executors" -> PropertyUtil.getPropertyValue("num-executors"))
   }
 }

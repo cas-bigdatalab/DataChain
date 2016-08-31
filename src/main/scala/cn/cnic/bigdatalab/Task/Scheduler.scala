@@ -38,6 +38,9 @@ trait Scheduler{
       .append(" --master ").append(taskInstance.sparkParams.get("master").get)
       .append(" --executor-memory ").append(taskInstance.sparkParams.get("executor-memory").get)
       .append(" --total-executor-cores ").append(taskInstance.sparkParams.get("total-executor-cores").get)
+      .append(" --driver-cores ").append(taskInstance.sparkParams.get("driver-cores").get)
+      .append(" --driver-memory ").append(taskInstance.sparkParams.get("driver-memory").get)
+      .append(" --num-executors ").append(taskInstance.sparkParams.get("num-executors").get)
 
     if(taskInstance.jars != null && !taskInstance.jars.isEmpty){
       command.append(" --jars ").append(taskInstance.jars.mkString("", ",",""))

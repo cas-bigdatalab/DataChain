@@ -135,7 +135,14 @@ object SqlUtil {
 
   def parseSql(sql: String, schema: Schema):(String, String)={
     val index = sql.indexOf("(")
-    val partitionSql = sql.substring(0, index+1) + "mp=%mp%, " + sql.substring(index+1)
+    val partitionSql = index match {
+      case -1 => {
+        val tableIndex = sql.indexOf(schema.getTable()) + schema.getTable().length
+        sql.substring(0, tableIndex) + " partition(mp=%mp%) " + sql.substring(tableIndex)
+      }
+      case _ => sql.substring(0, index+1) + "mp=%mp%, " + sql.substring(index+1)
+    }
+
     val hive_merge = PropertyUtil.getPropertyValue("hive_merge")
     val hive_truncate = PropertyUtil.getPropertyValue("hive_truncate")
     var attachSql: StringBuffer = new StringBuffer()
@@ -144,7 +151,7 @@ object SqlUtil {
         .replaceAll("%partition_columns%", schema.partitonFieldToString)).append(PropertyUtil.getPropertyValue("create_sql_separator"))
         .append(hive_truncate.replace("%tablename%", schema.getTable()))
     }else{
-      attachSql.append(hive_merge.replaceAll("%tablename%", schema.getTable()).replace("%columns%", schema.columnsToString()))
+      attachSql.append(hive_merge.replaceAll("%tablename%", schema.getTable()).replace("%columns%", schema.columnsFieldToString()).replaceAll(", %partition_columns%", ""))
         .append(PropertyUtil.getPropertyValue("create_sql_separator"))
         .append(hive_truncate.replace("%tablename%", schema.getTable()))
     }
