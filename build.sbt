@@ -1,6 +1,5 @@
-import sun.security.tools.PathList
-
-name := "my-project"
+import _root_.sbtassembly.AssemblyPlugin.autoImport._
+import _root_.sbtassembly.PathList
 
 name := "DataChain"
 
@@ -13,6 +12,7 @@ val hadoopVersion = "2.6.0"
 val sparkVersion = "1.6.1"
 
 val kiteVersion = "0.16.0"
+
 
 libraryDependencies ++=Seq(
   "org.apache.spark" %% "spark-core" % sparkVersion exclude("com.typesafe.akka", "akka-actor_2.10")
@@ -75,8 +75,15 @@ libraryDependencies ++=Seq(
   "com.typesafe.akka" % "akka-testkit_2.10" % "2.3.4",
   "org.specs2" %% "specs2" % "2.3.12",
   "junit" % "junit" % "4.7",
-  "org.slf4j" % "slf4j-api" % "1.6.1"
+  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
+  "com.typesafe" %% "scalalogging-slf4j" % "1.0.1",
+  "org.slf4j" % "slf4j-api" % "1.7.7",
+  "org.slf4j" % "slf4j-log4j12" % "1.7.21",
+  "log4j" % "log4j" % "1.2.17"
 )
 
 
+
 fork in Test := true
+
+
