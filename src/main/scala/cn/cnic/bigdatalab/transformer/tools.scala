@@ -4,16 +4,20 @@ package cn.cnic.bigdatalab.transformer
  * Created by cnic-liliang on 2016/6/6.
  */
 
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+
 import cn.cnic.bigdatalab.utils.FieldTypeUtil
 import com.sun.xml.internal.fastinfoset.util.StringArray
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+
 import scala.collection.immutable.HashMap
 import scala.collection.immutable.HashMap.HashTrieMap
 import scala.util.parsing.json._
 import scala.io.Source
 
-object tools{
+object Tools{
   def jsonfile2str(jsonfile:String):String = {
     var str = ""
     val file = Source.fromFile(jsonfile)
@@ -106,7 +110,10 @@ object tools{
         val inputpattern = tmap.convertTimestamp.get("inputFormats").get
         val outputpattern = tmap.convertTimestamp.get("outputFormat").get
         //DateTime.parse(timestamp, DateTimeFormat.forPattern(inputpattern)).toString(outputpattern)
-        DateTime.parse(timestamp, DateTimeFormat.forPattern(inputpattern))
+//        DateTime.parse(timestamp, DateTimeFormat.forPattern(inputpattern))
+        val format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val d = format.parse(timestamp)
+        new Timestamp(d.getTime())
       }
       case _       =>  FieldTypeUtil.parseDataType(typeName, srcValue)
     }

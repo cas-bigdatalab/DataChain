@@ -460,22 +460,29 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
   }*/
 
   /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~演示~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-/*  test("Chain realtime: csv->kafka->realTime->mysql") {
-
-    //1.define Collection
-    val agent_json_path = json_path + "/" + "agent/agent.json"
-    val agent = FileUtil.agentReader(agent_json_path)
-    val collectionStep = new CollectionStep().initAgent(agent)
+//  test("Chain realtime: csv->kafka->realTime->mysql") {
+//
+//    //1.define Collection
+//    val agent_json_path = json_path + "/" + "agent/agent_access_log_date.json"
+//    val agent = FileUtil.agentReader(agent_json_path)
+//    val collectionStep = new CollectionStep().initAgent(agent).run()
 
     //2. Define real Task
-    val task_json_path = json_path + "/" + "realtime/realTimeTask.json"
-    val taskBean = FileUtil.taskReader(task_json_path)
-    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+//    val task_json_path = json_path + "/" + "realtime/realTimeTask_mysql_access_log.json"
+//    val taskBean = FileUtil.taskReader(task_json_path)
+//    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean)).run
     //taskStep.run
 
-    val chain = new Chain()
-    chain.addStep(collectionStep).addStep(taskStep).run()
-  }*/
+//    val chain = new Chain()
+//    chain.addStep(collectionStep).addStep(taskStep).run()
+
+//    val task_json_path = json_path + "/" + "offline/" + "offlineTask_mysql2hive_access_log_uv.json"
+//    val taskBean = FileUtil.taskReader(task_json_path)
+//    val taskStep = new TaskStep().setOfflineTask(new OfflineTask(taskBean)).run
+//
+//    Thread.sleep(1000)
+
+//  }
 
   /*test("Chain offline: hive->mysql") {
     //1. Define Task
@@ -496,7 +503,7 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
 
   }*/
 
-  test("Chain realtime: csv->kafka->spark streaming->external") {
+  /*test("Chain realtime: csv->kafka->spark streaming->external") {
     //1.define Collection
     val agent_json_path = json_path + "/" + "agent/agent_for32.json"
     val agent = FileUtil.agentReader(agent_json_path)
@@ -510,7 +517,69 @@ abstract class AbstractDataChainTestSuit extends FunSuite with BeforeAndAfterAll
     val chain = new Chain()
     chain.addStep(collectionStep).addStep(taskStep).run()
 
+  }*/
+
+  //use json file
+//  test("Chain By JSON: csv->kafka->realTime->hive partition") {
+//
+//    //2. Define real Task
+//    val task_json_path = json_path + "/realtime/" + "realTimeTask_hive_partition_bucket.json"
+////    val task_json_path = json_path + "/realtime/" + "realtimeMultiTableTask.json"
+//    val taskBean = FileUtil.taskReader(task_json_path)
+//    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean)).run
+//
+//
+//  }
+
+
+  /*test("Chain realtime: csv->kafka->spark streaming->hive") {
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent/agent_uservisits.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define real Task
+    val task_json_path = json_path + "/" + "realtime/" + "realTimeTask_hive_uservisits.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+
+  }*/
+
+  /*test("Chain realtime: csv->kafka->spark streaming->mongo") {
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent/agent_uservisits.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define real Task
+    val task_json_path = json_path + "/" + "realtime/" + "realTimeTask_mongo_uservisits.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+
+  }*/
+
+  test("Chain realtime: csv->kafka->spark streaming->hbase") {
+    //1.define Collection
+    val agent_json_path = json_path + "/" + "agent/agent_uservisits.json"
+    val agent = FileUtil.agentReader(agent_json_path)
+    val collectionStep = new CollectionStep().initAgent(agent)
+
+    //2. Define real Task
+    val task_json_path = json_path + "/" + "realtime/" + "realTimeTask_hbase_uservisits.json"
+    val taskBean = FileUtil.taskReader(task_json_path)
+    val taskStep = new TaskStep().setRealTimeTask(new RealTimeTask(taskBean))
+
+    val chain = new Chain()
+    chain.addStep(collectionStep).addStep(taskStep).run()
+
   }
+
 }
 
 class DataChainTestSuit extends AbstractDataChainTestSuit{

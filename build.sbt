@@ -1,5 +1,6 @@
-import _root_.sbtassembly.AssemblyPlugin.autoImport._
-import _root_.sbtassembly.PathList
+import AssemblyKeys._
+
+seq(assemblySettings: _*)
 
 name := "DataChain"
 
@@ -79,10 +80,21 @@ libraryDependencies ++=Seq(
   "com.typesafe" %% "scalalogging-slf4j" % "1.0.1",
   "org.slf4j" % "slf4j-api" % "1.7.7",
   "org.slf4j" % "slf4j-log4j12" % "1.7.21",
-  "log4j" % "log4j" % "1.2.17"
+  "log4j" % "log4j" % "1.2.17",
+  "com.eed3si9n" % "sbt-assembly_2.8.1" % "sbt0.10.1_0.5"
 )
 
 
+mergeStrategy in assembly := {
+  case PathList("javax", "servlet", xs @ _*)         => MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith ".html" => MergeStrategy.first
+  case "application.conf"                            => MergeStrategy.concat
+  case "reference.conf"                              => MergeStrategy.discard
+  case "unwanted.txt"                                => MergeStrategy.discard
+  case x =>
+    val oldStrategy = (mergeStrategy in assembly).value
+    oldStrategy(x)
+}
 
 fork in Test := true
 
