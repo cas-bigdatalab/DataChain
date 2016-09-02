@@ -1,0 +1,18 @@
+{
+  "Task":{
+    "name":"MysqlUservisits",
+    "taskType":"realtime",
+    "topic":"uservisits",
+    "sql":"insert into table mysql_uservisits select * from streaming_uservisits",
+
+    "srcTable":{
+      "table1":"streaming_uservisits"
+    },
+
+    "mapping":"/data/datachainserver/configure/transformer/csvMapping_uservisits.json",
+
+    "destTable":{
+      "table1":"mysql_uservisits"
+    }
+  }
+}
