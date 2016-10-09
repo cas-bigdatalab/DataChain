@@ -1,0 +1,17 @@
+{
+  "Task":{
+    "name":"MLlibPipelineTask",
+    "taskType":"realtime",
+    "external":"datachain.jar",
+    "topic":"test",
+    "notificationTopic":"notification",
+    "entry":{
+      "mainClass":"cn.cnic.bigdatalab.compute.MLlib.MLPipelineTesting",
+      "methodName":"processDataFrame",
+      "language":"scala"
+    },
+
+    "mapping":"/opt/DataChainServer/configure/transformer/csvMapping_MLlibPipeline.json"
+
+  }
+}

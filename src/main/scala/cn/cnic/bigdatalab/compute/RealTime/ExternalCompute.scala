@@ -1,10 +1,12 @@
 package cn.cnic.bigdatalab.compute.realtime
 
+import cn.cnic.bigdatalab.compute.HiveSQLContextSingleton
 import cn.cnic.bigdatalab.compute.notification.KafkaMessagerProducer
 import cn.cnic.bigdatalab.compute.realtime.utils.Utils
 import cn.cnic.bigdatalab.transformer.Transformer
 import cn.cnic.bigdatalab.utils.{FileUtil, PropertyUtil, StreamingLogLevels}
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Row
 import org.apache.spark.streaming.{Seconds, StreamingContext, Time}
 import org.apache.spark.{SparkConf, SparkContext}
 import org.restlet.data.Language
@@ -29,7 +31,8 @@ object ExternalCompute {
         7 transformer
 
    */
-  def run(appName: String, duration : String, topic : String, kafkaParam : String, mainClass : String, methodName: String,
+  def run(appName: String, duration : String, topic : String, kafkaParam : String,
+          mainClass : String, methodName: String,
           language: String, mapping:String,
           notificationTopic : String = "", kafkaBrokerList:String = "") {
 
@@ -80,6 +83,30 @@ object ExternalCompute {
                 }
               }
             }).count()
+          }
+          case "processDataFrame" =>{
+            val sqlContext = HiveSQLContextSingleton.getInstance(rdd.sparkContext)
+
+            val srcRDD = rdd.filter(_!="").map(line => {
+              //call transformer
+              println("line:" + line + "!!!")
+              val row = transformer.transform(line)
+              println("transformer result: " + row)
+              row.toArray.toSeq
+            }).filter(_.nonEmpty).map(row => Row.fromSeq(row))
+
+            // Apply the schema to the RDD.
+            val schemaStructType = Utils.getSchema(transformer)
+            val srcDataDrame = sqlContext.createDataFrame(srcRDD,schemaStructType)
+
+            language.toLowerCase match {
+              case "scala" => {
+                Utils.invoker(mainClass+"$", methodName, srcDataDrame)
+              }
+              case "java" => {
+                Utils.invokeStaticMethod(mainClass, methodName, srcDataDrame)
+              }
+            }
           }
           case _ => throw new IllegalArgumentException("args length  error")
         }

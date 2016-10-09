@@ -1,7 +1,3 @@
-import AssemblyKeys._
-
-seq(assemblySettings: _*)
-
 name := "DataChain"
 
 version := "1.0"
@@ -32,6 +28,9 @@ libraryDependencies ++=Seq(
     exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10")
     excludeAll(ExclusionRule(organization = "org.eclipse.jetty")),
   "org.apache.spark" %% "spark-streaming-kafka" %  sparkVersion % "compile" exclude("com.typesafe.akka", "akka-actor_2.10")
+    exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10")
+    excludeAll(ExclusionRule(organization = "org.eclipse.jetty")),
+  "org.apache.spark" % "spark-mllib_2.10" % sparkVersion exclude("com.typesafe.akka", "akka-actor_2.10")
     exclude("com.typesafe.akka", "akka-remote_2.10") exclude("com.typesafe.akka", "akka-slf4j_2.10")
     excludeAll(ExclusionRule(organization = "org.eclipse.jetty")),
   "org.apache.kafka" % "kafka_2.10" % "0.8.2.2",
@@ -83,18 +82,6 @@ libraryDependencies ++=Seq(
   "log4j" % "log4j" % "1.2.17",
   "com.eed3si9n" % "sbt-assembly_2.8.1" % "sbt0.10.1_0.5"
 )
-
-
-mergeStrategy in assembly := {
-  case PathList("javax", "servlet", xs @ _*)         => MergeStrategy.first
-  case PathList(ps @ _*) if ps.last endsWith ".html" => MergeStrategy.first
-  case "application.conf"                            => MergeStrategy.concat
-  case "reference.conf"                              => MergeStrategy.discard
-  case "unwanted.txt"                                => MergeStrategy.discard
-  case x =>
-    val oldStrategy = (mergeStrategy in assembly).value
-    oldStrategy(x)
-}
 
 fork in Test := true
 
