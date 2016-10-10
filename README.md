@@ -1,7 +1,3 @@
-
-DataChain
-===
-
 **DataChain** is a full big data chain involving online data collection, real time & offline computation, data output
 
 It provides:
@@ -13,7 +9,7 @@ It provides:
 *  脚本支持java+scala
 
 Data Flow
-===
+=====================================
 **DataChain**整个数据流经过四个步骤：
 * 源数据通过采集模块进行采集
 * 对数据进行转换&计算
@@ -24,8 +20,7 @@ Data Flow
 * 可视化展示
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataFlow.png)
 
-Data Source
-===
+###Data Source
 
 支持多种数据源采集：
 *  系统日志
@@ -37,15 +32,13 @@ Data Source
 
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataSource.png)
 
-Data Transform
-===
+###Data Transform
 
 支持多种数据解析方式：json、csv、RE等
 
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataTransform.png)
 
-Data Store
-===
+###Data Store
 
 支持多种数据存储：关系型（Impala、MySQL），半结构化（MongoDB、Memcached、HBase），非结构化（HDFS），文档数据库（Solr）
 
