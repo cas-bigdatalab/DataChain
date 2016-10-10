@@ -20,7 +20,8 @@ Data Flow
 * 可视化展示
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataFlow.png)
 
-###Data Source
+Data Source
+-------------------------------
 
 支持多种数据源采集：
 *  系统日志
@@ -32,16 +33,20 @@ Data Flow
 
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataSource.png)
 
-###Data Transform
+Data Transform
+---------------------------------
 
 支持多种数据解析方式：json、csv、RE等
 
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataTransform.png)
 
-###Data Store
+Data Store
+---------------------------------
 
 支持多种数据存储：关系型（Impala、MySQL），半结构化（MongoDB、Memcached、HBase），非结构化（HDFS），文档数据库（Solr）
 
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataStore.png)
 
 
+Usage
+=====================================
