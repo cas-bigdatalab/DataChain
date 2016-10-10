@@ -11,3 +11,9 @@ It provides:
 *  计算多样化，包括实时计算和离线计算.
 *  存储多样化，包括关系型（Impala、MySQL），半结构化（MongoDB、Memcached、HBase），非结构化（HDFS），文档数据库（Solr）
 *  脚本支持java+scala
+
+Data Flow
+===
+![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataFlow.png)
+
+
