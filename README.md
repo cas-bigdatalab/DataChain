@@ -14,6 +14,14 @@ It provides:
 
 Data Flow
 ===
+**DataChain**整个数据流经过四个步骤：
+* 源数据通过采集模块进行采集
+* 对数据进行转换&计算
+  * 实时计算
+  * 增量存储
+  * 批量计算
+* 对数据进行存储
+* 可视化展示
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataFlow.png)
 
 Data Source
