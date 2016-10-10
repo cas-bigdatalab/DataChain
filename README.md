@@ -1,4 +1,4 @@
-**DataChain** 是大数据管理流水线，数据采集，管理，分析于一体的通用数据分析平台。将上层应用从数据采集，管理，分析中解放出来！
+**DataChain** 是大数据管理流水线，集数据采集，管理，分析于一体的通用数据分析平台。将上层应用从数据采集，管理，分析中解放出来！
 
 它具有如下特性:
 
@@ -20,6 +20,7 @@ Data Flow
   * 批量计算
 * 对数据进行存储
 * 可视化展示
+
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataFlow.png)
 
 Data Source
