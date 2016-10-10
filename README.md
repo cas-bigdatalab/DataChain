@@ -6,7 +6,8 @@
 *  数据解析多样化，包括JSON，CSV，RE等.
 *  计算多样化，包括实时计算、离线批量计算、增量存储.
 *  存储多样化，包括关系型，半结构化，非结构化，文档数据库
-*  编程模型为SQL，同时支持java，scala
+*  编程模型为SQL，同时支持MLlib算法库，用户自定义java，scala程序
+*  Chain的各个环节高度可配置
 
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataDesc.png)
 
@@ -20,6 +21,7 @@ Data Flow
   * 批量计算
 * 对数据进行存储
 * 可视化展示
+
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataFlow.png)
 
 Data Source
@@ -44,6 +46,11 @@ Data Transform
 
 Data Compute
 ---------------------------------
+支持多种计算模型
+* SQL
+* MLlib
+* Scala
+* Java
 
 
 Data Store
