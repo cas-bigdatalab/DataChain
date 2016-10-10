@@ -67,5 +67,20 @@ Data Store
 
 Usage Example
 =====================================
-下面以实时计算为例进行说明：
+实时任务定义：采集csv格式的数据文件，存入到mysql数据库。
+
+* 第一步：定义表
+
+ * 表streaming_test，驱动定义为streaming，意为从采集端采集的数据映射成的表
+    ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/streaming_table.png)
+ * 表mysql_user，驱动为mysql，意为mysql表
+    ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/mysql_table.png)
+    
+* 第二步：定义采集信息
+  采用flume的定义规范，需确定source，channel，sink
+  ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/agent.png)
+  
+* 第三步：定义Task
+  需要定义Task名称，类型（realtime，offline，external），原表srcTable，转换transformer，目标表destTable及对应表的操作SQL
+  ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/realtime_task.png)
 
