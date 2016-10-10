@@ -24,7 +24,7 @@ Data Flow
 
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataFlow.png)
 
-Data Source
+Data Collect
 -------------------------------
 
 支持多种数据源采集：
@@ -65,5 +65,7 @@ Data Store
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataStore.png)
 
 
-Usage
+Usage Example
 =====================================
+下面以实时计算为例进行说明：
+
