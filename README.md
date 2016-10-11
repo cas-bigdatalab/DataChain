@@ -14,13 +14,13 @@
 Data Flow
 =====================================
 **DataChain**整个数据流经过四个步骤：
-* 源数据通过采集模块进行采集
-* 对数据进行转换&计算
+* **DataCollect**：源数据通过采集模块进行采集
+* **DataTransform**：对数据格式进行分析、转换
+* **DataCompute**：对数据进行计算
   * 实时计算
   * 增量存储
   * 批量计算
-* 对数据进行存储
-* 可视化展示
+* **DataStore**：对数据进行存储
 
 ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataFlow.png)
 
@@ -71,16 +71,16 @@ Usage Example
 
 * 第一步：定义表
 
- * 表streaming_test，驱动定义为streaming，意为从采集端采集的数据映射成的表
+ * 表streaming_test，驱动定义为streaming，意为从采集端采集的数据映射成的表,table为消息队列topic
     ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/streaming_table.png)
- * 表mysql_user，驱动为mysql，意为mysql表
+ * 表mysql_user，对应mysql中数据库spark下的user表
     ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/mysql_table.png)
     
 * 第二步：定义采集信息
-  采用flume的定义规范，需确定source，channel，sink
+  采用flume的定义规范，需确定source，channel，sink。该配置定义采集10.0.71.20上路径为/opt/flumeSpooleDir文件夹下的文件，并发到kafka
   ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/agent.png)
   
 * 第三步：定义Task
-  需要定义Task名称，类型（realtime，offline，external），原表srcTable，转换transformer，目标表destTable及对应表的操作SQL
+  需要定义Task名称，类型（realtime，offline，external），原表srcTable，转换mappingSpec（transformer），目标表destTable及对应表的操作SQL
   ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/realtime_task.png)
 
