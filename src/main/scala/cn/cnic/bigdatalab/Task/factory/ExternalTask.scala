@@ -33,6 +33,41 @@ class ExternalTask extends TaskBean{
 
   }
 
+  def initOffline(name: String, external: String, expression: String, entry: Entry, notificationTopic:String = ""): TaskBean ={
+    this.taskType = "offline"
+
+    //init common params
+    init(name, taskType+"_external")
+
+    this.jars = List(external)
+    this.expression = expression
+    this.notificationTopic = notificationTopic
+
+
+    //init app params
+    if (notificationTopic == ""){
+      this.appParams = List(
+        this.taskType+"_"+name,
+        TaskUtils.wrapDelimiter(entry.mainClass),
+        TaskUtils.wrapDelimiter(entry.menthodName),
+        TaskUtils.wrapDelimiter(entry.language),
+        TaskUtils.wrapDelimiter(entry.parameters))
+    }else{
+      this.appParams = List(
+        this.taskType+"_"+name,
+        TaskUtils.wrapDelimiter(entry.mainClass),
+        TaskUtils.wrapDelimiter(entry.menthodName),
+        TaskUtils.wrapDelimiter(entry.language),
+        TaskUtils.wrapDelimiter(entry.parameters),
+        TaskUtils.getTopic(notificationTopic),
+        TaskUtils.getKafkaBrokerList()
+      )
+    }
+
+    this
+
+  }
+
 
   def parseMap(map: Map[String, Any]): ExternalTask ={
 
@@ -48,7 +83,7 @@ class ExternalTask extends TaskBean{
     assert(!map.get("external").get.asInstanceOf[String].isEmpty)
     val external = PropertyUtil.getPropertyValue("external_path") + map.get("external").get.asInstanceOf[String]
 
-    //srcTable
+    //entry
     assert(!map.get("entry").get.asInstanceOf[Map[String, Any]].isEmpty)
     val entry = Entry.parserMap(map.get("entry").get.asInstanceOf[Map[String, Any]])
 
@@ -69,19 +104,18 @@ class ExternalTask extends TaskBean{
         initRealtime(name, external, topic, entry, mapping, notificationTopic)
 
       }
-      /*case "offline" =>{
+      case "offline" =>{
 
-        //sql
-        assert(!map.get("sql").get.asInstanceOf[String].isEmpty)
-        val sql = map.get("sql").get.asInstanceOf[String]
+        //expression
+        val expression = map.getOrElse("expression", "").asInstanceOf[String]
 
-        //interval
-        val interval = map.getOrElse("interval", "-1").asInstanceOf[String]
+        //notificationTopic
+        val notificationTopic = map.getOrElse("notificationTopic", "").asInstanceOf[String]
 
-        initOfflineMultiSchema(name,sql, srcSchemaList:::destSchemaList, interval.toLong)
+        initOffline(name,external, expression, entry, notificationTopic)
 
       }
-      case "store" =>{
+      /*case "store" =>{
         //topic for realtime task
         assert(!map.get("topic").get.asInstanceOf[String].isEmpty)
         val topic = map.get("topic").get.asInstanceOf[String]

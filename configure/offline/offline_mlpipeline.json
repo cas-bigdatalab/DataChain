@@ -1,0 +1,15 @@
+{
+  "Task":{
+    "name":"MLlibPipelineTask",
+    "taskType":"offline",
+    "external":"datachain.jar",
+    "notificationTopic":"notification",
+    "expression":"*/1 * * ? * *",
+    "entry":{
+      "mainClass":"cn.cnic.bigdatalab.compute.MLlib.MLPipelineTraining",
+      "methodName":"processParameters",
+      "language":"scala",
+      "parameters":"modelPath:/tmp/logistic-regression-model-new"
+    }
+  }
+}

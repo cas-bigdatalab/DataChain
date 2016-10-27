@@ -1,4 +1,4 @@
-﻿1.zip -d /opt/datachain.jar META-INF/*.RSA META-INF/*.DSA META-INF/*.SF
+﻿1.zip -d datachain.jar META-INF/*.RSA META-INF/*.DSA META-INF/*.SF
 
 2.切换环境,记得修改hive-site.xml
 javax.jdo.option.ConnectionUR

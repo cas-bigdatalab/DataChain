@@ -7,6 +7,7 @@ class Entry {
   var mainClass: String = _
   var menthodName: String = _
   var language: String = _
+  var parameters: String = _
 
 }
 
@@ -27,6 +28,9 @@ object Entry{
     //language
     assert(!map.get("language").get.asInstanceOf[String].isEmpty)
     entry.language = map.get("language").get.asInstanceOf[String]
+
+    //parametersMap
+    entry.parameters = map.getOrElse("parameters","").asInstanceOf[String]
 
     entry
 
