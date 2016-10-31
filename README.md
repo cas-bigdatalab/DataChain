@@ -46,12 +46,18 @@ Data Transform
 
 Data Compute
 ---------------------------------
+支持多种计算类型
+* 实时流计算
+* 离线批量计算
+* 增量存储
+
 支持多种计算模型
 * SQL
 * MLlib
 * Scala
 * Java
 
+![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/dataCompute.png)
 
 Data Store
 ---------------------------------
@@ -80,7 +86,11 @@ Usage Example
   采用flume的定义规范，需确定source，channel，sink。该配置定义采集10.0.71.27上的apachelog日志，并发到kafka
   ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/agent_access_log.png)
   
-* 第三步：定义Task
+* 第三步：定义转换
+  利用正则表达式将apache access log进行解析
+  ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/commonApacheLogMapping.png)
+  
+* 第四步：定义实时任务Realtime Task
   需要定义Task名称，类型（realtime，offline，external），原表srcTable，转换mappingSpec（transformer），目标表destTable及对应表的操作SQL
   ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/realtime_access_log.png)
 
