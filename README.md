@@ -67,20 +67,20 @@ Data Store
 
 Usage Example
 =====================================
-实时任务定义：采集csv格式的数据文件，存入到mysql数据库。
+实时任务定义：采集10.0.71.27上apache的access log，存入到mysql数据库。
 
 * 第一步：定义表
 
- * 表streaming_test，驱动定义为streaming，意为从采集端采集的数据映射成的表,table为消息队列topic
-    ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/streaming_table.png)
- * 表mysql_user，对应mysql中数据库spark下的user表
-    ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/mysql_table.png)
+ * 表streaming_access_log，驱动定义为streaming，意为从采集端采集的数据映射成的表,table为消息队列topic
+    ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/streaming_access_log.png)
+ * 表mysql_access_log，对应mysql中数据库spark下的apache_access_log表
+    ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/mysql_access_log.png)
     
 * 第二步：定义采集信息
-  采用flume的定义规范，需确定source，channel，sink。该配置定义采集10.0.71.20上路径为/opt/flumeSpooleDir文件夹下的文件，并发到kafka
-  ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/agent.png)
+  采用flume的定义规范，需确定source，channel，sink。该配置定义采集10.0.71.27上的apachelog日志，并发到kafka
+  ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/agent_access_log.png)
   
 * 第三步：定义Task
   需要定义Task名称，类型（realtime，offline，external），原表srcTable，转换mappingSpec（transformer），目标表destTable及对应表的操作SQL
-  ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/realtime_task.png)
+  ![](https://github.com/cas-bigdatalab/DataChain/blob/master/doc/realtime_access_log.png)
 
