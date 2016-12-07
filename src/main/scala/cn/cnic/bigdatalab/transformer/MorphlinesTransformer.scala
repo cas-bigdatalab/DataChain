@@ -47,7 +47,7 @@ class MorphlinesTransformer(tmap : TransformerMapping) extends TransformerBase{
         for (item <- tmap.dimensions) {
           val feildValue = moResult.get(item.trim.split(":")(0)).get(0)
           //val value = FieldTypeUtil.parseDataType(item.trim.split(":")(1), feildValue.toString)
-          val value = tools.valueDataType(item.trim.split(":")(1), feildValue.toString, tmap)
+          val value = Tools.valueDataType(item.trim.split(":")(1), feildValue.toString, tmap)
           result += value
         }
       }
@@ -88,7 +88,7 @@ class MorphlinesTransformer(tmap : TransformerMapping) extends TransformerBase{
         val feildValue = moResult.get(item.trim.split(":")(0)).get(0)
         //println(feildValue.getClass)
         //val value = FieldTypeUtil.parseDataType(item.trim.split(":")(1), feildValue.toString)
-        val value = tools.valueDataType(item.trim.split(":")(1), feildValue.toString, tmap)
+        val value = Tools.valueDataType(item.trim.split(":")(1), feildValue.toString, tmap)
         result += value
       }
     }

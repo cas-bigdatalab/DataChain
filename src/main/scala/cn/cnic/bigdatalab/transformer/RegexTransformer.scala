@@ -41,7 +41,7 @@ class RegexTransformer(tmap : TransformerMapping) extends TransformerBase{
         if(schema.toList.contains(columns(i-1))) {
           //val map= Map(columnslist(i-1).toString -> m.group(i).toString)
           //println(columns(i-1).toString.split(":")(1))
-          val value = tools.valueDataType(columns(i-1).toString.split(":")(1), m.group(i).toString.trim, tmap)
+          val value = Tools.valueDataType(columns(i-1).toString.split(":")(1), m.group(i).toString.trim, tmap)
           //println(value)
           result += value //.add(columnslist(i-1).toString + ": " + m.group(i).toString)
         }

@@ -1,6 +1,7 @@
 package cn.cnic.bigdatalab.compute.realtime
 
-import java.text.{SimpleDateFormat, DateFormat}
+import java.sql.Timestamp
+import java.text.{DateFormat, SimpleDateFormat}
 import java.util.Date
 
 import akka.io.Udp.SO.Broadcast
@@ -14,7 +15,7 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.streaming.{Seconds, StreamingContext, Time}
 import org.apache.spark.{SparkConf, SparkContext}
-import org.slf4j.{LoggerFactory, Logger}
+import org.slf4j.{Logger, LoggerFactory}
 
 /**
   * Created by duyuanyuan on 2016/6/12.
@@ -66,25 +67,24 @@ object SQLCompute{
 
     val lines = Kafka2SparkStreaming.getStream(ssc, topic, kafkaParam)
 
-    var eventIndex = 0
+    //var windewIndex = 0
+    //var endTime = new Timestamp(System.currentTimeMillis())
     lines.foreachRDD((rdd: RDD[String], time: Time) => {
-      logger.info(eventIndex +"-CreateTime: " + df.format(new Date()))
+
+      val rddCount = rdd.count()
       try{
+
+        /*//window delay
+        if(rddCount != 0){
+          val first = rdd.filter(_!="").first()
+          val row = transformer.transform(first)
+          val createTime = row(row.size-1).asInstanceOf[Timestamp]
+          val windowdelay:Long = (endTime.getTime - createTime.getTime)/1000 - 1
+          logger.error(windewIndex +"-DelayTime: " + windowdelay.toString)
+        }*/
+
         val sqlContext = HiveSQLContextSingleton.getInstance(rdd.sparkContext)
 
-        //Get Row RDD
-        /*val srcRDD = rdd.filter(_!="").map(line => {
-          //call transformer
-          println("line:" + line + "!!!")
-          val row = transformer.transform(line)
-          println("transformer result: " + row)
-          if (row.toArray.size == 0){
-            println("transformer failed!!!")
-            Row.empty
-          }else{
-            Row.fromSeq(row.toArray.toSeq)
-          }
-        })*/
         val srcRDD = rdd.filter(_!="").map(line => {
           //call transformer
           println("line:" + line + "!!!")
@@ -125,8 +125,11 @@ object SQLCompute{
         val partition = notificationTopic.split(":")(1)
         KafkaMessagerProducer.produce(topic, partition, kafkaBrokerList, receiveStatus)
       }
-      logger.info(eventIndex +"-CreateTime: " + df.format(new Date()))
-      eventIndex = eventIndex + 1
+      /*if(rddCount != 0){
+        endTime = new Timestamp(System.currentTimeMillis())
+        logger.warn(windewIndex +"-EndTime: " + df.format(endTime))
+      }
+      windewIndex = windewIndex + 1*/
     })
 
     //启动

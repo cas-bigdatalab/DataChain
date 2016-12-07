@@ -52,7 +52,7 @@ import java.io.{InputStreamReader, ByteArrayInputStream}
         //extract
         if(schema.toList.contains(columns(cnt))) {
           //val value = FieldTypeUtil.parseDataType(columns(cnt).toString.split(":")(1), record.get(cnt))
-          val value = tools.valueDataType(columns(cnt).toString.split(":")(1), record.get(cnt).trim, tmap)
+          val value = Tools.valueDataType(columns(cnt).toString.split(":")(1), record.get(cnt).trim, tmap)
           row += value
         }
         cnt += 1

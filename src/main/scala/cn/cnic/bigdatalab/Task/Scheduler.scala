@@ -119,19 +119,20 @@ class OfflineScheduler extends Scheduler{
     val expression = taskInstance.expression
 
 
+    val name = taskInstance.taskType+"_"+taskInstance.name
     if(expression != ""){
-      val name = taskInstance.taskType+"_"+taskInstance.name
+
       try{
         Quartz.qse.createSchedule(name, Some(name), expression, None)
       }catch {
         case _ => println("Schedule has created")
       }
-
-      Quartz.qse.schedule(name, act, this)
-
-      Quartz.tasks += (name -> List(taskInstance, act))
-      return
     }
+    Quartz.qse.schedule(name, act, this)
+
+    Quartz.tasks += (name -> List(taskInstance, act))
+    return
+
 
 
 //    val interval = taskInstance.interval

@@ -61,7 +61,7 @@ class TransformerMapping(mapconf: String) extends Serializable{
   }
 
   def init(mapjson:String) = {
-    val mapping = tools.jsonfile2JsonMap(mapjson)
+    val mapping = Tools.jsonfile2JsonMap(mapjson)
     val map: Map[String, Any] = mapping.asInstanceOf[Map[String, Any]].get("mappingSpec").get.asInstanceOf[Map[String, Any]]
 
     //type
@@ -78,19 +78,23 @@ class TransformerMapping(mapconf: String) extends Serializable{
     //columns
     if(map.get("columns").isEmpty == false) {
       var value:ArrayBuffer[String] = new ArrayBuffer[String]()
-      val loccolumns =tools.jsonMap2Columns(mapping)
+      val loccolumns =Tools.jsonMap2Columns(mapping)
       for(item <- loccolumns) value += item.toString
       columns = value
     }
     //delimiter
-    if(map.get("delimiter").isEmpty == false) delimiter = map.get("delimiter").get.toString.trim.charAt(0)
+    if(map.get("delimiter").isEmpty == false)
+      if(map.get("delimiter").get.toString.equals(" "))
+        delimiter = ' '
+      else
+        delimiter = map.get("delimiter").get.toString.trim.charAt(0)
     //dimensions
     val svalue = new ArrayBuffer[String]()
-    val schemalist = tools.jsonMap2SchemaList(mapping)
+    val schemalist = Tools.jsonMap2SchemaList(mapping)
     for(item <- schemalist) svalue += item.toString
     dimensions = svalue
     //convertTimestamp
-    val convert = tools.jsonMap2ConvertTimestamp(mapping)
+    val convert = Tools.jsonMap2ConvertTimestamp(mapping)
     if(convert.nonEmpty) {
       convertTimestamp.put("field", convert.get.asInstanceOf[Map[String, Any]].get("field").get.toString)
       convertTimestamp.put("inputFormats", convert.get.asInstanceOf[Map[String, Any]].get("inputFormats").get.toString)
